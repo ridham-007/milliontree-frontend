@@ -37,7 +37,7 @@ export default function Navbar() {
           key: "location",
           },
       ];
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>("Home");
      
       const handleLinkClick = (title: string) => {
         setSelected(title);

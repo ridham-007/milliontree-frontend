@@ -4,11 +4,14 @@ import Image from 'next/image';
 import CustomDate from './ui/CustomDate';
 import CustomButton from './ui/CustomButton';
 import InputField from './ui/CustomInputFild';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { fireStorage } from '@/utils/firebase';
-import { v4 as uuidv4 } from 'uuid';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { uploadFile } from '@/app/_actions/actions'
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LandingPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,7 +23,7 @@ export default function LandingPage() {
   const [errors, setErrors] = useState({});
   const [imageName, setImageName] = useState<any>('');
   const [isLoading, setIsLoading] = useState<any>(false);
-
+  const [loading, setLoading] = useState<any>(false);
 
   const handleChange = (e:any) => {
     const { name, value, type, files } = e.target;
@@ -46,30 +49,19 @@ export default function LandingPage() {
     }));
   };
 
-  const uploadFile = async (
-    bucket: string,
-    file: File
-  ): Promise<{ url: string; name: string }> => {
-    try {
-      return new Promise(async (resolve, reject) => {
-        if (!file) resolve({ url: "", name: "" });
-        const fileName = file.name || `${uuidv4()}`;
-        const storageRef = ref(fireStorage, `${bucket}/${fileName}`);
-        await uploadBytes(storageRef, file);
-        const url = await getDownloadURL(storageRef);
-        resolve({ url, name: file.name });
-      });
-    } catch (e) {
-      throw e;
-    }
-  };
-
   const validateForm = () => {
     const newErrors:any = {};
     if (!formData.name) newErrors.name = "Name is required";
     if (!formData.email) newErrors.email = "Email is required";
 
     return newErrors;
+  };
+
+  const handleRedirectOnTrack = () => {
+    setLoading(true)
+    const userId = '66ebb503c80d4247cb358a34'; 
+    router.push(`/track/${userId}`);
+    setLoading(false)
   };
 
   const handleSubmit = async () => {
@@ -103,12 +95,16 @@ export default function LandingPage() {
         },
         body: JSON.stringify(finalUserDetails),
       });
-  
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
   
-      const json = await response.json();
+      const res = await response.json();
+      if (res?.message) {
+        toast(res.message);  
+      } else {
+        toast.error('Unexpected response from the server');
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -116,7 +112,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-full border border-red-700">
+    <div className="flex flex-col md:flex-row w-full h-full">
       <div className="flex flex-col w-full items-center px-6 py-[40px]">
         <p className="text-[18px] sm:text-[24px] lg:text-[27px] font-semibold text-center mb-5">
           Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
@@ -151,7 +147,7 @@ export default function LandingPage() {
         </div>
         <div>
           <p className="text-[18px] sm:text-[22px] font-medium text-center">
-            Click here to learn about
+          <Link href={'https://www.evertreen.com/'}>  Click here to learn about</Link>
           </p>
           <p className="text-[18px] sm:text-[22px] text-[#8C1515] font-medium text-center">
             {" "}
@@ -245,6 +241,8 @@ export default function LandingPage() {
           <CustomButton
             label="Track My Tree"
             className="flex px-2 w-full h-max !bg-[#306E1D] !text-white my-1"
+            // callback={handleRedirectOnTrack}
+            interactingAPI={loading}
           />
         </div>
       </div>

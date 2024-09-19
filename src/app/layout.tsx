@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { Flip, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Milliontree",
@@ -30,6 +32,7 @@ export default function RootLayout({
               {footer}
             </div>
           </div>
+          <ToastContainer position="top-right" transition={Flip} />
       </body>
     </html>
   );
