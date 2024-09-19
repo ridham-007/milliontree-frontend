@@ -19,6 +19,7 @@ export default function LandingPage() {
   });
   const [errors, setErrors] = useState({});
   const [imageName, setImageName] = useState<any>('');
+  const [isLoading, setIsLoading] = useState<any>(false);
 
 
   const handleChange = (e:any) => {
@@ -72,9 +73,12 @@ export default function LandingPage() {
   };
 
   const handleSubmit = async () => {
+    setIsLoading(true);
+    
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setIsLoading(false);
       return;
     }
   
@@ -105,18 +109,14 @@ export default function LandingPage() {
       }
   
       const json = await response.json();
-      console.log({ json });
     } catch (error) {
       console.error("Error submitting form:", error);
     }
+    setIsLoading(false);
   };
-  
-
-  console.log(formData);
-  
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-full">
+    <div className="flex flex-col md:flex-row w-full h-full border border-red-700">
       <div className="flex flex-col w-full items-center px-6 py-[40px]">
         <p className="text-[18px] sm:text-[24px] lg:text-[27px] font-semibold text-center mb-5">
           Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
@@ -232,8 +232,9 @@ export default function LandingPage() {
           </label>
           <CustomButton
             label="Submit"
-            className="flex px-2 w-full h-max !bg-[#306E1D] !text-white my-1"
+            className={`flex px-2 w-full h-max my-1 ${isLoading && 'pointer-events-none'}`}
             callback={handleSubmit}
+            interactingAPI={isLoading}
           />
           <hr />
         </div>
