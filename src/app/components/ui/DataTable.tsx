@@ -214,79 +214,10 @@ const DataTable: React.FC<DataTableProps> = ({
           ) : (
             displayRows.map((row: any, index: number) => (
               <TableRow key={index}>
-                {updatedColumns.map((column: any) => {
-                  const cellKey = `Datatable-row-${index}-${column.field}`;
+              {updatedColumns.map((column: any) => {
+                const cellKey = `Datatable-row-${index}-${column.field}`;
 
-                  if (column.field === "action" && tableConfig.actionPresent) {
-                    return (
-                      <TableCell
-                        key={cellKey}
-                        sx={{
-                          fontFamily: "Montserrat, sans-serif",
-                          fontSize: "14px",
-                        }}
-                      >
-                        <IconButton
-                          id="basic-button"
-                          aria-controls={open ? "basic-menu" : undefined}
-                          aria-haspopup="true"
-                          aria-expanded={open ? "true" : undefined}
-                          onClick={(event) => {
-                            handleClick(event, cellKey);
-                          }}
-                        >
-                          <MdOutlineMoreVert size={18} />
-                        </IconButton>
-                        <Menu
-                          id="basic-menu"
-                          anchorEl={anchorEl}
-                          open={open && menuKey === cellKey}
-                          onClose={() => setAnchorEl(null)}
-                          MenuListProps={{
-                            "aria-labelledby": "basic-button",
-                          }}
-                        >
-                          {tableConfig?.actionList?.includes("edit") && (
-                            <MenuItem
-                              onClick={() => {
-                                handleClose("edit", row);
-                              }}
-                            >
-                              <ListItemIcon>
-                                <MdOutlineEdit size={18} />
-                              </ListItemIcon>
-                              Edit
-                            </MenuItem>
-                          )}
-                          {tableConfig?.actionList?.includes("view") && (
-                            <MenuItem
-                              onClick={() => {
-                                handleClose("view", row);
-                              }}
-                            >
-                              <ListItemIcon>
-                                <GrView size={18} />
-                              </ListItemIcon>
-                              View
-                            </MenuItem>
-                          )}
-                          {tableConfig?.actionList?.includes("delete") && (
-                            <MenuItem
-                              onClick={() => {
-                                handleClose("delete", row);
-                              }}
-                            >
-                              <ListItemIcon>
-                                <RiDeleteBinLine size={18} />
-                              </ListItemIcon>
-                              Delete
-                            </MenuItem>
-                          )}
-                        </Menu>
-                      </TableCell>
-                    );
-                  }
-
+                if (column.field === "action" && tableConfig.actionPresent) {
                   return (
                     <TableCell
                       key={cellKey}
@@ -295,11 +226,92 @@ const DataTable: React.FC<DataTableProps> = ({
                         fontSize: "14px",
                       }}
                     >
-                      {row[column.field]}
+                      <IconButton
+                        id="basic-button"
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={(event) => {
+                          handleClick(event, cellKey);
+                        }}
+                      >
+                        <MdOutlineMoreVert size={18} />
+                      </IconButton>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open && menuKey === cellKey}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        {tableConfig?.actionList?.includes("edit") && (
+                          <MenuItem
+                            onClick={() => {
+                              handleClose("edit", row);
+                            }}
+                          >
+                            <ListItemIcon>
+                              <MdOutlineEdit size={18} />
+                            </ListItemIcon>
+                            Edit
+                          </MenuItem>
+                        )}
+                        {tableConfig?.actionList?.includes("view") && (
+                          <MenuItem
+                            onClick={() => {
+                              handleClose("view", row);
+                            }}
+                          >
+                            <ListItemIcon>
+                              <GrView size={18} />
+                            </ListItemIcon>
+                            View
+                          </MenuItem>
+                        )}
+                        {tableConfig?.actionList?.includes("delete") && (
+                          <MenuItem
+                            onClick={() => {
+                              handleClose("delete", row);
+                            }}
+                          >
+                            <ListItemIcon>
+                              <RiDeleteBinLine size={18} />
+                            </ListItemIcon>
+                            Delete
+                          </MenuItem>
+                        )}
+                      </Menu>
                     </TableCell>
                   );
-                })}
-              </TableRow>
+                } else if (column.customRender) {
+                  return (
+                    <TableCell
+                      key={cellKey}
+                      sx={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {column.customRender(row)}
+                    </TableCell>
+                  );
+                } else {
+                  return (
+                    <TableCell
+                      key={cellKey}
+                      sx={{
+                        fontFamily: "Montserrat, sans-serif",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {row[column.field] ? row[column.field] : "-"}
+                    </TableCell>
+                  );
+                }
+              })}
+            </TableRow>
             ))
           )}
         </TableBody>
