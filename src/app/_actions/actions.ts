@@ -1,3 +1,4 @@
+'use server'
 import { prepareServerError } from "@/utils/helpers";
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { fireStorage } from '@/utils/firebase';
@@ -71,19 +72,19 @@ export const updateUserInfo = async (
     }
   };
 
-  export const getUserByEmail = async (email: string): Promise<any> => {    
+  export const getUserByEmail = async (email: string): Promise<any> => {
     try {
       const userResponse = await (
         await fetch(`${process.env.NEXT_PUBLIC_URL}/user/${email}`, {
-          method: "GET",
+          method: "POST",
           headers: {
             'Content-Type': 'application/json',
           },
         })
       ).json();
+      
       if (userResponse) {
         return {
-          success: true,
           data: userResponse,
         };
       } else {
@@ -91,6 +92,28 @@ export const updateUserInfo = async (
       }
     } catch (error: any) {
       return prepareServerError(error?.message);
+    }
+  };
+
+  export const deleteUserById = async (userId: string): Promise<any> => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/${userId}`, {
+        method: "DELETE",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      const userResponse = await response.json();
+      if (response.ok) {
+        return {
+          data: userResponse,
+        };
+      } else {
+        return prepareServerError(userResponse?.message || 'Failed to delete user.');
+      }
+    } catch (error: any) {
+      return prepareServerError(error.message || 'An error occurred.');
     }
   };
 
@@ -119,6 +142,10 @@ export const updateUserInfo = async (
       return prepareServerError(error?.message || 'An unexpected error occurred.');
     }
   };
+
+
+
+  
   
 
 

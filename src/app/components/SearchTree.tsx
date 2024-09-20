@@ -4,7 +4,9 @@ import dynamic from "next/dynamic";
 import InputField from "./ui/CustomInputFild";
 import CustomButton from "./ui/CustomButton";
 import { useState } from "react";
-import { getUserByEmail } from "../_actions/actions";
+import { deleteUserById, getUserByEmail } from "../_actions/actions";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 interface SearchTreeProps {}
 const DataTable = dynamic(() => import("@/app/components/ui/DataTable"), {
@@ -12,29 +14,72 @@ const DataTable = dynamic(() => import("@/app/components/ui/DataTable"), {
 });
 
 export default function SearchTree(props: SearchTreeProps) {
+  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [data, setData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<any>(false);
+  const [userData, setUserData] = useState<any>();
+  const [refetch, setRefetch] = useState(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
-
+  
   const handleSearch = async () => {
+    setIsLoading(true)
+    setUserData([])
     try {
-      if(email){
+      if (!email) {
+        toast("Email is required to search for a user.");
+        setIsLoading(false)
+        return;
+      }
       const response = await getUserByEmail(email);
-      console.log({response});
-    }
-     
+      if (response?.data) {
+        const user = response.data;
+        setUserData([user]);
+      } else {
+        console.error("Failed to fetch user data:", response);
+      }
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
+    setIsLoading(false)
+
   };
+
+  const handleClear = () => {
+    setUserData([])  
+  };
+
+  const deleteUser = async (userId: string) => {
+    setLoading(true);
+    const response = await deleteUserById(userId);
+    if(response?.data?.success){
+      toast(response?.data?.message)
+      setUserData([])  
+    }
+    setLoading(false);
+  };
+
+  const handleEdit = async (userId: string) => {
+    router.push(`/track/${userId}`);
+  };
+
+  const handleActionMenu = (value: string, user: any) => {
+    if (value === "edit") {
+      handleEdit(user?._id);
+    }
+    if (value === "delete") {
+      deleteUser(user?._id);
+    }
+  };
+  
   const tableConfig = {
     notFoundData: " No user found",
     actionPresent: true,
     actionList: ["edit", "delete"],
     // handlePagination: handlePagination,
-    // onActionClick: handleActionMenu,
+    onActionClick: handleActionMenu,
     columns: [
       {
         field: "name",
@@ -44,8 +89,29 @@ export default function SearchTree(props: SearchTreeProps) {
         field: "email",
         headerName: "Email",
       },
+      {
+        field: "cohort",
+        headerName: "Cohort",
+      },
+      {
+        field: "datePlanted",
+        headerName: "Date Planted",
+        customRender: (cur: any) => {
+          const date = new Date(cur.datePlanted);
+          const formattedDate = new Intl.DateTimeFormat('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }).format(date);
+          return (
+            <div>
+              {formattedDate}
+            </div>
+          );
+        },
+      }
     ],
-    rows: data || [],
+    rows: userData || [],
     pagination: {
       totalResults: 10,
       totalPages: 10,
@@ -70,13 +136,23 @@ export default function SearchTree(props: SearchTreeProps) {
             bgColor="#F4F4F4"
           />
         </div>
+        <div className="flex gap-3">
         <CustomButton
           label="Search"
-          className="flex px-2 w-max h-max !bg-[#306E1D] !text-white border !border-[#306E1D]"
-        //   callback={handleSearch}
+          className="flex px-2 !w-[83px] h-max !bg-[#306E1D] !text-white border !border-[#306E1D]"
+          callback={handleSearch}
+          interactingAPI={isLoading}
         />
+         <CustomButton
+          label="Clear"
+          className="flex px-2 !w-[83px] h-max !bg-white !text-[#306E1D] border !border-[#306E1D]"
+          callback={handleClear}
+        />
+        </div>
       </div>
+      <div className="w-full max-w-[800px]">
       <DataTable tableConfig={tableConfig} />
+      </div>
     </div>
   );
 }

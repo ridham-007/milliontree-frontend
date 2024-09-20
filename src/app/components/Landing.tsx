@@ -176,9 +176,13 @@ export default function LandingPage() {
         <p className="text-[18px] sm:text-[24px] lg:text-[25px] font-normal text-center py-8">
           Numbers of Trees planted till date:{" "}
           <span className="py-1 px-3 font-medium text-white bg-[#306E1D] rounded-full">
-            100
+            1,000
           </span>
         </p>
+          <div className='flex flex-col w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]'>
+            <Image src='/images/home.png' width={150} height={150} alt='home' className='w-full' unoptimized /> 
+            <h2 className='font-semibold text-lg mt-4'>Photos from LEAD Me2We Forest</h2>
+          </div>
       </div>
       <div className="flex flex-col w-full shadow-xl shrink-l md:max-w-[348px] lg:max-w-[393px] p-6 gap-4">
         <div className="flex flex-col w-full bg-[#F2FFEE] items-center leading-8 px-7 py-5 gap-4">
@@ -193,11 +197,8 @@ export default function LandingPage() {
           />
         </div>
         <div>
-          <p className="text-[18px] sm:text-[22px] font-medium text-center">
-            <Link href={"https://www.evertreen.com/"}>
-              {" "}
-              Click here to learn about
-            </Link>
+          <p className="text-[18px] sm:text-[22px] font-medium text-center underline">
+          <Link href={'https://www.evertreen.com/'}>  Click here to learn about</Link>
           </p>
           <p className="text-[18px] sm:text-[22px] text-[#8C1515] font-medium text-center">
             {" "}
@@ -205,7 +206,10 @@ export default function LandingPage() {
           </p>
         </div>
         <hr />
-        <p className="text-[18px] sm:text-[22px] font-medium text-center">{`Planted a Tree? Let's register it toward our goal!!`}</p>
+        <div>
+        <p className="text-[18px] sm:text-[22px] font-medium text-center">{`Planted a Tree?`}</p>
+        <p className="text-[18px] sm:text-[22px] font-medium text-center">{` Let's register it toward our goal!!`}</p>
+        </div>
         <div className="flex flex-col gap-4 w-full">
           <InputField
             name="name"
@@ -288,7 +292,7 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col px-6 gap-[11px] py-[49px]">
           <p className="text-center">
-            Remember to water the plant & share photos at 30, 60 and 90 days
+            Remember to water the plant & share photos at <span className='text-[#306E1D]'>30</span>, <span className='text-[#306E1D]'>60</span> and <span className='text-[#306E1D]'>90 days</span>
           </p>
           <CustomButton
             label="Track My Tree"
