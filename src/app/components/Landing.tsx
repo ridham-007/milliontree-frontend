@@ -185,7 +185,7 @@ export default function LandingPage() {
   const handleRedirectOnTrack = () => {
     setLoading(true);
     const userId = "66ebb503c80d4247cb358a34";
-    router.push(`/track/${userId}`);
+    router.push(`/search_tree`);
     setLoading(false);
   };
 
@@ -452,7 +452,7 @@ export default function LandingPage() {
           <CustomButton
             label="Track My Tree"
             className="flex px-2 w-full h-max !bg-[#306E1D] !text-white my-1"
-            // callback={handleRedirectOnTrack}
+            callback={handleRedirectOnTrack}
             interactingAPI={loading}
           />
         </div>
