@@ -1,17 +1,20 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CustomDate from './ui/CustomDate';
 import CustomButton from './ui/CustomButton';
 import InputField from './ui/CustomInputFild';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import { uploadFile } from '@/app/_actions/actions'
+import { getPlantedTrees, uploadFile } from '@/app/_actions/actions'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps"
+import { IconButton, Tooltip } from '@mui/material';
 
 export default function LandingPage() {
   const router = useRouter();
+  const [plantedTrees, setPlantedTrees] = useState([]);  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,6 +23,10 @@ export default function LandingPage() {
     location: '',
     image: null,
   });
+
+  const contrastingColors = ["#b3d5a8", "#4CAF50", "#2C8A2E", "#306E1D"];
+  
+
   const [errors, setErrors] = useState({});
   const [imageName, setImageName] = useState<any>('');
   const [isLoading, setIsLoading] = useState<any>(false);
@@ -111,6 +118,17 @@ export default function LandingPage() {
     setIsLoading(false);
   };
 
+  const fetchAllPlantedTrees = async () => {
+    const response = await getPlantedTrees();
+    if (response.success) {
+      setPlantedTrees(response?.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllPlantedTrees();
+  },[])
+
   return (
     <div className="flex flex-col md:flex-row w-full h-full">
       <div className="flex flex-col w-full items-center px-6 py-[40px]">
@@ -118,14 +136,43 @@ export default function LandingPage() {
           Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
           <span className="text-[#8C1515]">Me2We 2025</span>
         </p>
-        <Image
-          src="/images/location.png"
-          height={460}
-          width={250}
-          alt="logo"
-          className="w-full"
-          unoptimized
-        />
+        <ComposableMap>
+          <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
+            {({ geographies }) =>
+              geographies.map((geo: any) => {
+                return (
+                  <>
+                    <Geography
+                      key={geo.id}
+                      geography={geo}
+                      style={{
+                        default: { fill: '#949a92' },
+                        hover: { fill: "#306E1D" },
+                        pressed: { fill: "#8C1515" },
+                      }}
+                    />
+                  </>
+                );
+              })
+            }
+          </Geographies>
+
+          {plantedTrees?.map((plant: any, index: number) => {
+            const { location } = plant;
+
+            return (
+              <Tooltip title={`Trees: ${plant.trees.length}`} arrow placement='top'>
+                <Marker
+                  key={index}
+                  coordinates={[location?.longitude, location?.latitude]}
+                >
+                  <circle r={4} fill={`${contrastingColors[plant.trees.length >= 4 ? 3 : plant.trees.length - 1]}`} />
+                </Marker>
+              </Tooltip>
+            );
+          })}
+        </ComposableMap>
+
         <p className="text-[18px] sm:text-[24px] lg:text-[25px] font-normal text-center py-8">
           Numbers of Trees planted till date:{" "}
           <span className="py-1 px-3 font-medium text-white bg-[#306E1D] rounded-full">
@@ -147,7 +194,10 @@ export default function LandingPage() {
         </div>
         <div>
           <p className="text-[18px] sm:text-[22px] font-medium text-center">
-          <Link href={'https://www.evertreen.com/'}>  Click here to learn about</Link>
+            <Link href={"https://www.evertreen.com/"}>
+              {" "}
+              Click here to learn about
+            </Link>
           </p>
           <p className="text-[18px] sm:text-[22px] text-[#8C1515] font-medium text-center">
             {" "}
@@ -228,7 +278,9 @@ export default function LandingPage() {
           </label>
           <CustomButton
             label="Submit"
-            className={`flex px-2 w-full h-max my-1 ${isLoading && 'pointer-events-none'}`}
+            className={`flex px-2 w-full h-max my-1 ${
+              isLoading && "pointer-events-none"
+            }`}
             callback={handleSubmit}
             interactingAPI={isLoading}
           />

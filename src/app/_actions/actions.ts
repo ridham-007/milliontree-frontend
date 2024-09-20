@@ -71,9 +71,7 @@ export const updateUserInfo = async (
     }
   };
 
-  export const getUserByEmail = async (email: string): Promise<any> => {
-    console.log({email});
-    
+  export const getUserByEmail = async (email: string): Promise<any> => {    
     try {
       const userResponse = await (
         await fetch(`${process.env.NEXT_PUBLIC_URL}/user/${email}`, {
@@ -95,3 +93,33 @@ export const updateUserInfo = async (
       return prepareServerError(error?.message);
     }
   };
+
+  export const getPlantedTrees = async (): Promise<any> => {
+  
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/planted-trees`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        return prepareServerError(errorResponse?.message || 'An error occurred while fetching data.');
+      }
+  
+      const userResponse = await response.json();
+  
+      return {
+        success: true,
+        data: userResponse.data,
+      };
+    } catch (error: any) {
+      return prepareServerError(error?.message || 'An unexpected error occurred.');
+    }
+  };
+  
+
+
+
