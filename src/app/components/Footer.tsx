@@ -15,8 +15,8 @@ export default function Footer() {
             Don't be uninformed. Get the latest update
             </p>
             <div className="flex w-full gap-2 justify-center mt-3">
-            <LiaLinkedinIn size={30} color="white" className="border border-white rounded-full p-1 cursor-pointer"/>
-            <RiYoutubeFill size={30} color="white" className="border border-white rounded-full p-1 cursor-pointer"/>
+            <LiaLinkedinIn size={30} color="white" className="border border-white rounded-full p-1 cursor-pointer" onClick={() => window.open("https://www.linkedin.com/groups/14208374/", "_blank")}/>
+            <RiYoutubeFill size={30} color="white" className="border border-white rounded-full p-1 cursor-pointer" onClick={() => window.open("https://www.youtube.com/@stanfordleadme2we", "_blank")}/>
             </div>
           </div>
             </div>
