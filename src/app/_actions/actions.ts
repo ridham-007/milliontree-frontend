@@ -82,7 +82,6 @@ export const updateUserInfo = async (
           },
         })
       ).json();
-      
       if (userResponse) {
         return {
           data: userResponse,
@@ -143,10 +142,28 @@ export const updateUserInfo = async (
     }
   };
 
-
-
+  export const createCheckoutSession = async (
+    body: any
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/stripe/create-checkout-session`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+            body: JSON.stringify(body),
+          }
+        )
+      ).json();
+      return {
+        success: true,
+        data: response,
+      };
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
   
-  
-
-
-

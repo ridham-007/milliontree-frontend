@@ -18,8 +18,7 @@ export default function SearchTree(props: SearchTreeProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState<any>(false);
-  const [userData, setUserData] = useState<any>();
-  const [refetch, setRefetch] = useState(false);
+  const [userData, setUserData] = useState<any>([]);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -34,11 +33,12 @@ export default function SearchTree(props: SearchTreeProps) {
         return;
       }
       const response = await getUserByEmail(email);
-      if (response?.data) {
-        const user = response.data;
+      if (response?.data?.success) {
+        const user = response?.data?.user;
         setUserData([user]);
       } else {
-        console.error("Failed to fetch user data:", response);
+        toast(response?.data?.message);
+        setUserData([]);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -121,7 +121,7 @@ export default function SearchTree(props: SearchTreeProps) {
 
   return (
     <div className="flex flex-col w-full h-full px-5 py-10 gap-5">
-      <div className="flex flex-col sm:flex-row w-full lg:w-[60%] items-end gap-2">
+      <div className="flex flex-col sm:flex-row w-full max-w-[840px] items-end gap-2">
         <div className="w-full">
           <label className="text-[16px] text-[#404040] font-medium pb-3">
             Search
@@ -139,18 +139,18 @@ export default function SearchTree(props: SearchTreeProps) {
         <div className="flex gap-3">
         <CustomButton
           label="Search"
-          className="flex px-2 !w-[83px] h-max !bg-[#306E1D] !text-white border !border-[#306E1D]"
+          className="flex px-2 !w-[83px] !h-[48px] !bg-[#306E1D] !text-white border !border-[#306E1D]"
           callback={handleSearch}
           interactingAPI={isLoading}
         />
          <CustomButton
           label="Clear"
-          className="flex px-2 !w-[83px] h-max !bg-white !text-[#306E1D] border !border-[#306E1D]"
+          className="flex px-2 !w-[83px] !h-[48px] !bg-white !text-[#306E1D] border !border-[#306E1D]"
           callback={handleClear}
         />
         </div>
       </div>
-      <div className="w-full max-w-[800px]">
+      <div className="w-full max-w-[840px]">
       <DataTable tableConfig={tableConfig} />
       </div>
     </div>

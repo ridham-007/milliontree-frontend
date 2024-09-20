@@ -1,46 +1,130 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import CustomDate from './ui/CustomDate';
-import CustomButton from './ui/CustomButton';
-import InputField from './ui/CustomInputFild';
+"use client"
+
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import CustomDate from "./ui/CustomDate";
+import CustomButton from "./ui/CustomButton";
+import InputField from "./ui/CustomInputFild";
 import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import { getPlantedTrees, uploadFile } from '@/app/_actions/actions'
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import "react-toastify/dist/ReactToastify.css";
+import { uploadFile,getPlantedTrees } from "@/app/_actions/actions";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import PlacesAutocomplete from "./ui/PlacesAutoComplete";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps"
 import { IconButton, Tooltip } from '@mui/material';
 
+
+interface formDataProps {
+  name: string;
+  email: string;
+  cohort: string;
+  datePlanted: string | undefined;
+  location: { name: string; latitude: number; longitude: number };
+  image: null;
+}
 export default function LandingPage() {
   const router = useRouter();
-  const [plantedTrees, setPlantedTrees] = useState([]);  
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    cohort: '',
-    datePlanted: '',
-    location: '',
+  const contrastingColors = ["#b3d5a8", "#4CAF50", "#2C8A2E", "#306E1D"];
+
+  const [formData, setFormData] = useState<formDataProps>({
+    name: "",
+    email: "",
+    cohort: "",
+    datePlanted: "",
+    location: { name: "", latitude: 0, longitude: 0 },
     image: null,
   });
-
-  const contrastingColors = ["#b3d5a8", "#4CAF50", "#2C8A2E", "#306E1D"];
-  
-
-  const [errors, setErrors] = useState({});
-  const [imageName, setImageName] = useState<any>('');
+  const [errors, setErrors] = useState<any>({});
+  const [plantedTrees, setPlantedTrees] = useState([]);
+  const [imageName, setImageName] = useState<any>("");
   const [isLoading, setIsLoading] = useState<any>(false);
   const [loading, setLoading] = useState<any>(false);
 
-  const handleChange = (e:any) => {
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      name: "",
+      email: "",
+      cohort: "",
+      datePlanted: "",
+      location: "",
+    };
+
+    if (!formData.name) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    } else if (formData.name.length > 35) {
+      newErrors.name = "Name must be 35 characters or less";
+      isValid = false;
+    }
+
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (formData.email.length > 35) {
+      newErrors.email = "Email must be 35 characters or less";
+      isValid = false;
+    }
+
+    if (!formData.cohort) {
+      newErrors.cohort = "Cohort is required";
+      isValid = false;
+    } else if (formData.cohort.length > 35) {
+      newErrors.cohort = "Cohort must be 35 characters or less";
+      isValid = false;
+    }
+
+    if (!formData.datePlanted) {
+      newErrors.datePlanted = "Date Planted is required";
+      isValid = false;
+    }
+
+    if (!formData.location.name) {
+      newErrors.location = "Location is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleChange = (e: any) => {
     const { name, value, type, files } = e.target;
-    
-    if (type === 'file') {
+    if (name === "name" && value.length > 35) {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        name: "Name must be 35 characters or less",
+      }));
+      return;
+    }
+
+    if (name === "email" && value.length > 35) {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        email: "Email must be 35 characters or less",
+      }));
+      return;
+    }
+
+    if (name === "cohort" && value.length > 35) {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        cohort: "Cohort must be 35 characters or less",
+      }));
+      return;
+    }
+
+    setErrors((prevErrors: any) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+    if (type === "file") {
       setFormData((prevData) => ({
         ...prevData,
         [name]: files[0],
       }));
-      setImageName(files[0].name)
+      setImageName(files[0].name);
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -49,38 +133,68 @@ export default function LandingPage() {
     }
   };
 
-  const handleDateChange = (newValue:any) => {
+  const handleLocationChange = (
+    event: any,
+    data: {
+      location: string;
+      latitude: number;
+      longitude: number;
+      placeId: string;
+    }
+  ) => {
+    if (!data.location) {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        location: "Location is required",
+      }));
+    } else {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        location: "",
+      }));
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        location: {
+          name: data.location,
+          latitude: data.latitude,
+          longitude: data.longitude,
+        },
+      }));
+    }
+  };
+
+  const handleDateChange = (newValue: any) => {
+    if (!newValue) {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        datePlanted: "Date Planted is required",
+      }));
+    } else {
+      setErrors((prevErrors: any) => ({
+        ...prevErrors,
+        datePlanted: "",
+      }));
+    }
     setFormData((prevData) => ({
       ...prevData,
       datePlanted: newValue,
     }));
   };
 
-  const validateForm = () => {
-    const newErrors:any = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-
-    return newErrors;
-  };
-
   const handleRedirectOnTrack = () => {
-    setLoading(true)
-    const userId = '66ebb503c80d4247cb358a34'; 
+    setLoading(true);
+    const userId = "66ebb503c80d4247cb358a34";
     router.push(`/track/${userId}`);
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      setIsLoading(false);
+    if (!validateForm()) {
       return;
     }
-  
+    setIsLoading(true);
+
     let finalUserDetails = {};
     if (formData.image) {
       try {
@@ -93,24 +207,27 @@ export default function LandingPage() {
     } else {
       finalUserDetails = formData;
     }
-    
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/register`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(finalUserDetails),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/user/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(finalUserDetails),
+        }
+      );
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
-  
+
       const res = await response.json();
       if (res?.message) {
-        toast(res.message);  
+        toast(res.message);
       } else {
-        toast.error('Unexpected response from the server');
+        toast.error("Unexpected response from the server");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -179,10 +296,19 @@ export default function LandingPage() {
             1,000
           </span>
         </p>
-          <div className='flex flex-col w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]'>
-            <Image src='/images/home.png' width={150} height={150} alt='home' className='w-full' unoptimized /> 
-            <h2 className='font-semibold text-lg mt-4'>Photos from LEAD Me2We Forest</h2>
-          </div>
+        <div className="flex flex-col w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]">
+          <Image
+            src="/images/home.png"
+            width={150}
+            height={150}
+            alt="home"
+            className="w-full"
+            unoptimized
+          />
+          <h2 className="font-semibold text-lg mt-4">
+            Photos from LEAD Me2We Forest
+          </h2>
+        </div>
       </div>
       <div className="flex flex-col w-full shadow-xl shrink-l md:max-w-[348px] lg:max-w-[393px] p-6 gap-4">
         <div className="flex flex-col w-full bg-[#F2FFEE] items-center leading-8 px-7 py-5 gap-4">
@@ -198,7 +324,10 @@ export default function LandingPage() {
         </div>
         <div>
           <p className="text-[18px] sm:text-[22px] font-medium text-center underline">
-          <Link href={'https://www.evertreen.com/'}>  Click here to learn about</Link>
+            <Link href={"https://www.evertreen.com/"}>
+              {" "}
+              Click here to learn about
+            </Link>
           </p>
           <p className="text-[18px] sm:text-[22px] text-[#8C1515] font-medium text-center">
             {" "}
@@ -207,55 +336,78 @@ export default function LandingPage() {
         </div>
         <hr />
         <div>
-        <p className="text-[18px] sm:text-[22px] font-medium text-center">{`Planted a Tree?`}</p>
-        <p className="text-[18px] sm:text-[22px] font-medium text-center">{` Let's register it toward our goal!!`}</p>
+          <p className="text-[18px] sm:text-[22px] font-medium text-center">{`Planted a Tree?`}</p>
+          <p className="text-[18px] sm:text-[22px] font-medium text-center">{` Let's register it toward our goal!!`}</p>
         </div>
         <div className="flex flex-col gap-4 w-full">
-          <InputField
-            name="name"
-            placeholder="Enter your name"
-            type="text"
-            onChange={handleChange}
-            value={formData.name}
-            className="text-[16px] mt-[8px]"
-            label={"Name"}
-            bgColor="#F4F4F4"
-          />
-          <InputField
-            name="email"
-            placeholder="Enter your email"
-            type="email"
-            onChange={handleChange}
-            value={formData.email}
-            className="text-[16px] mt-[8px]"
-            label={"Email"}
-            bgColor="#F4F4F4"
-          />
-          <InputField
-            name="cohort"
-            placeholder="Enter your cohort"
-            type="text"
-            onChange={handleChange}
-            value={formData.cohort}
-            className="text-[16px] mt-[8px]"
-            label={"Cohort"}
-            bgColor="#F4F4F4"
-          />
-          <CustomDate
-            label="Date Planted"
-            value={formData.datePlanted}
-            onChange={handleDateChange}
-          />
-          <InputField
-            name="location"
-            placeholder="Enter your location"
-            type="text"
-            onChange={handleChange}
-            value={formData.location}
-            className="text-[16px] mt-[8px]"
-            label={"Location"}
-            bgColor="#F4F4F4"
-          />
+          <div>
+            <InputField
+              name="name"
+              placeholder="Enter your name"
+              type="text"
+              onChange={handleChange}
+              value={formData.name}
+              className="text-[16px] mt-[8px]"
+              label={"Name"}
+              bgColor="#F4F4F4"
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+            )}
+          </div>
+          <div>
+            <InputField
+              name="email"
+              placeholder="Enter your email"
+              type="email"
+              onChange={handleChange}
+              value={formData.email}
+              className="text-[16px] mt-[8px]"
+              label={"Email"}
+              bgColor="#F4F4F4"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
+          </div>
+          <div>
+            <InputField
+              name="cohort"
+              placeholder="Enter your cohort"
+              type="text"
+              onChange={handleChange}
+              value={formData.cohort}
+              className="text-[16px] mt-[8px]"
+              label={"Cohort"}
+              bgColor="#F4F4F4"
+            />
+            {errors.cohort && (
+              <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
+            )}
+          </div>
+          <div>
+            <CustomDate
+              label="Date Planted"
+              value={formData.datePlanted}
+              onChange={handleDateChange}
+            />
+            {errors.datePlanted && (
+              <p className="text-red-500 text-sm mt-1">{errors.datePlanted}</p>
+            )}
+          </div>
+          <div>
+            <PlacesAutocomplete
+              name="location"
+              className="mt-[8px] w-full rounded-[8px] border border-[#f4f4f4]"
+              placeholder="Location of the event?"
+              label="Location"
+              onChange={handleLocationChange}
+              value={formData.location.name}
+            />
+            {errors.location && (
+              <p className="text-red-500 text-sm mt-1">{errors.location}</p>
+            )}
+          </div>
           <input
             type="file"
             accept="image/*"
@@ -292,7 +444,10 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col px-6 gap-[11px] py-[49px]">
           <p className="text-center">
-            Remember to water the plant & share photos at <span className='text-[#306E1D]'>30</span>, <span className='text-[#306E1D]'>60</span> and <span className='text-[#306E1D]'>90 days</span>
+            Remember to water the plant & share photos at{" "}
+            <span className="text-[#306E1D]">30</span>,{" "}
+            <span className="text-[#306E1D]">60</span> and{" "}
+            <span className="text-[#306E1D]">90 days</span>
           </p>
           <CustomButton
             label="Track My Tree"
