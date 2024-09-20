@@ -241,7 +241,7 @@ export default function LandingPage() {
           <CustomButton
             label="Track My Tree"
             className="flex px-2 w-full h-max !bg-[#306E1D] !text-white my-1"
-            callback={handleRedirectOnTrack}
+            // callback={handleRedirectOnTrack}
             interactingAPI={loading}
           />
         </div>
