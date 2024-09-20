@@ -132,8 +132,8 @@ export default function LandingPage() {
             1,000
           </span>
         </p>
-          <div className='flex flex-col w-full bg-[#F4F4F4] h-[285px] p-6 text-center mt-0 md:mt-[100px]'>
-            <Image src='/images/home-2.png' width={150} height={150} alt='home' className='w-full' /> 
+          <div className='flex flex-col w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]'>
+            <Image src='/images/home.png' width={150} height={150} alt='home' className='w-full' unoptimized /> 
             <h2 className='font-semibold text-lg mt-4'>Photos from LEAD Me2We Forest</h2>
           </div>
       </div>
@@ -243,7 +243,7 @@ export default function LandingPage() {
         </div>
         <div className="flex flex-col px-6 gap-[11px] py-[49px]">
           <p className="text-center">
-            Remember to water the plant & share photos at 30, 60 and 90 days
+            Remember to water the plant & share photos at <span className='text-[#306E1D]'>30</span>, <span className='text-[#306E1D]'>60</span> and <span className='text-[#306E1D]'>90 days</span>
           </p>
           <CustomButton
             label="Track My Tree"
