@@ -15,27 +15,27 @@ export default function Navbar() {
     },
     {
       title: "Schedule",
-      href: "/schedule",
+      href: "/",
       key: "schedule",
     },
     {
       title: "Speakers",
-      href: "/speakers",
+      href: "/",
       key: "speakers",
     },
     {
       title: "About Us",
-      href: "/about-us",
+      href: "/",
       key: "about",
     },
     {
       title: "Committee",
-      href: "/committee",
+      href: "/",
       key: "committee",
     },
     {
       title: "Location",
-      href: "/location",
+      href: "/",
       key: "location",
     },
   ];
