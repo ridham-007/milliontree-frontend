@@ -20,9 +20,9 @@ export default function Footer() {
             </div>
           </div>
             </div>
-          <p className="text-[15px] text-white text-center">
+          {/* <p className="text-[15px] text-white text-center">
             Created by ifonix.
-          </p>
+          </p> */}
       </div>
     )
 }
