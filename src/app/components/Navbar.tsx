@@ -58,7 +58,7 @@ export default function Navbar() {
             alt="logo"
             className="w-[170px] h-9"
           />
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <div className="flex gap-2 ml-6">
               <Image
                 src="/images/calendar.png"
@@ -73,7 +73,7 @@ export default function Navbar() {
               </div>
             </div>
             <p className="text-[#898a8b]">600+ in person attendees</p>
-          </div>
+          </div> */}
         </div>
         <div className="hidden lg:flex items-center justify-between">
           <div className="flex gap-5 justify-start">

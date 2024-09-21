@@ -251,7 +251,7 @@ export default function LandingPage() {
       <div className="flex flex-col w-full items-center px-6 py-[40px]">
         <p className="text-[18px] sm:text-[24px] lg:text-[27px] font-semibold text-center mb-5">
           Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
-          <span className="text-[#8C1515]">Me2We 2025</span>
+          <span className="text-[#8C1515]">Me2We 2030</span>
         </p>
         <ComposableMap>
           <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
