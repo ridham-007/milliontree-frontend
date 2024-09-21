@@ -35,7 +35,7 @@ export default function SearchTree(props: SearchTreeProps) {
       const response = await getUserByEmail(email);
       if (response?.data?.success) {
         const user = response?.data?.user;
-        setUserData([user]);
+        setUserData(user);
       } else {
         toast(response?.data?.message);
         setUserData([]);
@@ -49,14 +49,18 @@ export default function SearchTree(props: SearchTreeProps) {
 
   const handleClear = () => {
     setUserData([])  
+    setEmail('')
   };
 
   const deleteUser = async (userId: string) => {
     setLoading(true);
     const response = await deleteUserById(userId);
     if(response?.data?.success){
-      toast(response?.data?.message)
-      setUserData([])  
+      toast(response?.data?.message)  
+      const data = await getUserByEmail(email);
+      const user = data?.data?.user;
+      setUserData(user)
+
     }
     setLoading(false);
   };

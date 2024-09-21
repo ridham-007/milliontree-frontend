@@ -153,7 +153,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const displayRows = fixRow
     ? rows
-    : rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    : rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   useEffect(() => {
     if (eventSelection) {

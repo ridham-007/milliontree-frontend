@@ -51,13 +51,15 @@ export default function Navbar() {
     >
       <div className="flex flex-col w-full px-3">
         <div className="flex justify-between">
+          <Link href='/'>
           <Image
             src="/images/logo.png"
             height={50}
             width={250}
             alt="logo"
-            className="w-[170px] h-9"
+            className="w-[170px] h-9 cursor-pointer"
           />
+          </Link>
           {/* <div className="flex flex-col">
             <div className="flex gap-2 ml-6">
               <Image
