@@ -20,6 +20,7 @@ interface InputFieldProps {
   max?: number;
   step?: string;
   boxBorder?: boolean;
+  amount?: any;
 }
 
 const InputField = (props: InputFieldProps) => {
@@ -40,6 +41,7 @@ const InputField = (props: InputFieldProps) => {
     max,
     step,
     boxBorder,
+    amount
   } = props;
   const [viewPassword, setViewPassword] = useState<boolean>(
     !showPasswordSuffix
@@ -51,7 +53,7 @@ const InputField = (props: InputFieldProps) => {
       <label className="font-medium text-[16px] leading-[24px] text-[#404040]">
         {label}
       </label>
-      <div className={`flex items-center ${className}`}>
+      <div className={`flex items-center ${className} relative`}>
         <input
           disabled={active}
           maxLength={maxlength}
@@ -65,10 +67,14 @@ const InputField = (props: InputFieldProps) => {
         //   }
           placeholder={placeholder}
           onChange={(event) => onChange(event, name)}
-          className={`h-[48px] w-full rounded-[8px] border ${borderColor} pl-3 pr-3 focus:outline-none
+          className={`h-[48px] w-full rounded-[8px] border ${borderColor} ${amount ? "pl-6" : "pl-3"} pl-3 pr-3 focus:outline-none
         bg-[#F4F4F4]`}
           readOnly={readOnly}
         />
+       {amount && <>
+        <p className="flex items-center h-[48px] absolute left-3">$</p>
+        <p className="flex items-center h-[48px] absolute right-3">USD</p>
+        </>}
       </div>
     </div>
   );

@@ -446,13 +446,14 @@ export default function TrackPage(props: TrackPageProps) {
         <div>
           <InputField
             name="amount"
-            placeholder="0.00"
+            placeholder="$"
             type="number"
             onChange={handlePayment}
             value={paymentData.amount.toString()}
             className="text-[16px] mt-[8px]"
             label={"Enter Amount"}
             bgColor="#F4F4F4"
+            amount
           />
           {paymentErrors.amount && (
             <p className="text-red-500 text-sm mt-1">{paymentErrors.amount}</p>

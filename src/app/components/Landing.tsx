@@ -62,6 +62,7 @@ export default function LandingPage() {
       cohort: "",
       datePlanted: "",
       location: "",
+      image:"",
     };
 
     if (!formData.name) {
@@ -95,6 +96,11 @@ export default function LandingPage() {
 
     if (!formData.location.name) {
       newErrors.location = "Location is required";
+      isValid = false;
+    }
+
+    if (!formData.image) {
+      newErrors.image = "Image is required";
       isValid = false;
     }
 
@@ -145,7 +151,7 @@ export default function LandingPage() {
       }));
     }
   };
-
+  
   const handleLocationChange = (
     event: any,
     data: {
@@ -218,7 +224,7 @@ export default function LandingPage() {
       throw e;
     }
   };
-
+  
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
@@ -255,7 +261,8 @@ export default function LandingPage() {
 
       const res = await response.json();
       if (res?.message) {
-        toast(res.message);
+        toast(res?.message);
+        router.push(`/search-tree`);
       } else {
         toast.error("Unexpected response from the server");
       }
@@ -361,7 +368,7 @@ export default function LandingPage() {
         </div>
         <div>
           <p className="text-[18px] sm:text-[22px] font-medium text-center underline">
-            <Link href={"https://www.evertreen.com/"}>
+            <Link href={"https://www.evertreen.com/"} target={"_blank"}>
               {" "}
               Click here to learn about
             </Link>
@@ -445,6 +452,7 @@ export default function LandingPage() {
               <p className="text-red-500 text-sm mt-1">{errors.location}</p>
             )}
           </div>
+          <div>
           <input
             type="file"
             accept="image/*"
@@ -469,6 +477,10 @@ export default function LandingPage() {
               <p className="text-nowrap">{imageName}</p>
             )}
           </label>
+          {errors.image && (
+              <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+            )}
+          </div>
           <CustomButton
             label="Submit"
             className={`flex px-2 w-full h-max my-1 ${
