@@ -37,7 +37,8 @@ const sliderImage = [
 ]
 export default function LandingPage() {
   const router = useRouter();
-  const contrastingColors = ["#b3d5a8", "#4CAF50", "#2C8A2E", "#306E1D"];
+  const contrastingColors = ["#368a3a", "#266329", "#4CAF50", "#2C8A2E", "#306E1D"];
+
   const initialFormData ={
     name: "",
     email: "",
@@ -281,7 +282,7 @@ export default function LandingPage() {
       <div className="flex flex-col w-full md:w-[65%] lg:w-[73%] items-center px-6 py-[40px]">
         <p className="text-[18px] sm:text-[24px] lg:text-[27px] font-semibold text-center mb-5">
           Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
-          <span className="text-[#8C1515]">Me2We 2025</span>
+          <span className="text-[#8C1515]">Me2We 2030</span>
         </p>
         <ComposableMap>
           <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
@@ -293,10 +294,11 @@ export default function LandingPage() {
                       key={geo.id}
                       geography={geo}
                       style={{
-                        default: { fill: '#949a92' },
+                        default: { fill: '#dbdbdb' },
                         hover: { fill: "#306E1D" },
                         pressed: { fill: "#8C1515" },
                       }}
+                      stroke="#306E1D"
                     />
                   </>
                 );
@@ -308,7 +310,19 @@ export default function LandingPage() {
             const { location } = plant;
 
             return (
-              <Tooltip title={`Trees: ${plant.trees.length}`} arrow placement='top'>
+              <Tooltip title={`Trees planted: ${plant.trees.length}`} arrow placement='top' componentsProps={{
+                tooltip: {
+                  sx: {
+                    bgcolor: '#fff',
+                    color: "#306E1D",
+                    fontWeight: "bold",
+                    border: "1px solid #306E1D",
+                    '& .MuiTooltip-arrow': {
+                      color: 'transparent',
+                    },
+                  },
+                },
+              }}>
                 <Marker
                   key={index}
                   coordinates={[location?.longitude, location?.latitude]}
