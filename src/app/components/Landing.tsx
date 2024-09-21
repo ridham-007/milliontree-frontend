@@ -25,7 +25,7 @@ interface formDataProps {
 }
 export default function LandingPage() {
   const router = useRouter();
-  const contrastingColors = ["#b3d5a8", "#4CAF50", "#2C8A2E", "#306E1D"];
+  const contrastingColors = ["#368a3a", "#266329", "#4CAF50", "#2C8A2E", "#306E1D"];
 
   const [formData, setFormData] = useState<formDataProps>({
     name: "",
@@ -263,10 +263,11 @@ export default function LandingPage() {
                       key={geo.id}
                       geography={geo}
                       style={{
-                        default: { fill: '#949a92' },
+                        default: { fill: '#dbdbdb' },
                         hover: { fill: "#306E1D" },
                         pressed: { fill: "#8C1515" },
                       }}
+                      stroke="#306E1D"
                     />
                   </>
                 );
@@ -278,7 +279,19 @@ export default function LandingPage() {
             const { location } = plant;
 
             return (
-              <Tooltip title={`Trees: ${plant.trees.length}`} arrow placement='top'>
+              <Tooltip title={`Trees planted: ${plant.trees.length}`} arrow placement='top' componentsProps={{
+                tooltip: {
+                  sx: {
+                    bgcolor: '#fff',
+                    color: "#306E1D",
+                    fontWeight: "bold",
+                    border: "1px solid #306E1D",
+                    '& .MuiTooltip-arrow': {
+                      color: 'transparent',
+                    },
+                  },
+                },
+              }}>
                 <Marker
                   key={index}
                   coordinates={[location?.longitude, location?.latitude]}
