@@ -13,6 +13,10 @@ import Link from "next/link";
 import PlacesAutocomplete from "./ui/PlacesAutoComplete";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps"
 import { IconButton, Tooltip } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
+import Slider from "./ui/Slider";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { fireStorage } from "@/utils/firebase";
 
 
 interface formDataProps {
@@ -23,18 +27,26 @@ interface formDataProps {
   location: { name: string; latitude: number; longitude: number };
   image: null;
 }
+
+const sliderImage = [
+  {key:1,image:<Image src={'/images/plantation-1.jpg'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
+  {key:2,image:<Image src={'/images/plantation-2.jpg'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
+  {key:3,image:<Image src={'/images/plantation-3.jpg'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
+  {key:4,image:<Image src={'/images/plantation-4.png'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
+  {key:5,image:<Image src={'/images/plantation-5.png'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>}
+]
 export default function LandingPage() {
   const router = useRouter();
   const contrastingColors = ["#b3d5a8", "#4CAF50", "#2C8A2E", "#306E1D"];
-
-  const [formData, setFormData] = useState<formDataProps>({
+  const initialFormData ={
     name: "",
     email: "",
     cohort: "",
     datePlanted: "",
     location: { name: "", latitude: 0, longitude: 0 },
     image: null,
-  });
+  };
+  const [formData, setFormData] = useState<formDataProps>(initialFormData);
   const [errors, setErrors] = useState<any>({});
   const [plantedTrees, setPlantedTrees] = useState([]);
   const [imageName, setImageName] = useState<any>("");
@@ -124,7 +136,7 @@ export default function LandingPage() {
         ...prevData,
         [name]: files[0],
       }));
-      setImageName(files[0].name);
+      setImageName(files[0]?.name);
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -184,9 +196,26 @@ export default function LandingPage() {
 
   const handleRedirectOnTrack = () => {
     setLoading(true);
-    const userId = "66ebb503c80d4247cb358a34";
-    router.push(`/search_tree`);
+    router.push(`/search-tree`);
     setLoading(false);
+  };
+
+  const uploadFile = async (
+    bucket: string,
+    file: File
+  ): Promise<{ url: string; name: string }> => {
+    try {
+      return new Promise(async (resolve, reject) => {
+        if (!file) resolve({ url: "", name: "" });
+        const fileName = file.name || `${uuidv4()}`;
+        const storageRef = ref(fireStorage, `${bucket}/${fileName}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        resolve({ url, name: file.name });
+      });
+    } catch (e) {
+      throw e;
+    }
   };
 
   const handleSubmit = async () => {
@@ -232,6 +261,7 @@ export default function LandingPage() {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
+    setFormData(initialFormData)
     setIsLoading(false);
   };
 
@@ -248,7 +278,7 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col md:flex-row w-full h-full">
-      <div className="flex flex-col w-full items-center px-6 py-[40px]">
+      <div className="flex flex-col w-full md:w-[65%] lg:w-[73%] items-center px-6 py-[40px]">
         <p className="text-[18px] sm:text-[24px] lg:text-[27px] font-semibold text-center mb-5">
           Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
           <span className="text-[#8C1515]">Me2We 2025</span>
@@ -296,15 +326,8 @@ export default function LandingPage() {
             1,000
           </span>
         </p>
-        <div className="flex flex-col w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]">
-          <Image
-            src="/images/home.png"
-            width={150}
-            height={150}
-            alt="home"
-            className="w-full"
-            unoptimized
-          />
+        <div className="flex flex-col justify-between w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]">
+          <Slider sliderImage={sliderImage}/>
           <h2 className="font-semibold text-lg mt-4">
             Photos from LEAD Me2We Forest
           </h2>

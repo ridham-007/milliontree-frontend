@@ -10,6 +10,9 @@ import {
   uploadFile,
 } from "../_actions/actions";
 import { toast } from "react-toastify";
+import { fireStorage } from "@/utils/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
 
 interface TrackPageProps {
   userInfo: {
@@ -21,6 +24,7 @@ interface TrackPageProps {
     images: { day: number; image: string }[];
     location: string;
   };
+  userId:string;
 }
 
 export default function TrackPage(props: TrackPageProps) {
@@ -150,6 +154,24 @@ export default function TrackPage(props: TrackPageProps) {
     }));
   };
 
+  const uploadFile = async (
+    bucket: string,
+    file: File
+  ): Promise<{ url: string; name: string }> => {
+    try {
+      return new Promise(async (resolve, reject) => {
+        if (!file) resolve({ url: "", name: "" });
+        const fileName = file.name || `${uuidv4()}`;
+        const storageRef = ref(fireStorage, `${bucket}/${fileName}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        resolve({ url, name: file.name });
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const handleSave = async () => {
     if (!validateForm()) {
       return;
@@ -164,15 +186,17 @@ export default function TrackPage(props: TrackPageProps) {
         return img;
       })
     );
-
+    
     const data = {
-      id: "66ebb503c80d4247cb358a34",
+      id: props.userId,
       userData: {
         ...formData,
         images: updatedImages,
       },
     };
+
     const res = await updateUserInfo(data);
+    
     if (res) {
       toast(res?.data?.message);
     }

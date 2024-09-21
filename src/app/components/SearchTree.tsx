@@ -62,7 +62,9 @@ export default function SearchTree(props: SearchTreeProps) {
   };
 
   const handleEdit = async (userId: string) => {
+    if(userId){
     router.push(`/track/${userId}`);
+  }
   };
 
   const handleActionMenu = (value: string, user: any) => {

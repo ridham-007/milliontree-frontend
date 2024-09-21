@@ -1,6 +1,5 @@
 import { getUserById } from "@/app/_actions/actions";
 import TrackPage from "@/app/components/Track";
-import { redirect } from "next/navigation";
 
 export default async function PreviewEvent({ params: { userId }, }: { params: { userId: string } }) {
     let userData
@@ -10,7 +9,7 @@ export default async function PreviewEvent({ params: { userId }, }: { params: { 
        
     return (
         <div className="flex flex-1 flex-col w-full h-full">
-           <TrackPage userInfo={userData?.data}/>
+           <TrackPage userInfo={userData?.data} userId={userId}/>
         </div>
     )
 }
