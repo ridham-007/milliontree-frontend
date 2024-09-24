@@ -465,6 +465,16 @@ export default function TrackPage(props: TrackPageProps) {
           className="flex px-2 w-full !h-[40px] !bg-[#FF65DD] !text-white my-1"
           interactingAPI={loading}
         />
+      <h3 className="text-center">OR</h3>
+      <div className="flex w-full justify-center">
+      <Image
+        src='/images/qrcode.png'
+        alt={`qrcode`}
+        width={150}
+        height={100}
+        unoptimized
+      />
+      </div>
       </div>
     </div>
   );
