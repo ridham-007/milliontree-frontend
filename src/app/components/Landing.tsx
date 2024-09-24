@@ -7,16 +7,20 @@ import CustomButton from "./ui/CustomButton";
 import InputField from "./ui/CustomInputFild";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { uploadFile,getPlantedTrees } from "@/app/_actions/actions";
+import { uploadFile,getPlantedTrees, getEventsByRegion } from "@/app/_actions/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PlacesAutocomplete from "./ui/PlacesAutoComplete";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps"
-import { IconButton, Tooltip } from '@mui/material';
+import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import Slider from "./ui/Slider";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireStorage } from "@/utils/firebase";
+import CustomSelection from "./ui/CustomSelect";
+import CustomModal from "./ui/CustomModel";
+import { RiCloseCircleLine } from "react-icons/ri";
+import { FaChevronLeft } from "react-icons/fa";
 
 
 interface formDataProps {
@@ -35,6 +39,7 @@ const sliderImage = [
   {key:4,image:<Image src={'/images/plantation-4.png'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
   {key:5,image:<Image src={'/images/plantation-5.png'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>}
 ]
+
 export default function LandingPage() {
   const router = useRouter();
   const contrastingColors = ["#368a3a", "#266329", "#4CAF50", "#2C8A2E", "#306E1D"];
@@ -53,6 +58,38 @@ export default function LandingPage() {
   const [imageName, setImageName] = useState<any>("");
   const [isLoading, setIsLoading] = useState<any>(false);
   const [loading, setLoading] = useState<any>(false);
+  const [regionData, setRegionData] = useState<any[]>([]);
+const [eventsName, setEventsName] = useState<any[]>([]);
+const [selectedEvent, setSelectedEvent] = useState<any>(
+  eventsName?.[0] || null
+);
+const [openEventModal, setOpenEventModal] = useState<any>(false);
+const [selectedImage, setSelectedImage] = useState<string | null>(null);
+const [openImageModal, setOpenImageModal] = useState(false);
+
+const handleImageModalOpen = (imageSrc: string) => {
+  setSelectedImage(imageSrc);
+  setOpenImageModal(true);
+};
+
+const handleImageModalClose = () => {
+  setOpenImageModal(false);
+  setSelectedImage(null);
+};
+
+const transformEvents = (events: any[]) => {
+  return events?.map((event: any) => {
+    return {
+      label: event?.eventName,
+      value: event?.eventName,
+      images: event?.images,
+    };
+  });
+};
+
+  const handleCloseEventModal = () => { 
+    setOpenEventModal(false);
+  };
 
   const validateForm = () => {
     let isValid = true;
@@ -233,6 +270,7 @@ export default function LandingPage() {
 
     let finalUserDetails = {};
     if (formData.image) {
+      
       try {
         const { url } = await uploadFile("planted-tree", formData.image);
         finalUserDetails = { ...formData, images: [{ day: 1, image: url }] };
@@ -280,6 +318,87 @@ export default function LandingPage() {
     }
   };
 
+  const regionModalData = (
+    <>
+    <div className="flex justify-end px-8 py-4 border-b items-center">
+      <RiCloseCircleLine size={24} onClick={handleCloseEventModal} className="cursor-pointer"/>
+    </div>
+    <div className="flex flex-col gap-5 w-full px-8 py-4">
+    <CustomSelection
+              name="eventName"
+              data={eventsName}
+              errorMessage={"message"}
+              className="h-[48px] mt-[8px] flex items-center"
+              placeholder={"Select Timezone"}
+              label="Event Name"
+              value={selectedEvent}
+              onChange={setSelectedEvent}
+            />
+             <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+  {selectedEvent?.images?.map((image:any, index:number) => (
+    <div key={index} className="cursor-pointer">
+      <img
+        src={image}
+        width={150}
+        height={150}
+        alt={image.alt}
+        onClick={() => handleImageModalOpen(image)}
+        className="w-full h-auto object-fill"
+      />
+    </div>
+  ))}
+</div>
+    </div>
+    </>
+  )
+
+  const imagePreview = (
+    <div className="px-8 py-4">
+    <div className="flex gap-3 items-center">
+    <FaChevronLeft
+      onClick={handleImageModalClose}
+      className="flex text-[18px] justify-center items-center text-center cursor-pointer"
+    />
+    <Typography
+      id="modal-modal-title"
+      variant="h6"
+      component="h2"
+      className="text-center"
+    >
+      Selected Image
+    </Typography>
+  </div>
+  <div className="flex items-center py-4">
+    {selectedImage && (
+      <Image
+        src={selectedImage}
+        width={500}
+        height={500}
+        alt="Selected Image"
+        className="w-full h-auto"
+      />
+    )}
+  </div>
+  </div>
+  )
+
+  const fetchRegionImage = async (region:any) => {
+    const { response } = await getEventsByRegion(region);
+    if (response?.success) {
+      setRegionData(response?.data);
+      setOpenEventModal(true)
+    }else{
+      toast(response?.message)
+    }
+  };
+
+  useEffect(() => {
+    if (regionData.length > 0) {
+      const transformed = transformEvents(regionData);
+      setEventsName(transformed);  // Set the transformed events
+    }
+  }, [regionData]);
+
   useEffect(() => {
     fetchAllPlantedTrees();
   },[])
@@ -306,6 +425,7 @@ export default function LandingPage() {
                         pressed: { fill: "#8C1515" },
                       }}
                       stroke="#306E1D"
+                      onClick={()=>{fetchRegionImage(geo.properties.name)}}
                     />
                   </>
                 );
@@ -315,9 +435,8 @@ export default function LandingPage() {
 
           {plantedTrees?.map((plant: any, index: number) => {
             const { location } = plant;
-
             return (
-              <Tooltip title={`Trees planted: ${plant.trees.length}`} arrow placement='top' componentsProps={{
+              <Tooltip title={`Trees planted: ${plant?.trees?.length}`} arrow placement='top' componentsProps={{
                 tooltip: {
                   sx: {
                     bgcolor: '#fff',
@@ -334,7 +453,7 @@ export default function LandingPage() {
                   key={index}
                   coordinates={[location?.longitude, location?.latitude]}
                 >
-                  <circle r={4} fill={`${contrastingColors[plant.trees.length >= 4 ? 3 : plant.trees.length - 1]}`} />
+                  <circle r={4} fill={`${contrastingColors[plant?.trees?.length >= 4 ? 3 : plant?.trees?.length - 1]}`} />
                 </Marker>
               </Tooltip>
             );
@@ -505,6 +624,8 @@ export default function LandingPage() {
             interactingAPI={loading}
           />
         </div>
+        <CustomModal handleClose={handleCloseEventModal} open={openEventModal} modelData={regionModalData}/>
+        <CustomModal handleClose={handleImageModalClose} open={openImageModal} modelData={imagePreview}/>
       </div>
     </div>
   );

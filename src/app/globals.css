@@ -79,6 +79,9 @@ body {
   top: 0;
 }
 
+.pac-container {
+  z-index: 99999 !important; 
+}
 
 
 

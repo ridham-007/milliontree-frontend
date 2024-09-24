@@ -166,4 +166,58 @@ export const updateUserInfo = async (
       return prepareServerError(error?.message);
     }
   };
-  
+
+  export const createEvent = async (
+    body: any
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/event/addupdate-event`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+            body: JSON.stringify({
+              addUpdateEvent: { ...body },
+            }),
+          }
+        )
+      ).json();
+      if(response.data){
+      return {response: response.data}
+      }else{
+      return {response: response}
+     }
+      
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const getEventsByRegion = async (
+    region: string
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/event/events-by-region?region=${region}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+          }
+        )
+      ).json();
+      
+        if(response?.data){
+          return  {response:response?.data}
+          }
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+ 
