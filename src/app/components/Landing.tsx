@@ -323,7 +323,7 @@ const transformEvents = (events: any[]) => {
     <div className="flex justify-end px-8 py-4 border-b items-center">
       <RiCloseCircleLine size={24} onClick={handleCloseEventModal} className="cursor-pointer"/>
     </div>
-    <div className="flex flex-col gap-5 w-full px-8 py-4">
+    <div className="flex flex-col gap-5 w-full px-4 sm:px-8 py-4">
     <CustomSelection
               name="eventName"
               data={eventsName}
@@ -334,10 +334,10 @@ const transformEvents = (events: any[]) => {
               value={selectedEvent}
               onChange={setSelectedEvent}
             />
-             <div className="mb-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+             <div className="mb-4 grid grid-cols-2 max-h-[250px] overflow-y-auto sm:grid-cols-3 md:grid-cols-4 gap-4 custom-scrollbar">
   {selectedEvent?.images?.map((image:any, index:number) => (
     <div key={index} className="cursor-pointer">
-      <img
+      <Image
         src={image}
         width={150}
         height={150}
@@ -353,22 +353,17 @@ const transformEvents = (events: any[]) => {
   )
 
   const imagePreview = (
-    <div className="px-8 py-4">
+    <div className="px-4 sm:px-8 py-4">
     <div className="flex gap-3 items-center">
     <FaChevronLeft
       onClick={handleImageModalClose}
       className="flex text-[18px] justify-center items-center text-center cursor-pointer"
     />
-    <Typography
-      id="modal-modal-title"
-      variant="h6"
-      component="h2"
-      className="text-center"
-    >
+    <p className="text-[16px] sm:text-[22px]">
       Selected Image
-    </Typography>
+    </p>
   </div>
-  <div className="flex items-center py-4">
+  <div className="flex items-center py-4 ">
     {selectedImage && (
       <Image
         src={selectedImage}

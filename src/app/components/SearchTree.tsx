@@ -46,6 +46,7 @@ export default function SearchTree(props: SearchTreeProps) {
 
   const handleModelClose = () => { 
     setOpenModel(false);
+    setEventData(initialEventData);
     setErrors({});
   };
 
@@ -328,7 +329,7 @@ export default function SearchTree(props: SearchTreeProps) {
           />
         </label>
         </div>
-        <div className="flex flex-wrap max-h-[100px] overflow-y-auto gap-2">
+        <div className="flex flex-wrap max-h-[100px] overflow-y-auto gap-2 custom-scrollbar">
         {eventData.images.map((image, index) => (
           <div
           key={index}
