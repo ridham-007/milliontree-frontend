@@ -5,38 +5,24 @@ import { useState } from "react";
 import Image from "next/image";
 import { GrLinkedinOption } from "react-icons/gr";
 import { FaYoutube } from "react-icons/fa";
+import CustomButton from "./ui/CustomButton";
 
 export default function Navbar() {
   const navData = [
     {
-      title: "Home",
-      href: "/",
-      key: "home",
+      title: "Track My Tree",
+      href: "/track",
+      key: "track-my-tree",
     },
     {
-      title: "Schedule",
-      href: "/",
-      key: "schedule",
+      title: "Event",
+      href: "/event",
+      key: "event",
     },
     {
-      title: "Speakers",
-      href: "/",
-      key: "speakers",
-    },
-    {
-      title: "About Us",
-      href: "/",
-      key: "about",
-    },
-    {
-      title: "Committee",
-      href: "/",
-      key: "committee",
-    },
-    {
-      title: "Location",
-      href: "/",
-      key: "location",
+      title: "Blog",
+      href: "/blog",
+      key: "blog",
     },
   ];
   const [selected, setSelected] = useState<string | null>("Home");
@@ -46,84 +32,51 @@ export default function Navbar() {
   };
   return (
     <nav
-      className="flex flex-col w-full h-[100px] lg:h-[138px] shadow-lg justify-center px-3 sm:px-[30px] lg:px-[100px] lg:py-[50px]"
+      className="flex justify-between items-center w-full h-[100px] lg:h-[90px] shadow-lg px-3 sm:px-[30px] lg:px-[100px] lg:py-[50px] text-white"
       key="navbar"
     >
-      <div className="flex flex-col w-full px-3">
-        <div className="flex justify-between">
-          <Link href='/'>
+      <div className="flex flex-col w-full gap-1">
+        <Link href="/" className="w-[20%] flex justify-center">
           <Image
-            src="/images/logo.png"
-            height={50}
+            src="/images/palm-tree.png"
+            height={70}
             width={250}
             alt="logo"
-            className="w-[170px] h-9 cursor-pointer"
+            className="w-[37px] h-[68px] cursor-pointer"
           />
-          </Link>
-          {/* <div className="flex flex-col">
-            <div className="flex gap-2 ml-6">
-              <Image
-                src="/images/calendar.png"
-                alt="cal"
-                width={25}
-                height={25}
-                className="w-[30px] h-[35px]"
-              />
-              <div className="flex flex-col text-[#898a8b]">
-                <p>Mar 18-20 </p>
-                <p>Stanford GSB</p>
-              </div>
-            </div>
-            <p className="text-[#898a8b]">600+ in person attendees</p>
-          </div> */}
+        </Link>
+
+        <p className="flex text-[12px] tracking-[4px] font-light text-nowrap">
+        PLANT MILLION TREES
+        </p>
+      </div>
+
+      <div className="w-full hidden lg:flex items-center gap-[14%]">
+        <div className="flex gap-5 items-center justify-start">
+          {navData.map((tab: any, index: any) => {
+            return (
+              <>
+                <div key={index}>
+                  <Link
+                    href={`${tab.href}`}
+                    className={`tracking-[1px] hidden lg:flex font-normal text-[16px] py-3 px-2 cursor-pointer uppercase text-nowrap`}
+                    onClick={() => handleLinkClick(tab.title)}
+                  >
+                    {tab.title}
+                  </Link>
+                </div>
+              </>
+            );
+          })}
         </div>
-        <div className="hidden lg:flex items-center justify-between">
-          <div className="flex gap-5 justify-start">
-            {navData.map((tab: any, index: any) => {
-              return (
-                <>
-                  <div key={index}>
-                    <Link
-                      href={`${tab.href}`}
-                      className={`hidden lg:flex text-[18px] font-bold py-3 px-2 cursor-pointer transition-all duration-300 ease-in-out ${
-                        selected === tab.title
-                          ? "text-[#306E1D] font-semibold border-b-2 border-[#306E1D]"
-                          : "hover:text-[#306E1D] border-b-2 border-transparent"
-                      }`}
-                      onClick={() => handleLinkClick(tab.title)}
-                    >
-                      {tab.title}
-                    </Link>
-                  </div>
-                </>
-              );
-            })}
-          </div>
-          <div className="flex gap-4">
-            <GrLinkedinOption
-              size={30}
-              color="black"
-              className="p-1 cursor-pointer"
-              onClick={() =>
-                window.open(
-                  "https://www.linkedin.com/groups/14208374/",
-                  "_blank"
-                )
-              }
-            />
-            <FaYoutube
-              size={30}
-              color="black"
-              className="p-1 cursor-pointer"
-              onClick={() =>
-                window.open(
-                  "https://www.youtube.com/@stanfordleadme2we",
-                  "_blank"
-                )
-              }
-            />
-          </div>
-        </div>
+        <GrLinkedinOption
+          size={35}
+          className="p-1 cursor-pointer"
+          onClick={() =>
+            window.open("https://www.linkedin.com/groups/14208374/", "_blank")
+          }
+        />
+        <CustomButton label={"DONATE"} className="w-[25%] h-[50px] font-semibold tracking-wide rounded-full"/>
       </div>
     </nav>
   );
