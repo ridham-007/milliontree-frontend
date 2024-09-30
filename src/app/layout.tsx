@@ -25,7 +25,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} flex h-dvh flex-col item-center overflow-auto custom-scrollbar`}
       >
-         <div className="flex w-full h-full flex-col max-w-[1440px] mx-auto">
+         <div className="flex w-full h-full flex-col mx-auto">
             {header}
             <div className="flex w-full flex-1 flex-col">
               {children}

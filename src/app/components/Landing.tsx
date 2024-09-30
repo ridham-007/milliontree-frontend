@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import CustomDate from "./ui/CustomDate";
@@ -7,13 +6,22 @@ import CustomButton from "./ui/CustomButton";
 import InputField from "./ui/CustomInputFild";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { uploadFile,getPlantedTrees, getEventsByRegion } from "@/app/_actions/actions";
+import {
+  uploadFile,
+  getPlantedTrees,
+  getEventsByRegion,
+} from "@/app/_actions/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import PlacesAutocomplete from "./ui/PlacesAutoComplete";
-import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps"
-import { Box, IconButton, Tooltip, Typography } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+} from "react-simple-maps";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 import Slider from "./ui/Slider";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireStorage } from "@/utils/firebase";
@@ -21,7 +29,9 @@ import CustomSelection from "./ui/CustomSelect";
 import CustomModal from "./ui/CustomModel";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { FaChevronLeft } from "react-icons/fa";
-
+import landingBackground from "../../../public/images/landing-bg.png";
+import ImageSlider from "./ui/Slider";
+import ButtonPrefix from "../../../public/images/btn-logo.png";
 
 interface formDataProps {
   name: string;
@@ -32,19 +42,55 @@ interface formDataProps {
   image: null;
 }
 
-const sliderImage = [
-  {key:1,image:<Image src={'/images/plantation-1.jpg'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
-  {key:2,image:<Image src={'/images/plantation-2.jpg'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
-  {key:3,image:<Image src={'/images/plantation-3.jpg'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
-  {key:4,image:<Image src={'/images/plantation-4.png'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>},
-  {key:5,image:<Image src={'/images/plantation-5.png'} height={150} width={200} alt="" className="w-[200px] h-[150px] mx-4" unoptimized/>}
-]
+const sliderImages = [
+  {
+    src: "/images/plantation-1.jpg",
+    alt: "Plantation 1",
+    name: "Roots of Renewal",
+    location: "India",
+    date: "01.05.2024",
+  },
+  {
+    src: "/images/plantation-2.jpg",
+    alt: "Plantation 2",
+    name: "Roots of Renewal",
+    location: "India",
+    date: "01.05.2024",
+  },
+  {
+    src: "/images/plantation-3.jpg",
+    alt: "Plantation 3",
+    name: "Roots of Renewal",
+    location: "India",
+    date: "01.05.2024",
+  },
+  {
+    src: "/images/plantation-4.png",
+    alt: "Plantation 4",
+    name: "Roots of Renewal",
+    location: "India",
+    date: "01.05.2024",
+  },
+  {
+    src: "/images/plantation-5.png",
+    alt: "Plantation 5",
+    name: "Roots of Renewal",
+    location: "India",
+    date: "01.05.2024",
+  },
+];
 
 export default function LandingPage() {
   const router = useRouter();
-  const contrastingColors = ["#368a3a", "#266329", "#4CAF50", "#2C8A2E", "#306E1D"];
+  const contrastingColors = [
+    "#368a3a",
+    "#266329",
+    "#4CAF50",
+    "#2C8A2E",
+    "#306E1D",
+  ];
 
-  const initialFormData ={
+  const initialFormData = {
     name: "",
     email: "",
     cohort: "",
@@ -59,35 +105,35 @@ export default function LandingPage() {
   const [isLoading, setIsLoading] = useState<any>(false);
   const [loading, setLoading] = useState<any>(false);
   const [regionData, setRegionData] = useState<any[]>([]);
-const [eventsName, setEventsName] = useState<any[]>([]);
-const [selectedEvent, setSelectedEvent] = useState<any>(
-  eventsName?.[0] || null
-);
-const [openEventModal, setOpenEventModal] = useState<any>(false);
-const [selectedImage, setSelectedImage] = useState<string | null>(null);
-const [openImageModal, setOpenImageModal] = useState(false);
+  const [eventsName, setEventsName] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<any>(
+    eventsName?.[0] || null
+  );
+  const [openEventModal, setOpenEventModal] = useState<any>(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [openImageModal, setOpenImageModal] = useState(false);
 
-const handleImageModalOpen = (imageSrc: string) => {
-  setSelectedImage(imageSrc);
-  setOpenImageModal(true);
-};
+  const handleImageModalOpen = (imageSrc: string) => {
+    setSelectedImage(imageSrc);
+    setOpenImageModal(true);
+  };
 
-const handleImageModalClose = () => {
-  setOpenImageModal(false);
-  setSelectedImage(null);
-};
+  const handleImageModalClose = () => {
+    setOpenImageModal(false);
+    setSelectedImage(null);
+  };
 
-const transformEvents = (events: any[]) => {
-  return events?.map((event: any) => {
-    return {
-      label: event?.eventName,
-      value: event?.eventName,
-      images: event?.images,
-    };
-  });
-};
+  const transformEvents = (events: any[]) => {
+    return events?.map((event: any) => {
+      return {
+        label: event?.eventName,
+        value: event?.eventName,
+        images: event?.images,
+      };
+    });
+  };
 
-  const handleCloseEventModal = () => { 
+  const handleCloseEventModal = () => {
     setOpenEventModal(false);
   };
 
@@ -99,7 +145,7 @@ const transformEvents = (events: any[]) => {
       cohort: "",
       datePlanted: "",
       location: "",
-      image:"",
+      image: "",
     };
 
     if (!formData.name) {
@@ -188,7 +234,7 @@ const transformEvents = (events: any[]) => {
       }));
     }
   };
-  
+
   const handleLocationChange = (
     event: any,
     data: {
@@ -261,7 +307,7 @@ const transformEvents = (events: any[]) => {
       throw e;
     }
   };
-  
+
   const handleSubmit = async () => {
     if (!validateForm()) {
       return;
@@ -270,7 +316,6 @@ const transformEvents = (events: any[]) => {
 
     let finalUserDetails = {};
     if (formData.image) {
-      
       try {
         const { url } = await uploadFile("planted-tree", formData.image);
         finalUserDetails = { ...formData, images: [{ day: 1, image: url }] };
@@ -307,7 +352,7 @@ const transformEvents = (events: any[]) => {
     } catch (error) {
       console.error("Error submitting form:", error);
     }
-    setFormData(initialFormData)
+    setFormData(initialFormData);
     setIsLoading(false);
   };
 
@@ -319,92 +364,113 @@ const transformEvents = (events: any[]) => {
   };
 
   const regionModalData = (
-    <>
-    <div className="flex justify-end px-8 py-4 border-b items-center">
-      <RiCloseCircleLine size={24} onClick={handleCloseEventModal} className="cursor-pointer"/>
+    <div className="h-fit">
+      <div className="flex justify-end px-8 py-4 border-b items-center">
+        <RiCloseCircleLine
+          size={24}
+          onClick={handleCloseEventModal}
+          className="cursor-pointer"
+        />
+      </div>
+      <div className="flex flex-col gap-5 w-full px-4 sm:px-8 py-4">
+        <CustomSelection
+          name="eventName"
+          data={eventsName}
+          errorMessage={"message"}
+          className="h-[48px] mt-[8px] flex items-center"
+          placeholder={"Select Timezone"}
+          label="Event Name"
+          value={selectedEvent}
+          onChange={setSelectedEvent}
+        />
+        <div className="mb-4 grid grid-cols-2 max-h-[250px] overflow-y-auto sm:grid-cols-3 md:grid-cols-4 gap-4 custom-scrollbar">
+          {selectedEvent?.images?.map((image: any, index: number) => (
+            <div key={index} className="cursor-pointer">
+              <Image
+                src={image}
+                width={150}
+                height={150}
+                alt={image.alt}
+                onClick={() => handleImageModalOpen(image)}
+                className="w-full h-auto object-fill"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
-    <div className="flex flex-col gap-5 w-full px-4 sm:px-8 py-4">
-    <CustomSelection
-              name="eventName"
-              data={eventsName}
-              errorMessage={"message"}
-              className="h-[48px] mt-[8px] flex items-center"
-              placeholder={"Select Timezone"}
-              label="Event Name"
-              value={selectedEvent}
-              onChange={setSelectedEvent}
-            />
-             <div className="mb-4 grid grid-cols-2 max-h-[250px] overflow-y-auto sm:grid-cols-3 md:grid-cols-4 gap-4 custom-scrollbar">
-  {selectedEvent?.images?.map((image:any, index:number) => (
-    <div key={index} className="cursor-pointer">
-      <Image
-        src={image}
-        width={150}
-        height={150}
-        alt={image.alt}
-        onClick={() => handleImageModalOpen(image)}
-        className="w-full h-auto object-fill"
-      />
-    </div>
-  ))}
-</div>
-    </div>
-    </>
-  )
+  );
 
   const imagePreview = (
     <div className="px-4 sm:px-8 py-4">
-    <div className="flex gap-3 items-center">
-    <FaChevronLeft
-      onClick={handleImageModalClose}
-      className="flex text-[18px] justify-center items-center text-center cursor-pointer"
-    />
-    <p className="text-[16px] sm:text-[22px]">
-      Selected Image
-    </p>
-  </div>
-  <div className="flex items-center py-4 ">
-    {selectedImage && (
-      <Image
-        src={selectedImage}
-        width={500}
-        height={500}
-        alt="Selected Image"
-        className="w-full h-auto"
-      />
-    )}
-  </div>
-  </div>
-  )
+      <div className="flex gap-3 items-center">
+        <FaChevronLeft
+          onClick={handleImageModalClose}
+          className="flex text-[18px] justify-center items-center text-center cursor-pointer"
+        />
+        <p className="text-[16px] sm:text-[22px]">Selected Image</p>
+      </div>
+      <div className="flex items-center py-4 ">
+        {selectedImage && (
+          <Image
+            src={selectedImage}
+            width={500}
+            height={500}
+            alt="Selected Image"
+            className="w-full h-auto"
+          />
+        )}
+      </div>
+    </div>
+  );
 
-  const fetchRegionImage = async (region:any) => {
+  const fetchRegionImage = async (region: any) => {
     const { response } = await getEventsByRegion(region);
     if (response?.success) {
       setRegionData(response?.data);
-      setOpenEventModal(true)
-    }else{
-      toast(response?.message)
+      setOpenEventModal(true);
+    } else {
+      toast(response?.message);
     }
   };
 
   useEffect(() => {
     if (regionData.length > 0) {
       const transformed = transformEvents(regionData);
-      setEventsName(transformed);  // Set the transformed events
+      setEventsName(transformed); // Set the transformed events
     }
   }, [regionData]);
 
   useEffect(() => {
     fetchAllPlantedTrees();
-  },[])
+  }, []);
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-full">
-      <div className="flex flex-col w-full md:w-[65%] lg:w-[73%] items-center px-6 py-[40px]">
-        <p className="text-[18px] sm:text-[24px] lg:text-[27px] font-semibold text-center mb-5">
-          Drive for <span className="text-[#306E1D]">1M trees</span> planted by{" "}
-          <span className="text-[#8C1515]">Me2We 2030</span>
-        </p>
+    <div>
+      <div
+        className="flex w-full h-screen bg-cover bg-top bg-no-repeat"
+        style={{ backgroundImage: `url(${landingBackground.src})` }}
+      >
+        <div className="absolute inset-0 opacity-20 bg-black"></div>
+        <div className="flex justify-center items-center w-full flex-col gap-10 z-20">
+          <p className="w-full text-[#F1B932] font-montserrat text-[64px] font-semibold leading-[58.51px] tracking-[1.1em] text-center">
+            Welcome to
+          </p>
+          <p className="font-montserrat text-[90px] font-extrabold leading-[109.71px] tracking-[0.1em] text-center text-white">
+            PLANT MILLION TREES
+          </p>
+          <p className="text-[32px] font-light leading-[44.8px] text-center text-[#fff] capitalize">
+            Track, manage, and schedule events
+          </p>
+
+          <CustomButton
+            label={"SEE TREE MAP"}
+            className="rounded-full w-[280px] h-[70px] font-semibold tracking-wider text-[18px]"
+          />
+        </div>
+      </div>
+
+      {/* <div className="flex flex-col w-full md:w-[65%] lg:w-[73%] items-center px-6 py-[40px]">
         <ComposableMap>
           <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
             {({ geographies }) =>
@@ -454,173 +520,168 @@ const transformEvents = (events: any[]) => {
             );
           })}
         </ComposableMap>
+      </div> */}
 
-        <p className="text-[18px] sm:text-[24px] lg:text-[25px] font-normal text-center py-8">
-          Numbers of Trees planted till date:{" "}
-          <span className="py-1 px-3 font-medium text-white bg-[#306E1D] rounded-full">
-            1,000
-          </span>
+      <div className="flex flex-col justify-between w-full h-full max-h-[780px] bg-[#F2F0EB] p-6 text-center">
+        <p className="font-bold text-[44px] mt-[108px] mb-[35px]">
+          Past Events
         </p>
-        <div className="flex flex-col justify-between w-full bg-[#F4F4F4] h-auto md:h-[285px] p-6 text-center mt-0 md:mt-[100px]">
-          <Slider sliderImage={sliderImage}/>
-          <h2 className="font-semibold text-lg mt-4">
-            Photos from LEAD Me2We Forest
-          </h2>
-        </div>
+        <ImageSlider sliderImages={sliderImages} />
       </div>
-      <div className="flex flex-col w-full shadow-xl shrink-l md:max-w-[348px] lg:max-w-[393px] p-6 gap-4">
-        <div className="flex flex-col w-full bg-[#F2FFEE] items-center leading-8 px-7 py-5 gap-4">
-          <p className="text-[18px] sm:text-[24px] font-bold">Our Partner</p>
-          <Image
-            src="/images/evertreen.png"
-            height={77}
-            width={250}
-            alt="logo"
-            className="w-full"
-            unoptimized
-          />
+
+      <div className="flex flex-col my-[130px]">
+        <div className="flex ml-[80px]">
+          <div className="flex flex-col w-full">
+            <div className="mb-[50px]">
+              <p className="text-[18px] sm:text-[34px] font-bold leading-[41.45px] text-center">{`Planted a Tree?`}</p>
+              <p className="text-[18px] sm:text-[34px] font-bold leading-[41.45px] text-center">{` Let's register it toward our goal!!`}</p>
+            </div>
+            <div className="flex gap-4 w-full">
+              <div className="w-full flex flex-col gap-4">
+                <div>
+                  <InputField
+                    name="name"
+                    placeholder="name"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.name}
+                    className="text-[16px] mt-[8px] border-[#999999]"
+                    bgColor="#F4F4F4"
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  )}
+                </div>
+
+                <div>
+                  <InputField
+                    name="email"
+                    placeholder="email"
+                    type="email"
+                    onChange={handleChange}
+                    value={formData.email}
+                    className="text-[16px] mt-[8px]"
+                    bgColor="#F4F4F4"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
+                </div>
+
+                <div>
+                  <InputField
+                    name="cohort"
+                    placeholder="cohort"
+                    type="text"
+                    onChange={handleChange}
+                    value={formData.cohort}
+                    className="text-[16px] mt-[8px]"
+                    bgColor="#F4F4F4"
+                  />
+                  {errors.cohort && (
+                    <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
+                  )}
+                </div>
+              </div>
+              <div className="w-full flex flex-col justify-between">
+                <div>
+                  <CustomDate
+                    value={formData.datePlanted}
+                    onChange={handleDateChange}
+                  />
+                  {errors.datePlanted && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.datePlanted}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <PlacesAutocomplete
+                    name="location"
+                    className="mt-[8px] w-full rounded-[8px] border border-[#f4f4f4]"
+                    placeholder="Location"
+                    onChange={handleLocationChange}
+                    value={formData.location.name}
+                  />
+                  {errors.location && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.location}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="plant-image"
+                    name="image"
+                    onChange={handleChange}
+                  />
+                  <label
+                    htmlFor="plant-image"
+                    className="flex gap-[10px] border items-center border-[#999999] pl-[15px] h-[44px]"
+                  >
+                    {!formData.image ? (
+                      <div className="flex justify-between items-center w-full">
+                        <p className="text-nowrap">Attach photo</p>
+                        <CustomButton
+                          label="Choose File"
+                          className="flex mx-4 !bg-[#DDDDDD] !px-4 w-fit !text-black rounded-full border !p-1 -z-10"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-nowrap">{imageName}</p>
+                    )}
+                  </label>
+                  {errors.image && (
+                    <p className="text-red-500 text-sm mt-1">{errors.image}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-full items-center leading-8 px-7 py-5 gap-4 justify-between">
+            <p className="text-[18px] sm:text-[34px] font-bold">Our Partner</p>
+
+            <p className="font-montserrat text-[20px] font-normal leading-[24.38px] text-center">
+              Click
+              <Link href={"https://www.evertreen.com/"} target={"_blank"}>
+                <span className="underline text-[#3A8340] mx-1">here</span>
+              </Link>
+              to learn about Me2We Forecast
+            </p>
+
+            <CustomButton
+              className="!bg-[#3A8340] text-white text-[28px] w-[352px] h-[88px] rounded-full"
+              label={"evertreen"}
+              prefixIcon={
+                <Image src={ButtonPrefix.src} width={36} height={36} alt="" />
+              }
+            />
+          </div>
         </div>
-        <div>
-          <p className="text-[18px] sm:text-[22px] font-medium text-center underline">
-            <Link href={"https://www.evertreen.com/"} target={"_blank"}>
-              {" "}
-              Click here to learn about
-            </Link>
-          </p>
-          <p className="text-[18px] sm:text-[22px] text-[#8C1515] font-medium text-center">
-            {" "}
-            Me2We Forecast
-          </p>
-        </div>
-        <hr />
-        <div>
-          <p className="text-[18px] sm:text-[22px] font-medium text-center">{`Planted a Tree?`}</p>
-          <p className="text-[18px] sm:text-[22px] font-medium text-center">{` Let's register it toward our goal!!`}</p>
-        </div>
-        <div className="flex flex-col gap-4 w-full">
-          <div>
-            <InputField
-              name="name"
-              placeholder="Enter your name"
-              type="text"
-              onChange={handleChange}
-              value={formData.name}
-              className="text-[16px] mt-[8px]"
-              label={"Name"}
-              bgColor="#F4F4F4"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
-          <div>
-            <InputField
-              name="email"
-              placeholder="Enter your email"
-              type="email"
-              onChange={handleChange}
-              value={formData.email}
-              className="text-[16px] mt-[8px]"
-              label={"Email"}
-              bgColor="#F4F4F4"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-          <div>
-            <InputField
-              name="cohort"
-              placeholder="Enter your cohort"
-              type="text"
-              onChange={handleChange}
-              value={formData.cohort}
-              className="text-[16px] mt-[8px]"
-              label={"Cohort"}
-              bgColor="#F4F4F4"
-            />
-            {errors.cohort && (
-              <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
-            )}
-          </div>
-          <div>
-            <CustomDate
-              label="Date Planted"
-              value={formData.datePlanted}
-              onChange={handleDateChange}
-            />
-            {errors.datePlanted && (
-              <p className="text-red-500 text-sm mt-1">{errors.datePlanted}</p>
-            )}
-          </div>
-          <div>
-            <PlacesAutocomplete
-              name="location"
-              className="mt-[8px] w-full rounded-[8px] border border-[#f4f4f4]"
-              placeholder="Location of the event?"
-              label="Location"
-              onChange={handleLocationChange}
-              value={formData.location.name}
-            />
-            {errors.location && (
-              <p className="text-red-500 text-sm mt-1">{errors.location}</p>
-            )}
-          </div>
-          <div>
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            id="plant-image"
-            name="image"
-            onChange={handleChange}
-          />
-          <label
-            htmlFor="plant-image"
-            className="flex gap-[10px] border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
-          >
-            {!formData.image ? (
-              <>
-                <p className="text-nowrap">Attach photo</p>
-                <CustomButton
-                  label="Choose File"
-                  className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                />
-              </>
-            ) : (
-              <p className="text-nowrap">{imageName}</p>
-            )}
-          </label>
-          {errors.image && (
-              <p className="text-red-500 text-sm mt-1">{errors.image}</p>
-            )}
-          </div>
+        <div className="flex w-1/2 justify-center items-center mt-6">
           <CustomButton
             label="Submit"
-            className={`flex px-2 w-full h-max my-1 ${
+            className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 ${
               isLoading && "pointer-events-none"
             }`}
             callback={handleSubmit}
             interactingAPI={isLoading}
           />
-          <hr />
         </div>
-        <div className="flex flex-col px-6 gap-[11px] py-[49px]">
-          <p className="text-center">
-            Remember to water the plant & share photos at{" "}
-            <span className="text-[#306E1D]">30</span>,{" "}
-            <span className="text-[#306E1D]">60</span> and{" "}
-            <span className="text-[#306E1D]">90 days</span>
-          </p>
-          <CustomButton
-            label="Track My Tree"
-            className="flex px-2 w-full h-max !bg-[#306E1D] !text-white my-1"
-            callback={handleRedirectOnTrack}
-            interactingAPI={loading}
-          />
-        </div>
-        <CustomModal handleClose={handleCloseEventModal} open={openEventModal} modelData={regionModalData}/>
-        <CustomModal handleClose={handleImageModalClose} open={openImageModal} modelData={imagePreview}/>
+
+        <CustomModal
+          handleClose={handleCloseEventModal}
+          open={openEventModal}
+          modelData={regionModalData}
+        />
+        <CustomModal
+          handleClose={handleImageModalClose}
+          open={openImageModal}
+          modelData={imagePreview}
+        />
       </div>
     </div>
   );
