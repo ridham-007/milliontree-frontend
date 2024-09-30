@@ -6,6 +6,7 @@ import Image from "next/image";
 import { GrLinkedinOption } from "react-icons/gr";
 import { FaYoutube } from "react-icons/fa";
 import CustomButton from "./ui/CustomButton";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const navData = [
@@ -26,29 +27,22 @@ export default function Navbar() {
     },
   ];
   const [selected, setSelected] = useState<string | null>("Home");
-
+  const pathName = usePathname()
+  
   const handleLinkClick = (title: string) => {
     setSelected(title);
   };
   return (
     <nav
-      className="flex justify-between items-center w-full h-[100px] lg:h-[90px] shadow-lg px-3 sm:px-[30px] lg:px-[100px] lg:py-[50px] text-white"
+      className={`flex justify-between items-start w-full h-[230px] ${pathName === '/' ? 'bg-none text-white' : 'bg-[#F2F0EB] text-black'} shadow-lg px-3 sm:px-[30px] lg:px-[100px] lg:py-[50px] `}
       key="navbar"
     >
       <div className="flex flex-col w-full gap-1">
         <Link href="/" className="w-[20%] flex justify-center">
-          <Image
-            src="/images/palm-tree.png"
-            height={70}
-            width={250}
-            alt="logo"
-            className="w-[37px] h-[68px] cursor-pointer"
-          />
-        </Link>
-
         <p className="flex text-[12px] tracking-[4px] font-light text-nowrap">
         PLANT MILLION TREES
         </p>
+        </Link>
       </div>
 
       <div className="w-full hidden lg:flex items-center gap-[14%]">
