@@ -29,7 +29,7 @@ const [blogsData, setBlogsData] = useState<any>(initialValue);
     return(
         <div className="flex flex-col items-center w-full px-2">
         <div className="flex flex-col w-full max-w-[1280px] gap-10 lg:gap-[70px]">
-            <div className="w-full relative">
+            <div className="w-full relative z-30">
         <Image src={'/images/plantation-3.jpg'} width={350} height={350} alt="" unoptimized className="w-full h-[280px] sm:h-[350px] rounded-[20px] lg:rounded-[40px]"/>
         <p className="w-full top-32 text-[34px] sm:text-[44px] font-bold absolute text-white text-center tracking-[12px]">BLOG</p>
         </div>

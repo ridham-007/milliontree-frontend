@@ -7,7 +7,7 @@ const Default = async () => {
   return (
     <header
       key={Math.random()}
-      className={`absolute flex h-[100px] lg:h-fit w-full bg-transparent `}
+      className={`absolute flex h-[100px] lg:h-fit w-full bg-transparent z-20`}
     >
       <Navbar/>
     </header>

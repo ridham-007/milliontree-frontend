@@ -452,16 +452,16 @@ export default function LandingPage() {
         style={{ backgroundImage: `url(${landingBackground.src})` }}
       >
         <div className="absolute inset-0 opacity-20 bg-black"></div>
-        <div className="flex justify-center items-center w-full flex-col gap-10 z-20">
-          <p className="w-full text-[#F1B932] font-montserrat text-[64px] font-semibold leading-[58.51px] tracking-[1.1em] text-center">
+        <div className="flex justify-center items-center w-full flex-col gap-7 z-10">
+          <p className="w-full text-[#F1B932] font-montserrat text-[19px] sm:text-[40px] lg:text-[64px] font-semibold tracking-[1.1em] text-center">
             Welcome to
           </p>
-          <p className="font-montserrat text-[90px] font-extrabold leading-[109.71px] tracking-[0.1em] text-center text-white">
+          <p className="font-montserrat text-[55px] lg:text-[90px] pb-12 font-extrabold leading-[70 px] lg:leading-[109.71px] tracking-[0.1em] text-center text-white">
             PLANT MILLION TREES
           </p>
-          <p className="text-[32px] font-light leading-[44.8px] text-center text-[#fff] capitalize">
+          {/* <p className="text-[32px] font-light leading-[44.8px] text-center text-[#fff] capitalize">
             Track, manage, and schedule events
-          </p>
+          </p> */}
 
           <CustomButton
             label={"SEE TREE MAP"}

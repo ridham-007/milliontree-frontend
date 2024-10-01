@@ -12,7 +12,7 @@ export default function BlogPreview() {
           height={350}
           alt=""
           unoptimized
-          className="w-full h-[310px] rounded-[20px] lg:rounded-[40px] z-10"
+          className="w-full h-[310px] rounded-[20px] lg:rounded-[40px]"
         />
         <div className="flex flex-col w-full sm:px-10 lg:px-20">
           <p className="text-[24px] md:text-[34px] font-bold leading-7 md:leading-10 pb-6">

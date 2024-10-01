@@ -34,11 +34,11 @@ export default function Navbar() {
   };
   return (
     <nav
-      className={`flex justify-between items-start w-full h-[230px] ${pathName === '/' ? 'bg-none text-white' : 'bg-[#F2F0EB] text-black'} shadow-lg px-3 sm:px-[30px] lg:px-[100px] lg:py-[50px] `}
+      className={`flex justify-between items-start w-full h-[230px] ${pathName === '/' ? 'bg-none text-white' : 'bg-[#F2F0EB] text-black'} shadow-lg px-3 sm:px-[30px] lg:px-[100px] py-[40px] lg:py-[50px] `}
       key="navbar"
     >
-      <div className="flex flex-col w-full gap-1">
-        <Link href="/" className="w-[20%] flex justify-center">
+      <div className="flex lg:h-[48px] items-center w-full gap-1">
+        <Link href="/">
         <p className="flex text-[12px] tracking-[4px] font-light text-nowrap">
         PLANT MILLION TREES
         </p>
