@@ -388,7 +388,7 @@ export default function LandingPage() {
           value={selectedEvent}
           onChange={setSelectedEvent}
         />
-        <div className="mb-4 grid grid-cols-2 max-h-[250px] overflow-y-auto sm:grid-cols-3 md:grid-cols-4 gap-4 custom-scrollbar">
+        <div className="mb-4 grid grid-cols-2 max-h-[250px] overflow-y-auto sm:grid-cols-3 md:grid-cols-4 gap-4 ">
           {selectedEvent?.images?.map((image: any, index: number) => (
             <div key={index} className="cursor-pointer">
               <Image
@@ -451,9 +451,9 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div>
+    <div className="overflow-auto">
       <div
-        className="flex w-full h-screen bg-cover bg-top bg-no-repeat"
+        className="flex w-full h-screen bg-cover bg-top bg-no-repeat "
         style={{ backgroundImage: `url(${landingBackground.src})` }}
       >
         <div className="absolute inset-0 opacity-20 bg-black"></div>
@@ -534,15 +534,19 @@ export default function LandingPage() {
         <ImageSlider sliderImages={sliderImages} />
       </div>
 
-      <div className="flex flex-col my-[130px]">
-        <div className="flex ml-[80px]">
-          <div className="flex flex-col w-full">
-            <div className="mb-[50px]">
-              <p className="text-[18px] sm:text-[34px] font-bold leading-[41.45px] text-center">{`Planted a Tree?`}</p>
-              <p className="text-[18px] sm:text-[34px] font-bold leading-[41.45px] text-center">{` Let's register it toward our goal!!`}</p>
+      <div className="flex flex-col lg:flex-row w-full py-[118px] px-[10px] lg:px-[80px] gap-[100px] sm:gap-0 ">
+        <div className="flex flex-col w-full justify-center items-center">
+          <div className="flex flex-col gap-[49px] ">
+            <div className="flex flex-col">
+              <div className="font-bold text-[24px] sm:text-[34px] leading-[29px] sm:leading-[41px] text-center">
+                Planted a Tree?{" "}
+              </div>
+              <div className="font-bold text-[24px] sm:text-[34px] leading-[29px] sm:leading-[41px] text-center">
+                Let's register it toward our goal!
+              </div>
             </div>
-            <div className="flex gap-4 w-full">
-              <div className="w-full flex flex-col gap-4">
+            <div className="flex gap-[15px] sm:gap-[30px] w-[100%]">
+              <div className="flex flex-col gap-[10px] w-[50%] sm:w-auto">
                 <div>
                   <InputField
                     name="fName"
@@ -557,53 +561,23 @@ export default function LandingPage() {
                     <p className="text-red-500 text-sm mt-1">{errors.fName}</p>
                   )}
                 </div>
-
-                <div>
-                  <InputField
-                    name="email"
-                    placeholder="email"
-                    type="email"
-                    onChange={handleChange}
-                    value={formData.email}
-                    className="text-[16px] mt-[8px]"
-                    bgColor="#F4F4F4"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-                  )}
-                </div>
-
                 <div>
                   <InputField
                     name="cohort"
-                    placeholder="cohort"
+                    placeholder="Cohort"
                     type="text"
                     onChange={handleChange}
                     value={formData.cohort}
-                    className="text-[16px] mt-[8px]"
-                    bgColor="#F4F4F4"
+                    className="text-[16px] mt-[8px] border border-[#999999]"
                   />
                   {errors.cohort && (
                     <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
                   )}
                 </div>
-              </div>
-              <div className="w-full flex flex-col justify-between">
-                <div>
-                  <CustomDate
-                    value={formData.datePlanted}
-                    onChange={handleDateChange}
-                  />
-                  {errors.datePlanted && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.datePlanted}
-                    </p>
-                  )}
-                </div>
                 <div>
                   <PlacesAutocomplete
                     name="location"
-                    className="mt-[8px] w-full rounded-[8px] border border-[#f4f4f4]"
+                    className="mt-[8px] w-full border border-[#999999]"
                     placeholder="Location"
                     onChange={handleLocationChange}
                     value={formData.location.name}
@@ -614,7 +588,35 @@ export default function LandingPage() {
                     </p>
                   )}
                 </div>
+              </div>
+              <div className="flex flex-col gap-[10px] w-[50%] sm:w-auto">
                 <div>
+                  <InputField
+                    name="email"
+                    placeholder="Email"
+                    type="email"
+                    onChange={handleChange}
+                    value={formData.email}
+                    className="text-[16px] mt-[8px] border border-[#999999]"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
+                </div>
+                <div>
+                  <CustomDate
+                    value={formData.datePlanted}
+                    onChange={handleDateChange}
+                    className="border border-[#999999] mt-1"
+                  />
+                  {errors.datePlanted && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.datePlanted}
+                    </p>
+                  )}
+                </div>
+
+                <div className="mt-2 ">
                   <input
                     type="file"
                     accept="image/*"
@@ -625,14 +627,14 @@ export default function LandingPage() {
                   />
                   <label
                     htmlFor="plant-image"
-                    className="flex gap-[10px] border items-center border-[#999999] pl-[15px] h-[44px]"
+                    className="flex gap-[10px] border items-center border-[#999999] px-[2px] sm:px-2 h-[45px]"
                   >
                     {!formData.image ? (
-                      <div className="flex justify-between items-center w-full">
-                        <p className="text-nowrap">Attach photo</p>
+                      <div className="flex justify-between items-center w-full cursor-pointer">
+                        <p className="text-nowrap ">Attach photo</p>
                         <CustomButton
                           label="Choose File"
-                          className="flex mx-4 !bg-[#DDDDDD] !px-4 w-fit !text-black rounded-full border !p-1 -z-10"
+                          className="flex sm:mx-4 !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1  -z-10"
                         />
                       </div>
                     ) : (
@@ -646,37 +648,34 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col w-full items-center leading-8 px-7 py-5 gap-4 justify-between">
-            <p className="text-[18px] sm:text-[34px] font-bold">Our Partner</p>
-
-            <p className="font-montserrat text-[20px] font-normal leading-[24.38px] text-center">
-              Click
-              <Link href={"https://www.evertreen.com/"} target={"_blank"}>
-                <span className="underline text-[#3A8340] mx-1">here</span>
-              </Link>
-              to learn about Me2We Forecast
-            </p>
-
+          <div className="flex w-1/2 justify-center items-center mt-6">
             <CustomButton
-              className="!bg-[#3A8340] text-white text-[28px] w-[352px] h-[88px] rounded-full"
-              label={"evertreen"}
-              prefixIcon={
-                <Image src={ButtonPrefix.src} width={36} height={36} alt="" />
-              }
+              label="Submit"
+              className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 uppercase ${
+                isLoading && "pointer-events-none"
+              }`}
+              callback={handleSubmit}
+              interactingAPI={isLoading}
             />
           </div>
         </div>
-        <div className="flex w-1/2 justify-center items-center mt-6">
+        <div className="flex flex-col w-full  items-center">
+          <p className="text-[34px] font-bold leading-[41px]">Our Partner</p>
+          <p className="font-montserrat text-[20px] font-normal leading-[24.38px] text-center mt-[74px] sm:mt-[89px]">
+            Click
+            <Link href={"https://www.evertreen.com/"} target={"_blank"}>
+              <span className="underline text-[#3A8340] mx-1">here</span>
+            </Link>
+            to learn about Me2We Forecast
+          </p>
           <CustomButton
-            label="Submit"
-            className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 ${
-              isLoading && "pointer-events-none"
-            }`}
-            callback={handleSubmit}
-            interactingAPI={isLoading}
+            className="!bg-[#3A8340] text-white text-[28px] w-[300px] sm:w-[352px] h-[88px] rounded-full mt-[61px] sm:mt-[64px]"
+            label={"evertreen"}
+            prefixIcon={
+              <Image src={ButtonPrefix.src} width={36} height={36} alt="" />
+            }
           />
         </div>
-
         <CustomModal
           handleClose={handleCloseEventModal}
           open={openEventModal}
@@ -686,7 +685,7 @@ export default function LandingPage() {
           handleClose={handleImageModalClose}
           open={openImageModal}
           modelData={imagePreview}
-        />
+        />{" "}
       </div>
     </div>
   );

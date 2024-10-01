@@ -2,9 +2,8 @@ import Image from "next/image";
 import React, { useRef } from "react";
 import { CiCalendar, CiLocationOn } from "react-icons/ci";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
-import Slider from "react-slick"; 
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
-
 
 interface SliderProps {
   sliderImages: any;
@@ -17,7 +16,7 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
     speed: 500,
     slidesToScroll: 1,
     slidesToShow: 4,
-    arrows:false,
+    arrows: false,
     responsive: [
       {
         breakpoint: 1640,
@@ -32,7 +31,7 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
         },
       },
       {
-        breakpoint: 480,
+        breakpoint: 540,
         settings: {
           slidesToShow: 1,
         },
@@ -40,15 +39,18 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
     ],
   };
 
-  const handleBeforeChange = (oldIndex:any, newIndex:any) => {
-    console.log({oldIndex, newIndex});
-  }
+  const handleBeforeChange = (oldIndex: any, newIndex: any) => {
+    console.log({ oldIndex, newIndex });
+  };
 
   return (
     <>
       <Slider ref={sliderRef} {...settings} beforeChange={handleBeforeChange}>
         {sliderImages.map((image: any, index: any) => (
-          <div key={index} className="text-white !flex !flex-col !justify-center !items-center">
+          <div
+            key={index}
+            className="text-white !flex !flex-col !justify-center !items-center p-2"
+          >
             <Image
               src={image.src}
               height={320}
@@ -77,18 +79,21 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
           </div>
         ))}
       </Slider>
+
       <div className="flex w-full items-center justify-center gap-5">
-        <p className="text-[#3BAD49] text-[18px] font-normal">1/{Math.ceil(sliderImages.length / 4)}</p>
+        <p className="text-[#3BAD49] text-[18px] font-normal">
+          1/{Math.ceil(sliderImages.length / 4)}
+        </p>
         <div className="flex text-[#666666] gap-3">
-          <FaArrowLeftLong 
-            size={28} 
-            className="cursor-pointer w-8" 
-            onClick={() => sliderRef.current?.slickPrev()} 
+          <FaArrowLeftLong
+            size={28}
+            className="cursor-pointer w-8"
+            onClick={() => sliderRef.current?.slickPrev()}
           />
-          <FaArrowRightLong 
-            size={28} 
-            className="cursor-pointer w-8" 
-            onClick={() => sliderRef.current?.slickNext()} 
+          <FaArrowRightLong
+            size={28}
+            className="cursor-pointer w-8"
+            onClick={() => sliderRef.current?.slickNext()}
           />
         </div>
       </div>

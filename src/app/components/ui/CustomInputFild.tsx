@@ -68,7 +68,7 @@ const InputField = (props: InputFieldProps) => {
           }
           placeholder={placeholder}
           onChange={(event) => onChange(event, name)}
-          className={`h-[48px] w-full rounded-[8px]  ${borderColor} pl-3 pr-3 focus:outline-none
+          className={`h-[48px] w-full ${borderColor} pl-3 pr-3 focus:outline-none
         bg-[${bgColor}]`}
           readOnly={readOnly}
         />
