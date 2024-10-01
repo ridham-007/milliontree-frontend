@@ -56,7 +56,7 @@ const PlacesAutocomplete = (props: PlacesAutocompleteProps) => {
           }}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className={`h-[44px] w-full rounded-[8px]  pl-3 pr-3 focus:outline-none bg-[#F4F4F4] ${showBorder ? "border border-[#F4F4F4]" : null}`}
+          className={`h-[44px] w-full rounded-[8px]  pl-3 pr-3 focus:outline-none ${showBorder ? "border border-[#F4F4F4]" : null}`}
         />
       </div>
     </div>

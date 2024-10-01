@@ -19,7 +19,8 @@ interface InputFieldProps {
 }
 
 const CustomDate = (props: InputFieldProps) => {
-  const { className, label, onChange, value, disabled, inputCss, minDate } = props;
+  const { className, label, onChange, value, disabled, inputCss, minDate } =
+    props;
 
   return (
     <div className="flex flex-col w-full">
@@ -39,10 +40,9 @@ const CustomDate = (props: InputFieldProps) => {
             components={["DatePicker"]}
             sx={{
               ".MuiOutlinedInput-root": {
-                borderRadius: "8px",
+                // borderRadius: "8px",
                 width: "100%",
-                backgroundColor: '#F4F4F4'
-
+                // backgroundColor: '#F4F4F4'
               },
               ".MuiFormControl-root": {
                 ...inputCss,
@@ -60,6 +60,9 @@ const CustomDate = (props: InputFieldProps) => {
               },
               ".MuiOutlinedInput-notchedOutline": {
                 border: "none",
+              },
+              ".css-qgk9ur-MuiStack-root": {
+                paddingTop: "1px",
               },
             }}
           >
@@ -80,6 +83,12 @@ const CustomDate = (props: InputFieldProps) => {
                 },
                 ".MuiButtonBase-root .MuiPickersDay-root.Mui-selected": {
                   background: "red",
+                },
+                ".css-qgk9ur-MuiStack-root": {
+                  paddingTop: "1px",
+                },
+                ".css-bprv1h-MuiStack-root": {
+                  paddingTop: "1px",
                 },
               }}
             />
