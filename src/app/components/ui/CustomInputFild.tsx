@@ -20,7 +20,6 @@ interface InputFieldProps {
   max?: number;
   step?: string;
   boxBorder?: boolean;
-  amount?: any;
 }
 
 const InputField = (props: InputFieldProps) => {
@@ -30,6 +29,7 @@ const InputField = (props: InputFieldProps) => {
     type,
     bgColor,
     className,
+    errorMessage,
     showPasswordSuffix,
     onChange,
     value,
@@ -41,19 +41,20 @@ const InputField = (props: InputFieldProps) => {
     max,
     step,
     boxBorder,
-    amount
   } = props;
   const [viewPassword, setViewPassword] = useState<boolean>(
     !showPasswordSuffix
   );
- 
-  const borderColor = boxBorder ? "border-[#FF772E]" : "border-none";
+  const passwordEyeClick = () => {
+    setViewPassword((pre) => !pre);
+  };
+  const borderColor = boxBorder ? "border-[#FF772E]" : "border-[#D4D7DD]";
   return (
     <div className="flex flex-col w-full">
       <label className="font-medium text-[16px] leading-[24px] text-[#404040]">
         {label}
       </label>
-      <div className={`flex items-center ${className} relative`}>
+      <div className={`relative flex items-center ${className}`}>
         <input
           disabled={active}
           maxLength={maxlength}
@@ -62,19 +63,36 @@ const InputField = (props: InputFieldProps) => {
           max={max}
           value={value}
           step={step}
-        //   type={
-        //     type === "password" ? (viewPassword ? "text" : "password") : type
-        //   }
+          type={
+            type === "password" ? (viewPassword ? "text" : "password") : type
+          }
           placeholder={placeholder}
           onChange={(event) => onChange(event, name)}
-          className={`h-[48px] w-full rounded-[8px] border pl-3 pr-3 focus:outline-none
-        bg-[#F4F4F4] ${borderColor} ${amount ? "pl-6" : "pl-3"}`}
+          className={`h-[48px] w-full rounded-[8px]  ${borderColor} pl-3 pr-3 focus:outline-none
+        bg-[${bgColor}]`}
           readOnly={readOnly}
         />
-       {amount && <>
-        <p className="flex items-center h-[48px] absolute left-3">$</p>
-        <p className="flex items-center h-[48px] absolute right-3">USD</p>
-        </>}
+        {showPasswordSuffix && (
+          <div className="absolute right-[2%] cursor-pointer text-[#000000]">
+            {viewPassword ? (
+              <AiOutlineEye
+                className="h-[23px] w-[23px] text-[#2F2B4399]"
+                onClick={passwordEyeClick}
+              />
+            ) : (
+              <GoEyeClosed
+                className="h-[20px] w-[20px] text-[#2F2B4399]"
+                onClick={passwordEyeClick}
+              />
+            )}
+          </div>
+        )}
+        <p
+          aria-live="polite"
+          className="absolute left-2 top-12 font-normal text-[#FF0000]"
+        >
+          {errorMessage}
+        </p>
       </div>
     </div>
   );
