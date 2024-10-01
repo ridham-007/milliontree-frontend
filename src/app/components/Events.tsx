@@ -189,51 +189,10 @@ export default function Events() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-5">
-      <div className="w-full">
-        <div className="flex flex-col md:flex-row pt-8 md:pt-[30px] px-8 lg:px-[80px] pb-20 md:pb-[110px] bg-[#F2F0EB] justify-between">
-          <div className="flex items-center justify-between text-[13px] font-normal tracking-[2px] w-full">
-            <div>PLANT MILLION TREES</div>
-            {/* mobile view */}
-            <div className="md:hidden flex">
-              <button onClick={toggleMenu} className="text-[22px]">
-                &#9776;
-              </button>
-            </div>
-          </div>
-
-          <div
-            className={`${
-              menuOpen ? "flex" : "hidden"
-            } md:flex flex-col md:flex-row justify-center items-center md:gap-20 mt-6 md:mt-0 w-full `}
-          >
-            <div className="flex flex-col  w-full md:flex-row gap-5 lg:gap-8 md:gap-[32px] uppercase text-[14px] font-semibold text-center cursor-pointer">
-              <div className="leading-[17px]">track my tree</div>
-              <div className="leading-[17px]">events</div>
-              <div className="leading-[17px]">blog</div>
-            </div>
-            <div className="flex flex-row gap-7 lg:gap-[80px] justify-center items-center mt-4 md:mt-0">
-              <Image
-                src="/images/in-icon.png"
-                width={21}
-                height={21}
-                alt="Picture of in icon"
-                className="w-[21px] h-[21px]"
-              />
-              <button
-                type="button"
-                className="bg-[#F1B932] font-semibold leading-[19px] py-[12px] px-[40px] lg:px-[69px] rounded-[24px]"
-              >
-                DONATE
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex justify-center w-full relative bottom-[60px] sm:bottom-[80px] p-2">
-        <div className="flex flex-col w-full relative">
-          <div className="flex justify-center">
+    <div className="flex flex-col w-full h-full gap-5 ">
+      <div className="flex justify-center w-full px-[10px]">
+        <div className="flex flex-col w-full ">
+          <div className="flex justify-center relative top-[140px]">
             <Image
               src="/images/event-banner.png"
               width={355}
@@ -242,13 +201,13 @@ export default function Events() {
               className="sm:w-[1280px] sm:h-[350px] w-[355px] h-[310px] rounded-[40px]"
             />
           </div>
-          <div className="uppercase font-bold text-[34px] sm:text-[44px] leading-[53px] text-center text-white tracking-[10px] sm:tracking-[20px] absolute top-[150px] left-1/2 transform -translate-x-1/2">
+          <div className="uppercase font-bold text-[34px] sm:text-[44px] leading-[53px] text-center text-white tracking-[10px] sm:tracking-[20px] absolute top-[280px] sm:top-[290px] left-1/2 transform -translate-x-1/2">
             events
           </div>
         </div>
       </div>
       {/*  Upcoming events */}
-      <div className="flex flex-col w-full gap-4 sm:gap-6 p-3">
+      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px] mt-[200px]">
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Upcoming events
         </div>
@@ -429,7 +388,7 @@ export default function Events() {
       </div>
 
       {/* Completed events */}
-      <div className="flex flex-col w-full gap-4 sm:gap-6 p-2">
+      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px] mb-[100px]">
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Completed events
         </div>
