@@ -49,7 +49,8 @@ export const getUserById = async (id: string): Promise<any> => {
 export const updateUserInfo = async (
     data: any
   ): Promise<any> => {
-    const {id, userData} = data;
+    const data1 = JSON.parse(data); 
+    const {id, userData} = data1;
     try {
       const response = await (
         await fetch(
@@ -63,10 +64,16 @@ export const updateUserInfo = async (
           }
         )
       ).json();
-      return {
-        success: true,
-        data: response,
-      };
+
+      if(response){
+        return {
+          success: true,
+          data: response?.data,
+        };
+      } else {
+        return prepareServerError(response?.message);
+      }
+      
     } catch (error: any) {
         console.error(error?.message);
     }

@@ -281,7 +281,7 @@ export default function TrackPage(props: TrackPageProps) {
   useEffect(() => {
     if (props?.userInfo) {
       const newImageArray: any = [1, 60, 90].map((day: any, index: number) =>
-        props.userInfo.images.find((e: any, i: number) => e.day === day)
+        props?.userInfo?.images.find((e: any, i: number) => e.day === day)
           ? props.userInfo?.images[index]
           : { day, image: null }
       );
@@ -453,7 +453,6 @@ export default function TrackPage(props: TrackPageProps) {
             className="text-[16px] mt-[8px]"
             label={"Enter Amount"}
             bgColor="#F4F4F4"
-            amount
           />
           {paymentErrors.amount && (
             <p className="text-red-500 text-sm mt-1">{paymentErrors.amount}</p>

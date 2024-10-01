@@ -10,6 +10,7 @@ import {
   uploadFile,
   getPlantedTrees,
   getEventsByRegion,
+  updateUserInfo,
 } from "@/app/_actions/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -32,9 +33,9 @@ import { FaChevronLeft } from "react-icons/fa";
 import landingBackground from "../../../public/images/landing-bg.png";
 import ImageSlider from "./ui/Slider";
 import ButtonPrefix from "../../../public/images/btn-logo.png";
-
+const Cookies = require("js-cookie");
 interface formDataProps {
-  name: string;
+  fName: string;
   email: string;
   cohort: string;
   datePlanted: string | undefined;
@@ -91,7 +92,7 @@ export default function LandingPage() {
   ];
 
   const initialFormData = {
-    name: "",
+    fName: "",
     email: "",
     cohort: "",
     datePlanted: "",
@@ -112,6 +113,7 @@ export default function LandingPage() {
   const [openEventModal, setOpenEventModal] = useState<any>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [openImageModal, setOpenImageModal] = useState(false);
+
 
   const handleImageModalOpen = (imageSrc: string) => {
     setSelectedImage(imageSrc);
@@ -140,7 +142,7 @@ export default function LandingPage() {
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
-      name: "",
+      fName: "",
       email: "",
       cohort: "",
       datePlanted: "",
@@ -148,11 +150,11 @@ export default function LandingPage() {
       image: "",
     };
 
-    if (!formData.name) {
-      newErrors.name = "Name is required";
+    if (!formData.fName) {
+      newErrors.fName = "Name is required";
       isValid = false;
-    } else if (formData.name.length > 35) {
-      newErrors.name = "Name must be 35 characters or less";
+    } else if (formData.fName.length > 35) {
+      newErrors.fName = "Name must be 35 characters or less";
       isValid = false;
     }
 
@@ -193,10 +195,10 @@ export default function LandingPage() {
 
   const handleChange = (e: any) => {
     const { name, value, type, files } = e.target;
-    if (name === "name" && value.length > 35) {
+    if (name === "fName" && value.length > 35) {
       setErrors((prevErrors: any) => ({
         ...prevErrors,
-        name: "Name must be 35 characters or less",
+        fName: "Name must be 35 characters or less",
       }));
       return;
     }
@@ -313,6 +315,15 @@ export default function LandingPage() {
       return;
     }
     setIsLoading(true);
+    
+    const token = Cookies.get("access_token");
+    const userId = Cookies.get("userId");
+    console.log(token,userId);
+    
+    if(!token){
+      router.push('/login');
+      return;
+    }
 
     let finalUserDetails = {};
     if (formData.image) {
@@ -328,26 +339,20 @@ export default function LandingPage() {
     }
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/user/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(finalUserDetails),
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
+      const data = {
+        id: userId,
+        userData: finalUserDetails,
+      };
 
-      const res = await response.json();
-      if (res?.message) {
-        toast(res?.message);
-        router.push(`/search-tree`);
-      } else {
-        toast.error("Unexpected response from the server");
+      try {
+      const res = await updateUserInfo(JSON.stringify(data));
+
+      if(res?.success){
+        // router.push(`/track/${userId}`);
+      }
+        
+      } catch (error) {
+        console.error(error)
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -540,16 +545,16 @@ export default function LandingPage() {
               <div className="w-full flex flex-col gap-4">
                 <div>
                   <InputField
-                    name="name"
+                    name="fName"
                     placeholder="name"
                     type="text"
                     onChange={handleChange}
-                    value={formData.name}
+                    value={formData.fName}
                     className="text-[16px] mt-[8px] border-[#999999]"
                     bgColor="#F4F4F4"
                   />
-                  {errors.name && (
-                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  {errors.fName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.fName}</p>
                   )}
                 </div>
 

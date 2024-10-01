@@ -4,7 +4,9 @@ import Image from "next/image";
 import InputField from "./ui/CustomInputFild";
 import CustomButton from "./ui/CustomButton";
 import { useRouter } from "next/navigation";
-
+import { signUpUser } from "../_actions/auth-action";
+import { toast } from "react-toastify";
+const Cookies = require("js-cookie");
 interface LoginUser {
   fName: string;
   lName: string;
@@ -24,7 +26,9 @@ const SignUpForm = () => {
   const [userInfo, setUserInfo] = useState<LoginUser>(loginInitialValues);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
-
+  const [loading, setLoading] = useState(false)
+  console.log(errors);
+  
   const handleChange = (e: any) => {
     const { name, value } = e.target;
 
@@ -54,45 +58,75 @@ const SignUpForm = () => {
       newErrors.lName = "Last name must be 35 characters or less";
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (userInfo.email.trim() === "") {
       newErrors.email = "Email is required";
+    } else if (!emailRegex.test(userInfo.email)) {
+      newErrors.email = "Enter a valid email address";
+    } else if (userInfo.email.length > 50) {
+      newErrors.email = "Email must be 50 characters or less";
     }
 
     if (userInfo.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
 
+    if (!isTermsAccepted) {
+      newErrors.terms = "You must accept the terms and conditions";
+    }
+
+    if (userInfo.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: any) => {
+  const signUp = async (e: any) => {
     e.preventDefault();
-    if (validateForm()) {
+
+    const isError = validateForm();
+    if (isError) {
+      setLoading(true);
+      const response = await signUpUser(userInfo);
+      if (response?.success) {
+        Cookies.set("access_token", response?.accessToken);
+        Cookies.set("userId",response?.user?._id)
+        toast(response?.message);
+        router.push("/");
+      } else {
+        toast.info("Username or password incorrect.");
+      }
+      setLoading(false);
     }
   };
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsTermsAccepted(event.target.checked);
-  };
+const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const checked = event.target.checked;
+  setIsTermsAccepted(checked);
+  if (checked) {
+    setErrors({...errors, terms:''});
+  }
+};
+
   const handleLogin = () => {
     router.push("/login");
   };
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full max-w-[1440px] m-auto">
-        <div className="w-full hidden md:flex">
+      <div className="flex flex-col md:flex-row w-full max-w-[1440px] m-auto lg:p-10 lg:gap-10">
+        <div className="w-full hidden lg:flex lg:w-[50%]">
           <Image
             src="/images/landing-bg.png"
             width={700}
             height={700}
             alt="Picture of the author"
-            className="h-[700px] w-[700px]"
+            className="h-full w-full rounded-[80px]"
           />
         </div>
-        <div className="flex flex-col w-full justify-center items-center py-[50px] md:py-0 px-3 sm:px-0">
+        <div className="flex flex-col w-full lg:w-[50%] justify-center items-center py-[50px] md:py-0 px-3 sm:px-0">
           <form
             className="flex flex-col w-full max-w-[400px]"
-            onSubmit={handleSubmit}
+            onSubmit={signUp}
           >
             <div className="flex text-[28px] mb-8 font-bold leading-9 justify-center">
               Create Account
@@ -179,13 +213,14 @@ const SignUpForm = () => {
 
                   <p>Accept terms and conditions</p>
                 </div>
-                {errors.terms && <p className="text-red-500">{errors.terms}</p>}
+                {errors?.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
               </div>
               <div className="mt-2">
                 <CustomButton
                   label="Sign Up"
                   className="w-full"
                   type="submit"
+                  interactingAPI={loading}
                 />
               </div>
               <div className="w-full flex gap-[32px] items-center">

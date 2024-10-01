@@ -4,7 +4,9 @@ import Image from "next/image";
 import InputField from "./ui/CustomInputFild";
 import CustomButton from "./ui/CustomButton";
 import { useRouter } from "next/navigation";
-
+import { toast } from "react-toastify";
+import { signInUser } from "../_actions/auth-action";
+const Cookies = require("js-cookie");
 interface LoginUser {
   email: string;
   password: string;
@@ -18,6 +20,7 @@ const loginInitialValues: LoginUser = {
 const LoginForm = () => {
   const [userInfo, setUserInfo] = useState<LoginUser>(loginInitialValues);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(false)
   const router = useRouter();
 
   const handleChange = (e: any) => {
@@ -37,8 +40,13 @@ const LoginForm = () => {
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (userInfo.email.length == 0) {
-      newErrors.email = "Email is Required";
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (userInfo.email.trim() === "") {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(userInfo.email)) {
+      newErrors.email = "Enter a valid email address";
+    } else if (userInfo.email.length > 50) {
+      newErrors.email = "Email must be 50 characters or less";
     }
 
     if (userInfo.password.length < 8) {
@@ -50,30 +58,41 @@ const LoginForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    if (validateForm()) {
+   
+    const signIn = async (e: any) => {
+        e.preventDefault();
+        if (validateForm()) {
+        setLoading(true);
+        const response = await signInUser(userInfo);
+        if (response?.success) {
+          Cookies.set("access_token", response?.accessToken);
+          toast(response?.message)
+          router.push("/");
+        } else {
+          toast.info("Username or password incorrect.")
+        }
+        setLoading(false);
+      };
     }
-  };
   const handleSignUp = () => {
     router.push("/signup");
   };
   return (
     <>
-      <div className="flex flex-col md:flex-row w-full max-w-[1440px] m-auto">
-        <div className="w-full hidden md:flex">
+      <div className="flex flex-col h-[100%] md:flex-row w-full max-w-[1440px] m-auto lg:p-10 lg:gap-10">
+        <div className="w-full hidden h-full lg:flex lg:w-[50%]">
           <Image
             src="/images/landing-bg.png"
             width={700}
             height={700}
             alt="Picture of the author"
-            className="h-[700px] w-[700px]"
+            className="h-full w-full rounded-[80px]"
           />
         </div>
-        <div className="flex flex-col w-full justify-center items-center py-[50px] md:py-0 px-3 sm:px-0">
+        <div className="flex flex-col w-full lg:w-[50%] justify-center items-center py-[50px] md:py-0 px-3 sm:px-0">
           <form
             className="flex flex-col w-full max-w-[400px]"
-            onSubmit={handleSubmit}
+            onSubmit={signIn}
           >
             <div className="flex text-[28px] mb-8 font-bold leading-9 justify-center">
               Hello again!
@@ -122,7 +141,7 @@ const LoginForm = () => {
                 </div>
               </div>
               <div className="mt-2">
-                <CustomButton label="Log In" className="w-full" type="submit" />
+                <CustomButton label="Log In" className="w-full" type="submit" interactingAPI={loading}/>
               </div>
 
               <div className="w-full flex gap-[32px] items-center">
