@@ -22,10 +22,10 @@ export const uploadFile = async (
     }
   };
 
-export const getUserById = async (id: string): Promise<any> => {
+export const getTreesByUserById = async (id: string): Promise<any> => {
     try {
       const userResponse = await (
-        await fetch(`${process.env.NEXT_PUBLIC_URL}/user/${id}`, {
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/tree/${id}`, {
           method: "GET",
           cache: "no-store",
           headers: {
@@ -68,6 +68,40 @@ export const updateUserInfo = async (
         return {
           success: true,
           data: response?.data,
+        };
+      } else {
+        return prepareServerError(response?.message);
+      }
+      
+    } catch (error: any) {
+        console.error(error?.message);
+    }
+  };
+
+  export const updateTreeInfo = async (
+    data: any
+  ): Promise<any> => {
+    const data1 = JSON.parse(data); 
+    const { _id } = data1;
+    try {
+      const response = await (
+        await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/tree/update/${_id}`,
+          {
+            method: "PATCH",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data1),
+          }
+        )
+      ).json();
+
+      if(response){
+        return {
+          success: true,
+          data: response?.data,
+          message: response?.message
         };
       } else {
         return prepareServerError(response?.message);

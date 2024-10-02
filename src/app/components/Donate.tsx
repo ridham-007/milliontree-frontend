@@ -29,7 +29,7 @@ const Donate = () => {
               <div className="flex justify-center items-center">
                 <CustomButton
                   label={"DONATE NOW"}
-                  className="font-semibold py-[12px] px-[21px] !rounded-[24px] flex justify-center"
+                  className="w-[350px] font-semibold py-[12px] px-[21px] !rounded-[24px] flex justify-center"
                   onClick={() =>
                     window.open(
                       "https://buy.stripe.com/6oE8zr590dzEgGQ4gu",
@@ -47,7 +47,7 @@ const Donate = () => {
               </div>
               <div className="flex justify-center items-center">
                 <Image
-                  src={"/images/scaner.png"}
+                  src={"/images/scanner.png"}
                   width={210}
                   height={200}
                   alt=""

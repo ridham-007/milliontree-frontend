@@ -5,63 +5,58 @@ import CustomDate from "./ui/CustomDate";
 import CustomButton from "./ui/CustomButton";
 import { useEffect, useState } from "react";
 import {
-  createCheckoutSession,
-  updateUserInfo,
+  getTreesByUserById,
+  updateTreeInfo,
   uploadFile,
 } from "../_actions/actions";
 import { toast } from "react-toastify";
 import { fireStorage } from "@/utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/navigation";
+import CustomSelection from "./ui/CustomSelect";
+const Cookies = require("js-cookie");
 
-interface TrackPageProps {
-  userInfo: {
-    _id: string;
-    name: string;
-    email: string;
-    cohort: string;
-    datePlanted: string;
-    images: { day: number; image: string }[];
-    location: string;
-  };
-  userId: string;
-}
 
-export default function TrackPage(props: TrackPageProps) {
+export default function TrackPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
-    name: "",
+    treeName: "",
     cohort: "",
     datePlanted: "",
+    location: "",
+    userId: "",
     images: [],
   });
-  const [paymentData, setPaymentData] = useState({
-    name: "",
-    email: "",
-    amount: 0,
-  });
+  const [treeData, setTreeData] = useState([]);
   const [errors, setErrors] = useState({
-    name: "",
+    treeName: "",
     cohort: "",
     datePlanted: "",
   });
-  const [paymentErrors, setPaymentErrors] = useState({
-    name: "",
-    email: "",
-    amount: "",
-  });
   const [isLoading, setIsLoading] = useState<any>(false);
-  const [loading, setLoading] = useState<any>(false);
   const [imageFiles, setImageFiles] = useState<{ [key: number]: File }>({});
+  const [treeNameData, setTreeNameData] = useState<{ value: string; label: string }[]>([]);
+  const [selectTree, setSelectTree] = useState<{ value: string; label: string }>();
+
+  const transformedData = (treeData: any | undefined): { value: string; label: string }[] => {
+    if (!treeData || treeData.length === 0) return [];
+    return treeData
+    .map((tree: any) => ({
+      value: tree._id,
+      label: tree.treeName,
+    }));
+  };
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { name: "", cohort: "", datePlanted: "", images: "" };
+    const newErrors = { treeName: "", cohort: "", datePlanted: "", images: "" };
 
-    if (!formData.name) {
-      newErrors.name = "Name is required";
+    if (!formData.treeName) {
+      newErrors.treeName = "Name is required";
       isValid = false;
-    } else if (formData.name.length > 25) {
-      newErrors.name = "Name must be 15 characters or less";
+    } else if (formData.treeName.length > 25) {
+      newErrors.treeName = "Name must be 15 characters or less";
       isValid = false;
     }
 
@@ -82,59 +77,50 @@ export default function TrackPage(props: TrackPageProps) {
     return isValid;
   };
 
-  const paymentValidateForm = () => {
-    let isValid = true;
-    const newErrors = { name: "", email: "", amount: "" };
-
-    if (!paymentData.name) {
-      newErrors.name = "Name is required";
-      isValid = false;
-    } else if (paymentData.name.length > 25) {
-      newErrors.name = "Name must be 25 characters or less";
-      isValid = false;
-    }
-
-    if (!paymentData.email) {
-      newErrors.email = "Email is required";
-      isValid = false;
-    } else if (paymentData.email.length > 25) {
-      newErrors.email = "Email must be 25 characters or less";
-      isValid = false;
-    }
-
-    if (!paymentData.amount) {
-      newErrors.amount = "Amount is required";
-      isValid = false;
-    }
-
-    setPaymentErrors(newErrors);
-    return isValid;
-  };
-
-  const handleImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    day: number
-  ) => {
-    const { files } = e.target;
-    if (files && files[0]) {
-      const file = files[0];
-      setImageFiles((prev) => ({
-        ...prev,
-        [day]: file,
-      }));
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prevData: any) => ({
-          ...prevData,
-          images: prevData.images.map((img: any) =>
-            img.day === day ? { ...img, image: reader.result as string } : img
-          ),
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleImageChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   day: number
+  // ) => {
+  //   console.log(day, "dfdvfd")
+  //   const { files } = e.target;
+  //   if (files && files[0]) {
+  //     const file = files[0];
+  //     setImageFiles((prev) => ({
+  //       ...prev,
+  //       [day]: file,
+  //     }));
+  
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setFormData((prevData: any) => {
+  //         const existingImageIndex = prevData.images.findIndex(
+  //           (img: any) => img.day === day
+  //         );
+  
+  //         if (existingImageIndex !== -1) {
+  //           const updatedImages = [...prevData.images];
+  //           updatedImages[existingImageIndex] = {
+  //             ...updatedImages[existingImageIndex],
+  //             image: reader.result as string,
+  //           };
+  //           return {
+  //             ...prevData,
+  //             images: updatedImages,
+  //           };
+  //         } else {
+  //           return {
+  //             ...prevData,
+  //             images: [
+  //               ...prevData.images,
+  //               { day, image: reader.result as string },
+  //             ],
+  //           };
+  //         }
+  //       });
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   const handleDateChange = (newValue: any) => {
     if (!newValue) {
@@ -187,25 +173,24 @@ export default function TrackPage(props: TrackPageProps) {
       })
     );
 
+    
     const data = {
-      id: props.userId,
-      userData: {
-        ...formData,
-        images: updatedImages,
-      },
+      ...formData,
+      images: updatedImages,
     };
+    
+    const res = await updateTreeInfo(JSON.stringify(data));
 
-    const res = await updateUserInfo(data);
-
-    if (res) {
-      toast(res?.data?.message);
+    if (res?.success) {
+      toast(res?.message);
+      router.refresh();
     }
     setIsLoading(false);
   };
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    if (name === "name" && value.length > 35) {
+    if (name === "treeName" && value.length > 35) {
       setErrors((prevErrors) => ({
         ...prevErrors,
         name: "Name must be 35 characters or less",
@@ -230,73 +215,34 @@ export default function TrackPage(props: TrackPageProps) {
     }));
   };
 
-  const handlePayment = (e: any) => {
-    const { name, value } = e.target;
-    if (name === "name" && value.length > 35) {
-      setPaymentErrors((prevErrors) => ({
-        ...prevErrors,
-        name: "Name must be 35 characters or less",
-      }));
-      return;
-    }
-
-    if (name === "email" && value.length > 35) {
-      setPaymentErrors((prevErrors) => ({
-        ...prevErrors,
-        email: "email must be 35 characters or less",
-      }));
-      return;
-    }
-    setPaymentErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: "",
-    }));
-    const parsedValue = name === "amount" ? parseFloat(value) || 0 : value;
-    setPaymentData((prevData) => ({
-      ...prevData,
-      [name]: parsedValue,
-    }));
-  };
-
-  const handleDonate = async () => {
-    if (!paymentValidateForm()) {
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await createCheckoutSession({
-        name: paymentData.name,
-        email: paymentData.email,
-        amount: paymentData.amount,
-      });
-      if (response?.data?.url) {
-        window.location.href = response.data.url;
+  useEffect(() => {
+    const getTrees = async () => { 
+      const userId = Cookies.get("userId");
+      if(!userId){
+        router.push('/login')
       }
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
+  
+    const userInfo = await getTreesByUserById(userId);
+
+    if (userInfo?.data?.success) {
+      setTreeData(userInfo?.data?.tree);
+      setTreeNameData(transformedData(userInfo?.data?.tree))
     }
-    setLoading(false);
-  };
+  }
+    getTrees()
+  }, []);
+
+  const selectedTreeDetails = treeData.find((tree: any) => tree._id === selectTree?.value);
 
   useEffect(() => {
-    if (props?.userInfo) {
-      const newImageArray: any = [1, 60, 90].map((day: any, index: number) =>
-        props?.userInfo?.images.find((e: any, i: number) => e.day === day)
-          ? props.userInfo?.images[index]
-          : { day, image: null }
-      );
-      setFormData({
-        name: props?.userInfo?.name || "",
-        cohort: props?.userInfo?.cohort || "",
-        datePlanted: props?.userInfo?.datePlanted || "",
-        images: newImageArray,
-      });
+    if (selectedTreeDetails) {
+      setFormData(selectedTreeDetails);
     }
-  }, [props.userInfo]);
+  }, [selectedTreeDetails]);
 
   return (
     <div className="flex flex-col items-center w-full px-2 pb-[50px] sm:pb-[100px] ">
-      <div className="flex flex-col w-full max-w-[1280px] gap-[61px] ">
+      <div className="flex flex-col w-full max-w-[1280px]">
         <div className="w-full relative z-30">
           <Image
             src={"/images/TrackMyTree-bg.png"}
@@ -310,19 +256,30 @@ export default function TrackPage(props: TrackPageProps) {
             TRACK MY TREE
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row w-full gap-[25px] md:gap-[46px]">
-          <div className="flex flex-col w-full gap-[55px]">
-            <div className="flex flex-col lg:flex-row gap-5 lg:gap-11 justify-center w-full lg:max-w-[380px]">
+        <div className="flex justify-end my-4">
+            <CustomSelection
+              className="w-full md:w-[300px]"
+              placeholder={"Please select"}
+              label="Select tree"
+              data={treeNameData}
+              value={selectTree}
+              onChange={(value: any) => setSelectTree(value)}
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row w-full gap-[5px] md:gap-[46px]">
+          <div className="flex flex-col w-full md:gap-[55px]">
+            <div className="flex flex-col justify-center w-full lg:max-w-[380px]">
               <InputField
-                name="name"
-                placeholder="Name"
+                name="treeName"
+                placeholder="Enter your name"
                 type="text"
                 onChange={handleChange}
-                value={formData.name}
+                value={formData.treeName}
                 className="text-[16px] mt-[8px] border border-[#cccccc]"
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              {errors.treeName && (
+                <p className="text-red-500 text-sm mt-1">{errors.treeName}</p>
               )}
             </div>
             <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
@@ -332,36 +289,10 @@ export default function TrackPage(props: TrackPageProps) {
                     key={imageObj.day}
                     className="flex flex-col w-full lg:max-w-[380px] gap-2"
                   >
-                    <label className="text-[16px] text-[#404040] font-medium">
-                      Day {imageObj.day}
+                    <label className="text-[16px] text-[#404040] font-semibold">
+                      Day 1
                     </label>
-                    {!imageObj?.image && (
-                      <>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="flex"
-                          id={`plant-image-${imageObj.day}`}
-                          name="image"
-                          onChange={(e: any) => {
-                            handleImageChange(e, imageObj.day);
-                          }}
-                        />
-                        <label
-                          htmlFor={`plant-image-${imageObj.day}`}
-                          className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
-                        >
-                          <div className="flex flex-col gap-[10px] items-center w-full">
-                            <p className="text-nowrap">Attach photo</p>
-                            <CustomButton
-                              label="Choose File"
-                              className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                            />
-                          </div>
-                        </label>
-                      </>
-                    )}
-                    {imageObj.image && (
+                    {(imageObj?.day === 1 && imageObj?.image) ? (
                       <Image
                         src={imageObj?.image}
                         alt={`Day ${imageObj?.day}`}
@@ -370,13 +301,40 @@ export default function TrackPage(props: TrackPageProps) {
                         className="w-full"
                         unoptimized
                       />
+                    ) : (
+                      <>
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          id={`plant-image-${imageObj.day}`}
+                          name="image"
+                          // onChange={(e: any) => {
+                          //   handleImageChange(e, 1);
+                          // }}
+                        />
+                        <label
+                          htmlFor={`plant-image-${imageObj.day}`} // Link the label to the input
+                          className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
+                        >
+                          <p className="text-nowrap text-[#555555] font-normal">
+                            Attach photo
+                          </p>
+                          <CustomButton
+                            label="Choose File"
+                            className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1 -z-10"
+                          />
+                        </label>
+                        </div>
+                      </>
                     )}
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="flex flex-col w-full gap-[55px]">
+          <div className="flex flex-col w-full md:gap-[55px]">
             <div className="flex flex-col w-full lg:max-w-[380px]">
               <InputField
                 name="cohort"
@@ -397,36 +355,10 @@ export default function TrackPage(props: TrackPageProps) {
                     key={imageObj.day}
                     className="flex flex-col w-full lg:max-w-[380px] gap-2"
                   >
-                    <label className="text-[16px] text-[#404040] font-medium">
-                      Day {imageObj.day}
+                    <label className="text-[16px] text-[#404040] font-semibold">
+                      Day 60
                     </label>
-                    {!imageObj?.image && (
-                      <>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="flex"
-                          id={`plant-image-${imageObj.day}`}
-                          name="image"
-                          onChange={(e: any) => {
-                            handleImageChange(e, imageObj.day);
-                          }}
-                        />
-                        <label
-                          htmlFor={`plant-image-${imageObj.day}`}
-                          className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
-                        >
-                          <div className="flex flex-col gap-[10px] items-center w-full">
-                            <p className="text-nowrap">Attach photo</p>
-                            <CustomButton
-                              label="Choose File"
-                              className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                            />
-                          </div>
-                        </label>
-                      </>
-                    )}
-                    {imageObj.image && (
+                    {(imageObj?.day === 60 && imageObj?.image) ? (
                       <Image
                         src={imageObj?.image}
                         alt={`Day ${imageObj?.day}`}
@@ -435,13 +367,40 @@ export default function TrackPage(props: TrackPageProps) {
                         className="w-full"
                         unoptimized
                       />
+                    ) : (
+                      <>
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          id={`plant-image-${imageObj.day}`}
+                          name="image"
+                          // onChange={(e: any) => {
+                          //   handleImageChange(e, 60);
+                          // }}
+                        />
+                       <label
+                          htmlFor={`plant-image-${imageObj.day}`} // Link the label to the input
+                          className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
+                        >
+                          <p className="text-nowrap text-[#555555] font-normal">
+                            Attach photo
+                          </p>
+                          <CustomButton
+                            label="Choose File"
+                            className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1 -z-10"
+                          />
+                        </label>
+                        </div>
+                      </>
                     )}
                   </div>
                 );
               })}
             </div>
           </div>
-          <div className="flex flex-col w-full mt-2 gap-[55px]">
+          <div className="flex flex-col w-full mt-2 md:gap-[55px]">
             <div className="flex flex-col w-full lg:max-w-[380px]">
               <CustomDate
                 value={formData.datePlanted}
@@ -456,41 +415,16 @@ export default function TrackPage(props: TrackPageProps) {
             </div>
             <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
               {formData?.images?.map((imageObj: any) => {
+                console.log(imageObj, "vdvfdv")
                 return (
                   <div
                     key={imageObj.day}
                     className="flex flex-col w-full lg:max-w-[380px] gap-2"
                   >
-                    <label className="text-[16px] text-[#404040] font-medium">
-                      Day {imageObj.day}
+                    <label className="text-[16px] text-[#404040] font-semibold">
+                      Day 90
                     </label>
-                    {!imageObj?.image && (
-                      <>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="flex"
-                          id={`plant-image-${imageObj.day}`}
-                          name="image"
-                          onChange={(e: any) => {
-                            handleImageChange(e, imageObj.day);
-                          }}
-                        />
-                        <label
-                          htmlFor={`plant-image-${imageObj.day}`}
-                          className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
-                        >
-                          <div className="flex flex-col gap-[10px] items-center w-full">
-                            <p className="text-nowrap">Attach photo</p>
-                            <CustomButton
-                              label="Choose File"
-                              className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                            />
-                          </div>
-                        </label>
-                      </>
-                    )}
-                    {imageObj.image && (
+                    {(imageObj?.day === 90 && imageObj?.image) ? (
                       <Image
                         src={imageObj?.image}
                         alt={`Day ${imageObj?.day}`}
@@ -499,6 +433,33 @@ export default function TrackPage(props: TrackPageProps) {
                         className="w-full"
                         unoptimized
                       />
+                    ) : (
+                      <>
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          id={`plant-image-${imageObj.day}`}
+                          name="image"
+                          // onChange={(e: any) => {
+                          //   handleImageChange(e, 90); 
+                          // }}
+                        />
+                        <label
+                          htmlFor={`plant-image-${imageObj.day}`}
+                          className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
+                        >
+                          <p className="text-nowrap text-[#555555] font-normal">
+                            Attach photo
+                          </p>
+                          <CustomButton
+                            label="Choose File"
+                            className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1 -z-10"
+                          />
+                        </label>
+                      </div>
+                    </>
                     )}
                   </div>
                 );
@@ -509,6 +470,8 @@ export default function TrackPage(props: TrackPageProps) {
         <CustomButton
           label="SAVE"
           className="flex w-[210px] font-semibold leading-[19.5px] !rounded-[24px] py-[12px] px-[21px] self-center mt-5"
+          callback={handleSave}
+          interactingAPI={isLoading}
         />
       </div>
     </div>
