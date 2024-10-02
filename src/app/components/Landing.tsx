@@ -35,8 +35,7 @@ import ImageSlider from "./ui/Slider";
 import ButtonPrefix from "../../../public/images/btn-logo.png";
 const Cookies = require("js-cookie");
 interface formDataProps {
-  fName: string;
-  email: string;
+  treeName: string;
   cohort: string;
   datePlanted: string | undefined;
   location: { name: string; latitude: number; longitude: number };
@@ -92,8 +91,7 @@ export default function LandingPage() {
   ];
 
   const initialFormData = {
-    fName: "",
-    email: "",
+    treeName: "",
     cohort: "",
     datePlanted: "",
     location: { name: "", latitude: 0, longitude: 0 },
@@ -142,27 +140,18 @@ export default function LandingPage() {
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
-      fName: "",
-      email: "",
+      treeName: "",
       cohort: "",
       datePlanted: "",
       location: "",
       image: "",
     };
 
-    if (!formData.fName) {
-      newErrors.fName = "Name is required";
+    if (!formData.treeName) {
+      newErrors.treeName = "Name is required";
       isValid = false;
-    } else if (formData.fName.length > 35) {
-      newErrors.fName = "Name must be 35 characters or less";
-      isValid = false;
-    }
-
-    if (!formData.email) {
-      newErrors.email = "Email is required";
-      isValid = false;
-    } else if (formData.email.length > 35) {
-      newErrors.email = "Email must be 35 characters or less";
+    } else if (formData.treeName.length > 35) {
+      newErrors.treeName = "Name must be 35 characters or less";
       isValid = false;
     }
 
@@ -195,21 +184,21 @@ export default function LandingPage() {
 
   const handleChange = (e: any) => {
     const { name, value, type, files } = e.target;
-    if (name === "fName" && value.length > 35) {
+    if (name === "treeName" && value.length > 35) {
       setErrors((prevErrors: any) => ({
         ...prevErrors,
-        fName: "Name must be 35 characters or less",
+        treeName: "Name must be 35 characters or less",
       }));
       return;
     }
 
-    if (name === "email" && value.length > 35) {
-      setErrors((prevErrors: any) => ({
-        ...prevErrors,
-        email: "Email must be 35 characters or less",
-      }));
-      return;
-    }
+    // if (name === "email" && value.length > 35) {
+    //   setErrors((prevErrors: any) => ({
+    //     ...prevErrors,
+    //     email: "Email must be 35 characters or less",
+    //   }));
+    //   return;
+    // }
 
     if (name === "cohort" && value.length > 35) {
       setErrors((prevErrors: any) => ({
@@ -311,10 +300,6 @@ export default function LandingPage() {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      return;
-    }
-    setIsLoading(true);
     
     const token = Cookies.get("access_token");
     const userId = Cookies.get("userId");
@@ -324,6 +309,11 @@ export default function LandingPage() {
       router.push('/login');
       return;
     }
+
+    if (!validateForm()) {
+      return;
+    }
+    setIsLoading(true);
 
     let finalUserDetails = {};
     if (formData.image) {
@@ -340,19 +330,19 @@ export default function LandingPage() {
 
     try {
       const data = {
-        id: userId,
-        userData: finalUserDetails,
+        ...finalUserDetails,
+        userId: userId,
       };
 
       try {
       const res = await updateUserInfo(JSON.stringify(data));
 
       if(res?.success){
-        // router.push(`/track/${userId}`);
+        toast.success("Plant tree successfully.")
       }
         
       } catch (error) {
-        console.error(error)
+        console.log(error)
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -549,16 +539,16 @@ export default function LandingPage() {
               <div className="flex flex-col gap-[10px] w-[50%] sm:w-auto">
                 <div>
                   <InputField
-                    name="fName"
-                    placeholder="name"
+                    name="treeName"
+                    placeholder="Name"
                     type="text"
                     onChange={handleChange}
-                    value={formData.fName}
+                    value={formData.treeName}
                     className="text-[16px] mt-[8px] border-[#999999]"
                     bgColor="#F4F4F4"
                   />
-                  {errors.fName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.fName}</p>
+                  {errors.treeName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.treeName}</p>
                   )}
                 </div>
                 <div>
@@ -590,7 +580,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="flex flex-col gap-[10px] w-[50%] sm:w-auto">
-                <div>
+                {/* <div>
                   <InputField
                     name="email"
                     placeholder="Email"
@@ -602,7 +592,7 @@ export default function LandingPage() {
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                   )}
-                </div>
+                </div> */}
                 <div>
                   <CustomDate
                     value={formData.datePlanted}

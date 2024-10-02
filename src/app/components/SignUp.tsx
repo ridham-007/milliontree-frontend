@@ -27,7 +27,6 @@ const SignUpForm = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false)
-  console.log(errors);
   
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -95,7 +94,7 @@ const SignUpForm = () => {
         toast(response?.message);
         router.push("/");
       } else {
-        toast.info("Username or password incorrect.");
+        toast.error(response?.message);
       }
       setLoading(false);
     }

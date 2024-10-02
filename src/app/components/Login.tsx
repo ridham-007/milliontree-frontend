@@ -66,6 +66,7 @@ const LoginForm = () => {
         const response = await signInUser(userInfo);
         if (response?.success) {
           Cookies.set("access_token", response?.accessToken);
+          Cookies.set("userId",response?.user?._id)
           toast(response?.message)
           router.push("/");
         } else {

@@ -50,17 +50,16 @@ export const updateUserInfo = async (
     data: any
   ): Promise<any> => {
     const data1 = JSON.parse(data); 
-    const {id, userData} = data1;
     try {
       const response = await (
         await fetch(
-          `${process.env.NEXT_PUBLIC_URL}/user/update/${id}`,
+          `${process.env.NEXT_PUBLIC_URL}/tree/register`,
           {
-            method: "PATCH",
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(data1),
           }
         )
       ).json();
@@ -126,7 +125,7 @@ export const updateUserInfo = async (
   export const getPlantedTrees = async (): Promise<any> => {
   
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/user/planted-trees`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/tree/planted-trees`, {
         method: "GET",
         headers: {
           'Content-Type': 'application/json',

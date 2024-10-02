@@ -1,3 +1,4 @@
+"use server"
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
@@ -53,7 +54,7 @@ export async function middleware(request: NextRequest) {
   const token = cookies().get("access_token");
   const response = checkTokenExpiry(token?.value);
   if (response.valid) {
-    if (pathname?.includes("login") || pathname?.includes("register")) {
+    if (pathname?.includes("login") || pathname?.includes("signup")) {
       const res = NextResponse.redirect(`${baseUrl}/`);
       applySetCookie(request, res);
       return res;
@@ -62,12 +63,10 @@ export async function middleware(request: NextRequest) {
       return res;
     }
   } else {
-    if (pathname?.includes("login") || pathname?.includes("images")) {
-      applySetCookie(request, res);
-      return res;
-    } else {
-      const res = NextResponse.redirect(new URL(`${baseUrl}/login`));
-      applySetCookie(request, res);
+    if (pathname?.includes("login")) {
+        // cookies().set("access_token", "");
+        // cookies().set("userId", "");
+      NextResponse.redirect(new URL(`${baseUrl}/login`))
       return res;
     }
   }
