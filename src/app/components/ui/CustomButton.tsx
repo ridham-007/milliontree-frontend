@@ -1,17 +1,19 @@
 "use client";
 import React from "react";
 import { useFormStatus } from "react-dom";
+
 interface ButtonProps {
   label: string | undefined | React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset" | undefined;
-  callback?: (e?: any) => void | Promise<void> | undefined |any;
+  callback?: (e?: any) => void | Promise<void> | undefined | any;
   prefixIcon?: React.ReactNode;
   suffixIcon?: React.ReactNode;
-  style?: boolean
+  style?: boolean;
   interactingAPI?: boolean;
   name?: string;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
 const CustomButton = ({
@@ -24,11 +26,18 @@ const CustomButton = ({
   style,
   interactingAPI = false,
   name,
-  disabled = false
+  disabled = false,
+  onClick,
 }: ButtonProps) => {
   const { pending: formPending } = useFormStatus();
+
   const handleButtonClick = async (e: any) => {
     e?.stopPropagation();
+
+    if (typeof onClick === "function") {
+      onClick();
+    }
+
     if (typeof callback === "function") {
       await callback(e);
     }
@@ -75,8 +84,12 @@ const CustomButton = ({
       disabled={formPending || disabled}
       type={type}
       name={name}
-      className={`flex cursor-pointer items-center justify-center gap-1 rounded-[8px] ${style ? 'px-0 py-0' : 'px-4 py-2'} font-normal bg-[#F1B932] text-black ${disabled && "cursor-not-allowed bg-[#cfc7c2]"} ${className}`}
-      onClick={(e) => { handleButtonClick(e) }}
+      className={`flex cursor-pointer items-center justify-center gap-1 rounded-[8px] ${
+        style ? "px-0 py-0" : "px-4 py-2"
+      } font-normal bg-[#F1B932] text-black ${
+        disabled && "cursor-not-allowed bg-[#cfc7c2]"
+      } ${className}`}
+      onClick={handleButtonClick}
     >
       {getButton()}
     </button>

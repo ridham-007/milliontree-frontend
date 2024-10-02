@@ -12,7 +12,7 @@ import {
 import { toast } from "react-toastify";
 import { fireStorage } from "@/utils/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 interface TrackPageProps {
   userInfo: {
@@ -24,7 +24,7 @@ interface TrackPageProps {
     images: { day: number; image: string }[];
     location: string;
   };
-  userId:string;
+  userId: string;
 }
 
 export default function TrackPage(props: TrackPageProps) {
@@ -186,7 +186,7 @@ export default function TrackPage(props: TrackPageProps) {
         return img;
       })
     );
-    
+
     const data = {
       id: props.userId,
       userData: {
@@ -196,7 +196,7 @@ export default function TrackPage(props: TrackPageProps) {
     };
 
     const res = await updateUserInfo(data);
-    
+
     if (res) {
       toast(res?.data?.message);
     }
@@ -295,185 +295,221 @@ export default function TrackPage(props: TrackPageProps) {
   }, [props.userInfo]);
 
   return (
-    <div className="flex flex-col md:flex-row w-full h-full">
-      <div className="flex flex-col w-full items-center px-6 py-[40px] gap-10 lg:gap-14">
-        <p className="text-[18px] sm:text-[24px] lg:text-[25px] font-semibold text-center lg:pb-7">
-          Track My{" "}
-          <span className="py-1 px-3 font-medium text-white bg-[#306E1D] rounded-full">
-            Tree
-          </span>
-        </p>
-        <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
-          <div className="flex flex-col w-full lg:max-w-[250px] lg:min-w-[208px]">
-            <InputField
-              name="name"
-              placeholder="Enter your name"
-              type="text"
-              onChange={handleChange}
-              value={formData.name}
-              className="text-[16px] mt-[8px]"
-              label={"Name"}
-              bgColor="#F4F4F4"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
-          <div className="flex flex-col w-full lg:max-w-[250px] lg:min-w-[208px]">
-            <InputField
-              name="cohort"
-              placeholder="Enter your cohort"
-              type="text"
-              onChange={handleChange}
-              value={formData.cohort}
-              className="text-[16px] mt-[8px]"
-              label={"Cohort"}
-              bgColor="#F4F4F4"
-            />
-            {errors.cohort && (
-              <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
-            )}
-          </div>
-          <div className="flex flex-col w-full lg:max-w-[250px] lg:min-w-[208px]">
-            <CustomDate
-              label="Date Planted"
-              value={formData.datePlanted}
-              onChange={handleDateChange}
-            />
-            {errors.datePlanted && (
-              <p className="text-red-500 text-sm mt-1">{errors.datePlanted}</p>
-            )}
-          </div>
+    <div className="flex flex-col items-center w-full px-2 pb-[50px] sm:pb-[100px] ">
+      <div className="flex flex-col w-full max-w-[1280px] gap-[61px] ">
+        <div className="w-full relative z-30">
+          <Image
+            src={"/images/TrackMyTree-bg.png"}
+            width={350}
+            height={350}
+            alt=""
+            unoptimized
+            className="w-full h-[280px] sm:h-[350px] rounded-[40px]"
+          />
+          <p className="w-full top-[100px] sm:top-[150px] text-[34px] sm:text-[44px] font-bold absolute text-white text-center leading-[41px] tracking-[12px]">
+            TRACK MY TREE
+          </p>
         </div>
-        <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
-          {formData?.images?.map((imageObj: any) => {
-            return (
-              <div
-                key={imageObj.day}
-                className="flex flex-col w-full lg:max-w-[250px] lg:min-w-[208px] gap-2"
-              >
-                <label className="text-[16px] text-[#404040] font-medium">
-                  Day {imageObj.day}
-                </label>
-                {!imageObj?.image && (
-                  <>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      id={`plant-image-${imageObj.day}`}
-                      name="image"
-                      onChange={(e: any) => {
-                        handleImageChange(e, imageObj.day);
-                      }}
-                    />
-                    <label
-                      htmlFor={`plant-image-${imageObj.day}`}
-                      className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
-                    >
-                      <div className="flex flex-col gap-[10px] items-center w-full">
-                        <p className="text-nowrap">Attach photo</p>
-                        <CustomButton
-                          label="Choose File"
-                          className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                        />
-                      </div>
+        <div className="flex flex-col sm:flex-row w-full gap-[25px] md:gap-[46px]">
+          <div className="flex flex-col w-full gap-[55px]">
+            <div className="flex flex-col lg:flex-row gap-5 lg:gap-11 justify-center w-full lg:max-w-[380px]">
+              <InputField
+                name="name"
+                placeholder="Enter your name"
+                type="text"
+                onChange={handleChange}
+                value={formData.name}
+                className="text-[16px] mt-[8px] border border-[#cccccc]"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+              )}
+            </div>
+            <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
+              {formData?.images?.map((imageObj: any) => {
+                return (
+                  <div
+                    key={imageObj.day}
+                    className="flex flex-col w-full lg:max-w-[380px] gap-2"
+                  >
+                    <label className="text-[16px] text-[#404040] font-medium">
+                      Day {imageObj.day}
                     </label>
-                  </>
-                )}
-                {imageObj.image && (
-                  <Image
-                    src={imageObj?.image}
-                    alt={`Day ${imageObj?.day}`}
-                    width={100}
-                    height={100}
-                    className="w-full"
-                    unoptimized
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex justify-end w-full max-w-[840px]">
-          <CustomButton
-            label="Save"
-            className="flex !px-[25px] w-full sm:!w-[304px] md:!w-full lg:!w-[304px] h-max !text-white border !border-[#306E1D]"
-            callback={handleSave}
-            interactingAPI={isLoading}
-          />
-        </div>
-      </div>
-      <div className="flex flex-col w-full shadow-xl shrink-l lg:max-w-[393px] py-10 px-6 gap-4">
-        <div>
-          <p className="text-[18px] sm:text-[24px] font-normal text-center px-16">
-            <span className="text-[#FF65DD]">Donate</span> to grow
-          </p>
-          <p className="text-[18px] sm:text-[24px] font-normal text-center px-16">
-            LEAD Me2We forest
-          </p>
-        </div>
-        <div>
-          <InputField
-            name="name"
-            placeholder="Enter your name"
-            type="text"
-            onChange={handlePayment}
-            value={paymentData.name}
-            className="text-[16px] mt-[8px]"
-            label={"Name"}
-            bgColor="#F4F4F4"
-          />
-          {paymentErrors.name && (
-            <p className="text-red-500 text-sm mt-1">{paymentErrors.name}</p>
-          )}
-        </div>
-        <div>
-          <InputField
-            name="email"
-            placeholder="Enter your email"
-            type="email"
-            onChange={handlePayment}
-            value={paymentData.email}
-            className="text-[16px] mt-[8px]"
-            label={"Email"}
-            bgColor="#F4F4F4"
-          />
-          {paymentErrors.email && (
-            <p className="text-red-500 text-sm mt-1">{paymentErrors.email}</p>
-          )}
-        </div>
-        <div>
-          <InputField
-            name="amount"
-            placeholder="$"
-            type="number"
-            onChange={handlePayment}
-            value={paymentData.amount.toString()}
-            className="text-[16px] mt-[8px]"
-            label={"Enter Amount"}
-            bgColor="#F4F4F4"
-          />
-          {paymentErrors.amount && (
-            <p className="text-red-500 text-sm mt-1">{paymentErrors.amount}</p>
-          )}
+                    {!imageObj?.image && (
+                      <>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="flex"
+                          id={`plant-image-${imageObj.day}`}
+                          name="image"
+                          onChange={(e: any) => {
+                            handleImageChange(e, imageObj.day);
+                          }}
+                        />
+                        <label
+                          htmlFor={`plant-image-${imageObj.day}`}
+                          className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
+                        >
+                          <div className="flex flex-col gap-[10px] items-center w-full">
+                            <p className="text-nowrap">Attach photo</p>
+                            <CustomButton
+                              label="Choose File"
+                              className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
+                            />
+                          </div>
+                        </label>
+                      </>
+                    )}
+                    {imageObj.image && (
+                      <Image
+                        src={imageObj?.image}
+                        alt={`Day ${imageObj?.day}`}
+                        width={100}
+                        height={100}
+                        className="w-full"
+                        unoptimized
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col w-full gap-[55px]">
+            <div className="flex flex-col w-full lg:max-w-[380px]">
+              <InputField
+                name="cohort"
+                placeholder="Enter your cohort"
+                type="text"
+                onChange={handleChange}
+                value={formData.cohort}
+                className="text-[16px] mt-[8px] border border-[#cccccc] "
+              />
+              {errors.cohort && (
+                <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
+              )}
+            </div>
+            <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
+              {formData?.images?.map((imageObj: any) => {
+                return (
+                  <div
+                    key={imageObj.day}
+                    className="flex flex-col w-full lg:max-w-[380px] gap-2"
+                  >
+                    <label className="text-[16px] text-[#404040] font-medium">
+                      Day {imageObj.day}
+                    </label>
+                    {!imageObj?.image && (
+                      <>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="flex"
+                          id={`plant-image-${imageObj.day}`}
+                          name="image"
+                          onChange={(e: any) => {
+                            handleImageChange(e, imageObj.day);
+                          }}
+                        />
+                        <label
+                          htmlFor={`plant-image-${imageObj.day}`}
+                          className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
+                        >
+                          <div className="flex flex-col gap-[10px] items-center w-full">
+                            <p className="text-nowrap">Attach photo</p>
+                            <CustomButton
+                              label="Choose File"
+                              className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
+                            />
+                          </div>
+                        </label>
+                      </>
+                    )}
+                    {imageObj.image && (
+                      <Image
+                        src={imageObj?.image}
+                        alt={`Day ${imageObj?.day}`}
+                        width={100}
+                        height={100}
+                        className="w-full"
+                        unoptimized
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="flex flex-col w-full mt-2 gap-[55px]">
+            <div className="flex flex-col w-full lg:max-w-[380px]">
+              <CustomDate
+                value={formData.datePlanted}
+                onChange={handleDateChange}
+                className="border border-[#cccccc] !pt-0"
+              />
+              {errors.datePlanted && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.datePlanted}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-col w-full lg:flex-row gap-5 lg:gap-11 justify-center">
+              {formData?.images?.map((imageObj: any) => {
+                return (
+                  <div
+                    key={imageObj.day}
+                    className="flex flex-col w-full lg:max-w-[380px] gap-2"
+                  >
+                    <label className="text-[16px] text-[#404040] font-medium">
+                      Day {imageObj.day}
+                    </label>
+                    {!imageObj?.image && (
+                      <>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="flex"
+                          id={`plant-image-${imageObj.day}`}
+                          name="image"
+                          onChange={(e: any) => {
+                            handleImageChange(e, imageObj.day);
+                          }}
+                        />
+                        <label
+                          htmlFor={`plant-image-${imageObj.day}`}
+                          className="flex gap-[10px] w-full border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
+                        >
+                          <div className="flex flex-col gap-[10px] items-center w-full">
+                            <p className="text-nowrap">Attach photo</p>
+                            <CustomButton
+                              label="Choose File"
+                              className="flex px-2 w-max md:w-full h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
+                            />
+                          </div>
+                        </label>
+                      </>
+                    )}
+                    {imageObj.image && (
+                      <Image
+                        src={imageObj?.image}
+                        alt={`Day ${imageObj?.day}`}
+                        width={100}
+                        height={100}
+                        className="w-full"
+                        unoptimized
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
         <CustomButton
-          label="Donate Now"
-          callback={handleDonate}
-          className="flex px-2 w-full !h-[40px] !bg-[#FF65DD] !text-white my-1"
-          interactingAPI={loading}
+          label="SAVE"
+          className="flex w-[210px] font-semibold leading-[19.5px] !rounded-[24px] py-[12px] px-[21px] self-center mt-5"
         />
-      <h3 className="text-center">OR</h3>
-      <div className="flex w-full justify-center">
-      <Image
-        src='/images/qrcode.png'
-        alt={`qrcode`}
-        width={150}
-        height={100}
-        unoptimized
-      />
-      </div>
       </div>
     </div>
   );

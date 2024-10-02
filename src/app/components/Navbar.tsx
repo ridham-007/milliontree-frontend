@@ -7,12 +7,12 @@ import { GrLinkedinOption } from "react-icons/gr";
 import { FaYoutube } from "react-icons/fa";
 import CustomButton from "./ui/CustomButton";
 import { usePathname } from "next/navigation";
-
+import { useRouter } from "next/navigation";
 export default function Navbar() {
   const navData = [
     {
       title: "Track My Tree",
-      href: "/track",
+      href: "/track-my-tree",
       key: "track-my-tree",
     },
     {
@@ -26,22 +26,29 @@ export default function Navbar() {
       key: "blog",
     },
   ];
+  const router = useRouter();
+
   const [selected, setSelected] = useState<string | null>("Home");
-  const pathName = usePathname()
-  
+  const pathName = usePathname();
+
   const handleLinkClick = (title: string) => {
     setSelected(title);
   };
+  const handleDonate = () => {
+    router.push("/donate");
+  };
   return (
     <nav
-      className={`flex justify-between items-start w-full h-[230px] ${pathName === '/' ? 'bg-none text-white' : 'bg-[#F2F0EB] text-black'} shadow-lg px-3 sm:px-[30px] lg:px-[100px] py-[40px] lg:py-[50px] `}
+      className={`flex justify-between items-start w-full h-[230px] ${
+        pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
+      } shadow-lg px-3 sm:px-[30px] lg:px-[100px] py-[40px] lg:py-[50px] `}
       key="navbar"
     >
       <div className="flex lg:h-[48px] items-center w-full gap-1">
         <Link href="/">
-        <p className="flex text-[12px] tracking-[4px] font-light text-nowrap">
-        PLANT MILLION TREES
-        </p>
+          <p className="flex text-[12px] tracking-[4px] font-light text-nowrap">
+            PLANT MILLION TREES
+          </p>
         </Link>
       </div>
 
@@ -70,7 +77,11 @@ export default function Navbar() {
             window.open("https://www.linkedin.com/groups/14208374/", "_blank")
           }
         />
-        <CustomButton label={"DONATE"} className="w-[25%] h-[50px] font-semibold tracking-wide rounded-full"/>
+        <CustomButton
+          label={"DONATE"}
+          className=" h-[50px] font-semibold tracking-wide rounded-full w-[25%]"
+          onClick={handleDonate}
+        />
       </div>
     </nav>
   );
