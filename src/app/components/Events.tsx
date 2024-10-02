@@ -189,25 +189,24 @@ export default function Events() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-5 ">
-      <div className="flex justify-center w-full px-[10px]">
-        <div className="flex flex-col w-full ">
-          <div className="flex justify-center relative top-[140px]">
-            <Image
-              src="/images/event-banner.png"
-              width={355}
-              height={310}
-              alt="Picture of the author"
-              className="sm:w-[1280px] sm:h-[350px] w-[355px] h-[310px] rounded-[40px]"
-            />
-          </div>
-          <div className="uppercase font-bold text-[34px] sm:text-[44px] leading-[53px] text-center text-white tracking-[10px] sm:tracking-[20px] absolute top-[280px] sm:top-[290px] left-1/2 transform -translate-x-1/2">
-            events
-          </div>
+    <div className="flex flex-col w-full h-full ">
+      <div className="flex justify-center items-center w-full px-[10px] flex-col max-w-[1280px] self-center">
+        <div className="w-full relative z-30 self-center">
+          <Image
+            src={"/images/event-banner.png"}
+            width={355}
+            height={310}
+            alt=""
+            unoptimized
+            className="flex sm:w-[1280px] sm:h-[350px] w-[355px] h-[310px] rounded-[40px] "
+          />
+          <p className="w-full top-32 text-[34px] sm:text-[44px] font-bold absolute text-white text-center tracking-[12px]">
+            EVENTS
+          </p>
         </div>
       </div>
       {/*  Upcoming events */}
-      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px] mt-[200px]">
+      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px] mt-[100px]">
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Upcoming events
         </div>
