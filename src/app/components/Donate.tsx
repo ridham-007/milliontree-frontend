@@ -48,11 +48,11 @@ const Donate = () => {
               <div className="flex justify-center items-center">
                 <Image
                   src={"/images/scaner.png"}
-                  width={112}
-                  height={112}
+                  width={210}
+                  height={200}
                   alt=""
                   unoptimized
-                  className="w-[112px] h-[112px] rounded-[20px] lg:rounded-[40px]"
+                  className="w-[210px] h-[200px] rounded-[20px] lg:rounded-[40px]"
                 />
               </div>
             </div>
