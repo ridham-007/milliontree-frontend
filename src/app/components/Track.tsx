@@ -315,7 +315,7 @@ export default function TrackPage(props: TrackPageProps) {
             <div className="flex flex-col lg:flex-row gap-5 lg:gap-11 justify-center w-full lg:max-w-[380px]">
               <InputField
                 name="name"
-                placeholder="Enter your name"
+                placeholder="Name"
                 type="text"
                 onChange={handleChange}
                 value={formData.name}
@@ -380,7 +380,7 @@ export default function TrackPage(props: TrackPageProps) {
             <div className="flex flex-col w-full lg:max-w-[380px]">
               <InputField
                 name="cohort"
-                placeholder="Enter your cohort"
+                placeholder="Cohort"
                 type="text"
                 onChange={handleChange}
                 value={formData.cohort}
@@ -446,7 +446,7 @@ export default function TrackPage(props: TrackPageProps) {
               <CustomDate
                 value={formData.datePlanted}
                 onChange={handleDateChange}
-                className="border border-[#cccccc] !pt-0"
+                className="border border-[#cccccc] !pt-0 !h-[48px]"
               />
               {errors.datePlanted && (
                 <p className="text-red-500 text-sm mt-1">

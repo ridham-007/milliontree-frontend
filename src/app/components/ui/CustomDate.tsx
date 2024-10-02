@@ -33,6 +33,9 @@ const CustomDate = (props: InputFieldProps) => {
           "& .MuiStack-root": {
             width: "100%",
           },
+          "& .css-qgk9ur-MuiStack-root": {
+            overflow: "hidden",
+          },
         }}
       >
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -61,9 +64,6 @@ const CustomDate = (props: InputFieldProps) => {
               ".MuiOutlinedInput-notchedOutline": {
                 border: "none",
               },
-              ".css-qgk9ur-MuiStack-root": {
-                paddingTop: "1px",
-              },
             }}
           >
             <DatePicker
@@ -83,12 +83,6 @@ const CustomDate = (props: InputFieldProps) => {
                 },
                 ".MuiButtonBase-root .MuiPickersDay-root.Mui-selected": {
                   background: "red",
-                },
-                ".css-qgk9ur-MuiStack-root": {
-                  paddingTop: "1px",
-                },
-                ".css-bprv1h-MuiStack-root": {
-                  paddingTop: "1px",
                 },
               }}
             />

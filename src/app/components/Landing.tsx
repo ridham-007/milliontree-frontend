@@ -546,7 +546,7 @@ export default function LandingPage() {
 
       <div className="flex flex-col lg:flex-row w-full py-[118px] px-[10px] lg:px-[80px] gap-[100px] lg:gap-0 ">
         <div className="flex flex-col w-full justify-center items-center">
-          <div className="flex flex-col gap-[49px] ">
+          <div className="flex flex-col gap-[49px]">
             <div className="flex flex-col">
               <div className="font-bold text-[24px] sm:text-[34px] leading-[29px] sm:leading-[41px] text-center">
                 Planted a Tree?{" "}
@@ -580,7 +580,7 @@ export default function LandingPage() {
                     type="text"
                     onChange={handleChange}
                     value={formData.cohort}
-                    className="text-[16px] mt-[8px] border border-[#999999] sm:w-[298px]"
+                    className="text-[16px] mt-[8px] border border-[#999999]  sm:w-[298px]"
                   />
                   {errors.cohort && (
                     <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
@@ -601,7 +601,7 @@ export default function LandingPage() {
                   )}
                 </div>
               </div>
-              <div className="flex flex-col gap-[10px] w-[50%] sm:w-auto">
+              <div className="flex flex-col gap-[10px] w-[50%] ">
                 {/* <div>
                   <InputField
                     name="email"
