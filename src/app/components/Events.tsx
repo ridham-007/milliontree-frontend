@@ -189,7 +189,7 @@ export default function Events() {
   };
 
   return (
-    <div className="flex flex-col w-full h-full ">
+    <div className="flex flex-col w-full h-full gap-[64px]">
       <div className="flex justify-center items-center w-full px-[10px] flex-col max-w-[1280px] self-center">
         <div className="w-full relative z-30 self-center">
           <Image
@@ -206,7 +206,7 @@ export default function Events() {
         </div>
       </div>
       {/*  Upcoming events */}
-      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px] mt-[100px]">
+      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px]">
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Upcoming events
         </div>
