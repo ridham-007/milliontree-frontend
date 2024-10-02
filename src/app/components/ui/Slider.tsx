@@ -80,7 +80,7 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
         ))}
       </Slider>
 
-      <div className="flex w-full items-center justify-center gap-5">
+      <div className="flex sm:flex-row flex-col-reverse w-full items-center justify-center gap-5 mt-[45px]">
         <p className="text-[#3BAD49] text-[18px] font-normal">
           1/{Math.ceil(sliderImages.length / 4)}
         </p>

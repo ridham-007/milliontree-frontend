@@ -112,7 +112,6 @@ export default function LandingPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [openImageModal, setOpenImageModal] = useState(false);
 
-
   const handleImageModalOpen = (imageSrc: string) => {
     setSelectedImage(imageSrc);
     setOpenImageModal(true);
@@ -300,13 +299,12 @@ export default function LandingPage() {
   };
 
   const handleSubmit = async () => {
-    
     const token = Cookies.get("access_token");
     const userId = Cookies.get("userId");
-    console.log(token,userId);
-    
-    if(!token){
-      router.push('/login');
+    console.log(token, userId);
+
+    if (!token) {
+      router.push("/login");
       return;
     }
 
@@ -335,14 +333,13 @@ export default function LandingPage() {
       };
 
       try {
-      const res = await updateUserInfo(JSON.stringify(data));
+        const res = await updateUserInfo(JSON.stringify(data));
 
-      if(res?.success){
-        toast.success("Plant tree successfully.")
-      }
-        
+        if (res?.success) {
+          toast.success("Plant tree successfully.");
+        }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -378,7 +375,7 @@ export default function LandingPage() {
           value={selectedEvent}
           onChange={setSelectedEvent}
         />
-        <div className="mb-4 grid grid-cols-2 max-h-[250px] overflow-y-auto sm:grid-cols-3 md:grid-cols-4 gap-4 ">
+        <div className="mb-4 grid grid-cols-2 max-h-[250px] sm:grid-cols-3 md:grid-cols-4 gap-4 ">
           {selectedEvent?.images?.map((image: any, index: number) => (
             <div key={index} className="cursor-pointer">
               <Image
@@ -441,7 +438,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="overflow-auto">
+    <div>
       <div
         className="flex w-full h-screen bg-cover bg-top bg-no-repeat "
         style={{ backgroundImage: `url(${landingBackground.src})` }}
@@ -465,8 +462,13 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* <div className="flex flex-col w-full md:w-[65%] lg:w-[73%] items-center px-6 py-[40px]">
-        <ComposableMap>
+      <div className="flex flex-col w-full justify-center items-center md:w-[65%] lg:w-[73%] px-6 pt-[40px] sm:pt-[96px] pb-[74px] sm:pb-[104px] m-auto">
+        <div className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center">
+          Drive for <span className="underline">1M trees</span> planted by Me2We
+          2030
+        </div>
+
+        <ComposableMap className="flex justify-center items-center">
           <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
             {({ geographies }) =>
               geographies.map((geo: any) => {
@@ -476,12 +478,14 @@ export default function LandingPage() {
                       key={geo.id}
                       geography={geo}
                       style={{
-                        default: { fill: '#dbdbdb' },
+                        default: { fill: "#dbdbdb" },
                         hover: { fill: "#306E1D" },
                         pressed: { fill: "#8C1515" },
                       }}
                       stroke="#306E1D"
-                      onClick={()=>{fetchRegionImage(geo.properties.name)}}
+                      onClick={() => {
+                        fetchRegionImage(geo.properties.name);
+                      }}
                     />
                   </>
                 );
@@ -492,39 +496,55 @@ export default function LandingPage() {
           {plantedTrees?.map((plant: any, index: number) => {
             const { location } = plant;
             return (
-              <Tooltip title={`Trees planted: ${plant?.trees?.length}`} arrow placement='top' componentsProps={{
-                tooltip: {
-                  sx: {
-                    bgcolor: '#fff',
-                    color: "#306E1D",
-                    fontWeight: "bold",
-                    border: "1px solid #306E1D",
-                    '& .MuiTooltip-arrow': {
-                      color: 'transparent',
+              <Tooltip
+                title={`Trees planted: ${plant?.trees?.length}`}
+                arrow
+                placement="top"
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      bgcolor: "#fff",
+                      color: "#306E1D",
+                      fontWeight: "bold",
+                      border: "1px solid #306E1D",
+                      "& .MuiTooltip-arrow": {
+                        color: "transparent",
+                      },
                     },
                   },
-                },
-              }}>
+                }}
+              >
                 <Marker
                   key={index}
                   coordinates={[location?.longitude, location?.latitude]}
                 >
-                  <circle r={4} fill={`${contrastingColors[plant?.trees?.length >= 4 ? 3 : plant?.trees?.length - 1]}`} />
+                  <circle
+                    r={4}
+                    fill={`${
+                      contrastingColors[
+                        plant?.trees?.length >= 4 ? 3 : plant?.trees?.length - 1
+                      ]
+                    }`}
+                  />
                 </Marker>
               </Tooltip>
             );
           })}
         </ComposableMap>
-      </div> */}
+        <div className="font-semibold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px] text-center">
+          Numbers of Trees planted till date:{" "}
+          <span className="text-[#3BAD49]">1,000</span> 
+        </div>
+      </div>
 
-      <div className="flex flex-col justify-between w-full h-full max-h-[780px] bg-[#F2F0EB] p-6 text-center">
-        <p className="font-bold text-[44px] mt-[108px] mb-[35px]">
+      <div className="flex flex-col  w-full h-full max-h-[780px] bg-[#F2F0EB] p-6 text-center">
+        <p className="font-bold text-[44px] mt-[50px] sm:mt-[108px] mb-[45px]">
           Past Events
         </p>
         <ImageSlider sliderImages={sliderImages} />
       </div>
 
-      <div className="flex flex-col lg:flex-row w-full py-[118px] px-[10px] lg:px-[80px] gap-[100px] sm:gap-0 ">
+      <div className="flex flex-col lg:flex-row w-full py-[118px] px-[10px] lg:px-[80px] gap-[100px] lg:gap-0 ">
         <div className="flex flex-col w-full justify-center items-center">
           <div className="flex flex-col gap-[49px] ">
             <div className="flex flex-col">
@@ -536,7 +556,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex gap-[15px] sm:gap-[30px] w-[100%]">
-              <div className="flex flex-col gap-[10px] w-[50%] sm:w-auto">
+              <div className="flex flex-col gap-[10px] w-[50%] ">
                 <div>
                   <InputField
                     name="treeName"
@@ -544,11 +564,13 @@ export default function LandingPage() {
                     type="text"
                     onChange={handleChange}
                     value={formData.treeName}
-                    className="text-[16px] mt-[8px] border-[#999999]"
+                    className="text-[16px] mt-[8px] border border-[#999999] sm:w-[298px]"
                     bgColor="#F4F4F4"
                   />
                   {errors.treeName && (
-                    <p className="text-red-500 text-sm mt-1">{errors.treeName}</p>
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.treeName}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -558,7 +580,7 @@ export default function LandingPage() {
                     type="text"
                     onChange={handleChange}
                     value={formData.cohort}
-                    className="text-[16px] mt-[8px] border border-[#999999]"
+                    className="text-[16px] mt-[8px] border border-[#999999] sm:w-[298px]"
                   />
                   {errors.cohort && (
                     <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
@@ -567,7 +589,7 @@ export default function LandingPage() {
                 <div>
                   <PlacesAutocomplete
                     name="location"
-                    className="mt-[8px] w-full border border-[#999999]"
+                    className="mt-[8px] border border-[#999999] sm:w-[298px]"
                     placeholder="Location"
                     onChange={handleLocationChange}
                     value={formData.location.name}
@@ -597,7 +619,7 @@ export default function LandingPage() {
                   <CustomDate
                     value={formData.datePlanted}
                     onChange={handleDateChange}
-                    className="border border-[#999999] mt-1"
+                    className="border border-[#999999] mt-[9px] sm:w-[298px] !h-[48px] "
                   />
                   {errors.datePlanted && (
                     <p className="text-red-500 text-sm mt-1">
@@ -606,22 +628,24 @@ export default function LandingPage() {
                   )}
                 </div>
 
-                <div className="mt-2 ">
+                <div className="mt-2 sm:w-[298px]">
                   <input
                     type="file"
                     accept="image/*"
-                    className="hidden"
+                    className="hidden "
                     id="plant-image"
                     name="image"
                     onChange={handleChange}
                   />
                   <label
                     htmlFor="plant-image"
-                    className="flex gap-[10px] border items-center border-[#999999] px-[2px] sm:px-2 h-[45px]"
+                    className="flex gap-[10px] border items-center border-[#999999] px-[2px] sm:px-2 h-[48px]"
                   >
                     {!formData.image ? (
                       <div className="flex justify-between items-center w-full cursor-pointer">
-                        <p className="text-nowrap ">Attach photo</p>
+                        <p className="text-nowrap text-[#555555] font-normal">
+                          Attach photo
+                        </p>
                         <CustomButton
                           label="Choose File"
                           className="flex sm:mx-4 !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1  -z-10"
@@ -659,7 +683,7 @@ export default function LandingPage() {
             to learn about Me2We Forecast
           </p>
           <CustomButton
-            className="!bg-[#3A8340] text-white text-[28px] w-[300px] sm:w-[352px] h-[88px] rounded-full mt-[61px] sm:mt-[64px]"
+            className="!bg-[#3A8340] text-white text-[28px] w-[300px] sm:w-[352px] h-[88px] rounded-full  mt-[61px] sm:mt-[64px]"
             label={"evertreen"}
             prefixIcon={
               <Image src={ButtonPrefix.src} width={36} height={36} alt="" />
