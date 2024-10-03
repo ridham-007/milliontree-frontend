@@ -30,7 +30,6 @@ const Pagination = ({ totalPages, onPageChange, currentPage }: PaginationProps) 
     return (
         <Stack direction="row" spacing='10px' className='pagination-wrapper'>
             {items.map(({ page, type, selected, ...item }, index) => {
-
                 let children = null;
 
                 if (type === 'start-ellipsis' || type === 'end-ellipsis') {
@@ -48,7 +47,7 @@ const Pagination = ({ totalPages, onPageChange, currentPage }: PaginationProps) 
                                 fontSize:currentPage ? '22px' : '20px',
                                 fontFamily: "'Montserrat', sans-serif",
                                 backgroundColor: 'white',
-                                color: currentPage ? '#3BAD49' : 'black',
+                                color: currentPage === page ? '#3BAD49' : 'black',
                                 boxShadow: 'none',
                                 borderRadius:'100%',
                                 '&:hover': {

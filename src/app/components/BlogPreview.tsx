@@ -2,66 +2,63 @@
 import Image from "next/image";
 import { IoLocationOutline } from "react-icons/io5";
 import { PiCalendarDots } from "react-icons/pi";
+import parse from 'html-react-parser';
+interface BlogPreviewProps {
+  data?: any;
+}
+export default function BlogPreview({ data }: BlogPreviewProps) {
+  const formatDate = (dateString: string) => {
+    const [datePart] = dateString.split('T');
+    const [year, month, day] = datePart.split('-');
 
-export default function BlogPreview() {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthName = months[parseInt(month) - 1];
+    return `${monthName} ${parseInt(day)}, ${year}`;
+  }
   return (
-      <div className="flex flex-col w-full max-w-[1280px] gap-10 lg:gap-[70px]">
+      <div className="flex flex-col w-full max-w-[1280px] gap-10 lg:gap-[70px] pb-10">
+        <div className="w-full z-30">
         <Image
-          src={"/images/plantation-3.jpg"}
+          src={data?.featureImage ? `${data?.featureImage}` : 'https://theconnecty.com/images/dummy.jpg'}
           width={350}
           height={350}
           alt=""
           unoptimized
-          className="w-full h-[310px] rounded-[20px] lg:rounded-[40px]"
+          className="w-full h-[310px] rounded-[20px] lg:rounded-[40px] "
         />
+        <p className="text-[11px] text-black">Image credit:<span className="text-black pl-2">{data?.creditBy}</span></p>
+        </div>
         <div className="flex flex-col w-full sm:px-10 lg:px-20">
           <p className="text-[24px] md:text-[34px] font-bold leading-7 md:leading-10 pb-6">
-            The Impact and Importance of Tree-Planting Events
+          {data?.title}
           </p>
           <div className="flex w-full gap-7 pb-5">
             <div className="flex gap-2 items-center">
               <IoLocationOutline size={24} color="#666666" />
               <p className="text-[16px] text-[#666666] whitespace-nowrap w-[110px] md:w-[150px] lg:w-[140px] overflow-hidden truncate">
-                Berlin, Germany Berlin, Germany
+              {data?.location}
               </p>
             </div>
             <div className="flex gap-2 items-center">
               <PiCalendarDots size={20} color="#666666" />
-              <p className="text-[16px] text-[#666666]">23.04.2024</p>
+              <p className="text-[16px] text-[#666666]">{data?.createDate ? formatDate(data?.createDate) : ""}</p>
             </div>
           </div>
           <div className="flex flex-col md:flex-row gap-9">
             <Image
-              src={"/images/plantation-3.jpg"}
+              src={data?.featureImage ? `${data?.featureImage}` : 'https://theconnecty.com/images/dummy.jpg'}
               width={500}
               height={400}
               alt=""
               unoptimized
               className="w-full md:w-[380px] lg:w-[500px] h-[286px] lg:h-[400px] rounded-[20px] lg:rounded-[30px]"
             />
-            <div>
-              <p>
-                Trees play a pivotal role in maintaining the balance of our
-                planet’s ecosystems. They absorb carbon dioxide (CO2) from the
-                atmosphere, produce oxygen, and store carbon in their biomass.
-                This makes them a critical tool in fighting global warming.
-                Forests, which are composed largely of trees, cover
-                approximately 31% of the Earth's land surface, and they absorb
-                nearly 2.6 billion tons of CO2 annually. Beyond their ability to
-                reduce carbon in the atmosphere, trees are also essential for
-                maintaining biodiversity. Forests serve as habitats for 80% of
-                the world's terrestrial species, from birds and insects to
-                mammals and fungi. By planting trees, we create and restore
-                habitats, making tree-planting events an integral part of
-                conservation efforts to protect endangered species. Trees also
-                help to regulate water cycles, prevent soil erosion, and provide
-                shade that can reduce urban heat island effects, making cities
-                more livable. Their presence in both rural and urban areas
-                offers numerous environmental, economic, and health benefits,
-                from cleaner air to energy savings.
-              </p>
-            </div>
+            <div className="w-full text-[14px] md:text-[18px] leading-7 article-container">{data?.description}</div>
           </div>
+          <div className="w-full text-[14px] md:text-[18px] leading-7 font-medium article-container">{parse(data?.content || '')}</div>
         </div>
       </div>
   );
