@@ -70,7 +70,7 @@ const LoginForm = () => {
           toast(response?.message)
           router.push("/");
         } else {
-          toast.info("Username or password incorrect.")
+          toast.info(response?.message ?? "Username or password incorrect.")
         }
         setLoading(false);
       };
