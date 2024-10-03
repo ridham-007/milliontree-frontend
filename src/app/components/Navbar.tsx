@@ -91,12 +91,8 @@ export default function Navbar(props: navbarProps) {
 
   return (
     <nav
-      className={`flex items-start w-full ${
-        pathName === "/admin"
-          ? "h-[90px] py-[10px] lg:py-[20px]"
-          : "h-[230px] py-[40px] lg:py-[50px]"
-      } ${
-        pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
+      className={`flex items-start w-full ${ pathName === "/admin" ? "h-[90px] py-[10px] lg:py-[20px]": "h-[230px] py-[40px] lg:py-[50px]"}
+       ${ pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
       } shadow-lg px-3 sm:px-[30px] xl:px-[100px] py-[40px] lg:py-[50px] `}
       key="navbar"
     >
@@ -112,7 +108,7 @@ export default function Navbar(props: navbarProps) {
           </div>
 
           {/* Mobile Menu Icon */}
-          <div className="lg:hidden flex items-center">
+          {/* <div className="lg:hidden flex items-center">
             <button onClick={toggleMenu}>
               {isMenuOpen ? (
                 <IoClose className="text-[20px] sm:text-[24px]" />
@@ -120,7 +116,7 @@ export default function Navbar(props: navbarProps) {
                 <FiMenu className="text-[20px] sm:text-[24px]" />
               )}
             </button>
-          </div>
+          </div> */}
         </div>
       )}
 
@@ -235,7 +231,7 @@ export default function Navbar(props: navbarProps) {
 
       {/* mobile view */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-0 right-0 w-full bg-[#3BAD49] text-[#fff] shadow-lg flex flex-col mb-[500px] pt-[40px] pb-[320px] !z-40">
+        <div className="lg:hidden absolute top-0 right-0 w-full bg-[#3BAD49] text-[#fff] shadow-lg flex flex-col mb-[500px] pt-[40px] pb-[320px]">
           <div className="flex !pt-0 p-[10px]">
             <div className="flex lg:h-[48px] items-center w-full gap-1">
               <Link href="/">

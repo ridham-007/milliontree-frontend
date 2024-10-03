@@ -4,7 +4,7 @@ export default async function SearchTreeLayout({ params: { userId }, }: { params
    
        
     return (
-        <div className="flex flex-1 flex-col w-full h-full">
+        <div className="flex flex-1 flex-col w-full h-full mt-[230px]">
            <SearchTree/>
         </div>
     )

@@ -22,7 +22,6 @@ export default function Blog() {
   const handlePageChange = (page: number) => {
     setBlogsData({ ...blogsData, page: page });
   };
-  console.log({blog});
   
   const fetchBlogs = async () => {
     setLoading(true)
@@ -51,6 +50,7 @@ export default function Blog() {
   useEffect(() => {
     fetchBlogs();    
   }, [blogsData]);
+  
     return(
         <div className="flex flex-col items-center w-full px-2">
         <div className="flex flex-col w-full max-w-[1280px] gap-10 lg:gap-[70px]">
