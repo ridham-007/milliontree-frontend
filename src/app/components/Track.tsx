@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import CustomSelection from "./ui/CustomSelect";
 const Cookies = require("js-cookie");
 
-
 export default function TrackPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -38,13 +37,19 @@ export default function TrackPage() {
   const [isLoading, setIsLoading] = useState<any>(false);
   const [isRefresh, setIsRefresh] = useState<any>(false);
   const [imageFiles, setImageFiles] = useState<{ [key: number]: File }>({});
-  const [treeNameData, setTreeNameData] = useState<{ value: string; label: string }[]>([]);
-  const [selectTree, setSelectTree] = useState<{ value: string; label: string }>();
-  
-  const transformedData = (treeData: any | undefined): { value: string; label: string }[] => {
+  const [treeNameData, setTreeNameData] = useState<
+    { value: string; label: string }[]
+  >([]);
+  const [selectTree, setSelectTree] = useState<{
+    value: string;
+    label: string;
+  }>();
+
+  const transformedData = (
+    treeData: any | undefined
+  ): { value: string; label: string }[] => {
     if (!treeData || treeData.length === 0) return [];
-    return treeData
-    .map((tree: any) => ({
+    return treeData.map((tree: any) => ({
       value: tree._id,
       label: tree.treeName,
     }));
@@ -90,14 +95,14 @@ export default function TrackPage() {
         ...prev,
         [day]: file,
       }));
-  
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData((prevData: any) => {
           const existingImageIndex = prevData.images.findIndex(
             (img: any) => img.day === day
           );
-  
+
           if (existingImageIndex !== -1) {
             const updatedImages = [...prevData.images];
             updatedImages[existingImageIndex] = {
@@ -160,10 +165,9 @@ export default function TrackPage() {
   };
 
   const handleSave = async () => {
-
-    if(!formData?._id){
+    if (!formData?._id) {
       setIsLoading(false);
-      return toast.info("Select one tree to proceed")
+      return toast.info("Select one tree to proceed");
     }
 
     if (!validateForm()) {
@@ -181,12 +185,11 @@ export default function TrackPage() {
       })
     );
 
-    
     const data = {
       ...formData,
       images: updatedImages,
     };
-    
+
     const res = await updateTreeInfo(JSON.stringify(data));
 
     if (res?.success) {
@@ -231,18 +234,20 @@ export default function TrackPage() {
       if(!userId){
         router.push('/login')
       }
-  
-    const userInfo = await getTreesByUserById(userId);
 
-    if (userInfo?.data?.success) {
-      setTreeData(userInfo?.data?.tree);
-      setTreeNameData(transformedData(userInfo?.data?.tree))
-    }
-  }
-    getTrees()
+      const userInfo = await getTreesByUserById(userId);
+
+      if (userInfo?.data?.success) {
+        setTreeData(userInfo?.data?.tree);
+        setTreeNameData(transformedData(userInfo?.data?.tree));
+      }
+    };
+    getTrees();
   }, [isRefresh]);
 
-  const selectedTreeDetails = treeData.find((tree: any) => tree._id === selectTree?.value);
+  const selectedTreeDetails = treeData.find(
+    (tree: any) => tree._id === selectTree?.value
+  );
 
   useEffect(() => {
     if (selectedTreeDetails) {
@@ -266,9 +271,9 @@ export default function TrackPage() {
             TRACK MY TREE
           </p>
         </div>
-        <div className="flex justify-end my-4">
+        <div className="flex self-end my-4 mr-4">
           <CustomSelection
-            className="w-full md:w-[380px]"
+            className="!w-[220px] md:w-[380px] rounded-none "
             placeholder={"Please select"}
             label="Select tree"
             data={treeNameData}
@@ -302,11 +307,14 @@ export default function TrackPage() {
               </label>
               {formData.images.find((img: any) => img.day === 1)?.image ? (
                 <Image
-                  src={formData.images.find((img: any) => img.day === 1)?.image ?? ''}
+                  src={
+                    formData.images.find((img: any) => img.day === 1)?.image ??
+                    ""
+                  }
                   alt="Day 1"
                   width={100}
                   height={100}
-                  className="w-full h-[250px] object-cover"
+                  className="w-full h-[250px] object-contain"
                   unoptimized
                 />
               ) : (
@@ -363,12 +371,13 @@ export default function TrackPage() {
               {formData.images.find((img: any) => img.day === 60)?.image ? (
                 <Image
                   src={
-                    formData.images.find((img: any) => img.day === 60)?.image ?? ''
+                    formData.images.find((img: any) => img.day === 60)?.image ??
+                    ""
                   }
                   alt="Day 60"
                   width={100}
                   height={100}
-                  className="w-full h-[250px] object-cover"
+                  className="w-full h-[250px] object-contain"
                   unoptimized
                 />
               ) : (
@@ -424,12 +433,13 @@ export default function TrackPage() {
               {formData.images.find((img: any) => img.day === 90)?.image ? (
                 <Image
                   src={
-                    formData.images.find((img: any) => img.day === 90)?.image ?? ''
+                    formData.images.find((img: any) => img.day === 90)?.image ??
+                    ""
                   }
                   alt="Day 90"
                   width={100}
                   height={100}
-                  className="w-full h-[250px] object-cover"
+                  className="w-full h-[250px] object-contain"
                   unoptimized
                 />
               ) : (

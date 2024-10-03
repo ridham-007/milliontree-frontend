@@ -856,7 +856,7 @@ export default function LandingPage() {
                   <input
                     type="file"
                     accept="image/*"
-                    className="hidden "
+                    className="hidden"
                     id="plant-image"
                     name="image"
                     onChange={handleChange}
@@ -872,11 +872,15 @@ export default function LandingPage() {
                         </p>
                         <CustomButton
                           label="Choose File"
-                          className="flex sm:mx-4 !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1  -z-10"
+                          className="flex sm:mx-4 !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-black rounded-full border !p-1 -z-10"
                         />
                       </div>
                     ) : (
-                      <p className="text-nowrap">{imageName}</p>
+                      <p className="text-nowrap">
+                        {imageName.length > 32
+                          ? `${imageName.slice(0, 32)}...`
+                          : imageName}
+                      </p>
                     )}
                   </label>
                   {errors.image && (
