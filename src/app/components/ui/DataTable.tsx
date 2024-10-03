@@ -27,6 +27,7 @@ import { useEffect, useState } from "react";
 import { MdOutlineEdit, MdOutlineMoreVert } from "react-icons/md";
 import { GrView } from "react-icons/gr";
 import { RiDeleteBinLine } from "react-icons/ri";
+import Loader from "../Loader";
 
 interface TablePaginationActionsProps {
   count: number;
@@ -72,14 +73,22 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
         disabled={page === 0}
         aria-label="previous page"
       >
-        {theme.direction === "rtl" ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
       >
-        {theme.direction === "rtl" ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
       </IconButton>
       <IconButton
         onClick={handleLastPageButtonClick}
@@ -125,7 +134,10 @@ const DataTable: React.FC<DataTableProps> = ({
     setAnchorEl(null);
   };
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => {
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    newPage: number
+  ) => {
     if (fixRow) {
       handlePagination(newPage);
     }
@@ -193,7 +205,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 align="center"
                 sx={{ height: "200px", position: "relative" }}
               >
-                {/* <Loader show={true} sx={{ position: "absolute" }} /> */}
+                <Loader show={true} sx={{ position: "absolute" }} />
               </TableCell>
             </TableRow>
           ) : tableConfig?.rows?.length === 0 ? (
@@ -214,110 +226,125 @@ const DataTable: React.FC<DataTableProps> = ({
           ) : (
             displayRows.map((row: any, index: number) => (
               <TableRow key={index}>
-              {updatedColumns.map((column: any) => {
-                const cellKey = `Datatable-row-${index}-${column.field}`;
+                {updatedColumns.map((column: any) => {
+                  const cellKey = `Datatable-row-${index}-${column.field}`;
 
-                if (column.field === "action" && tableConfig.actionPresent) {
-                  return (
-                    <TableCell
-                      key={cellKey}
-                      sx={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontSize: "14px",
-                      }}
-                    >
-                      <IconButton
-                        id="basic-button"
-                        aria-controls={open ? "basic-menu" : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? "true" : undefined}
-                        onClick={(event) => {
-                          handleClick(event, cellKey);
+                  if (column.field === "action" && tableConfig.actionPresent) {
+                    return (
+                      <TableCell
+                        key={cellKey}
+                        sx={{
+                          fontFamily: "Montserrat, sans-serif",
+                          fontSize: "14px",
                         }}
                       >
-                        <MdOutlineMoreVert size={18} />
-                      </IconButton>
-                      <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open && menuKey === cellKey}
-                        onClose={handleClose}
-                        MenuListProps={{
-                          "aria-labelledby": "basic-button",
+                        <IconButton
+                          id="basic-button"
+                          aria-controls={open ? "basic-menu" : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={open ? "true" : undefined}
+                          onClick={(event) => {
+                            handleClick(event, cellKey);
+                          }}
+                        >
+                          <MdOutlineMoreVert size={18} />
+                        </IconButton>
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          open={open && menuKey === cellKey}
+                          onClose={handleClose}
+                          MenuListProps={{
+                            "aria-labelledby": "basic-button",
+                          }}
+                        >
+                          {tableConfig?.actionList?.includes("edit") && (
+                            <MenuItem
+                              onClick={() => {
+                                handleClose("edit", row);
+                              }}
+                            >
+                              <ListItemIcon>
+                                <MdOutlineEdit size={18} />
+                              </ListItemIcon>
+                              Edit
+                            </MenuItem>
+                          )}
+                          {tableConfig?.actionList?.includes("view") && (
+                            <MenuItem
+                              onClick={() => {
+                                handleClose("view", row);
+                              }}
+                            >
+                              <ListItemIcon>
+                                <GrView size={18} />
+                              </ListItemIcon>
+                              View
+                            </MenuItem>
+                          )}
+                          {tableConfig?.actionList?.includes("delete") && (
+                            <MenuItem
+                              onClick={() => {
+                                handleClose("delete", row);
+                              }}
+                            >
+                              <ListItemIcon>
+                                <RiDeleteBinLine size={18} />
+                              </ListItemIcon>
+                              Delete
+                            </MenuItem>
+                          )}
+                        </Menu>
+                      </TableCell>
+                    );
+                  } else if (column.customRender) {
+                    return (
+                      <TableCell
+                        key={cellKey}
+                        sx={{
+                          fontFamily: "Montserrat, sans-serif",
+                          fontSize: "14px",
                         }}
                       >
-                        {tableConfig?.actionList?.includes("edit") && (
-                          <MenuItem
-                            onClick={() => {
-                              handleClose("edit", row);
-                            }}
-                          >
-                            <ListItemIcon>
-                              <MdOutlineEdit size={18} />
-                            </ListItemIcon>
-                            Edit
-                          </MenuItem>
-                        )}
-                        {tableConfig?.actionList?.includes("view") && (
-                          <MenuItem
-                            onClick={() => {
-                              handleClose("view", row);
-                            }}
-                          >
-                            <ListItemIcon>
-                              <GrView size={18} />
-                            </ListItemIcon>
-                            View
-                          </MenuItem>
-                        )}
-                        {tableConfig?.actionList?.includes("delete") && (
-                          <MenuItem
-                            onClick={() => {
-                              handleClose("delete", row);
-                            }}
-                          >
-                            <ListItemIcon>
-                              <RiDeleteBinLine size={18} />
-                            </ListItemIcon>
-                            Delete
-                          </MenuItem>
-                        )}
-                      </Menu>
-                    </TableCell>
-                  );
-                } else if (column.customRender) {
-                  return (
-                    <TableCell
-                      key={cellKey}
-                      sx={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {column.customRender(row)}
-                    </TableCell>
-                  );
-                } else {
-                  return (
-                    <TableCell
-                      key={cellKey}
-                      sx={{
-                        fontFamily: "Montserrat, sans-serif",
-                        fontSize: "14px",
-                      }}
-                    >
-                      {row[column.field] ? row[column.field] : "-"}
-                    </TableCell>
-                  );
-                }
-              })}
-            </TableRow>
+                        {column.customRender(row)}
+                      </TableCell>
+                    );
+                  } else {
+                    return (
+                      <TableCell
+                        key={cellKey}
+                        sx={{
+                          fontFamily: "Montserrat, sans-serif",
+                          fontSize: "14px",
+                        }}
+                      >
+                        {row[column.field] ? row[column.field] : "-"}
+                      </TableCell>
+                    );
+                  }
+                })}
+              </TableRow>
             ))
           )}
         </TableBody>
         <TableFooter>
           <TableRow>
-            {!fixRow && (
+            {/* {!fixRow && ( 
+              <TablePaginationActions
+                count={rows.length}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={handleChangePage}
+              />
+             )} */}
+            {fixRow ? (
+              <TablePaginationActions
+                count={tableConfig?.pagination?.totalPages}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={handleChangePage}
+              />
+            ) : (
               <TablePaginationActions
                 count={rows.length}
                 page={page}

@@ -260,4 +260,99 @@ export const updateUserInfo = async (
     }
   };
 
+  export const addUpdateBlog = async (
+    data: any
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/blog/add-update-blog`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+            // Authorization: `Bearer ${await getAccessToken()}`,
+          },
+          body: JSON.stringify(data),
+        })
+      ).json();
+      return {
+        success: true,
+        data: response,
+      };
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const deleteBlog = async (blogId: any): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/blog/${blogId}`, {
+          method: "DELETE",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+            // Authorization: `Bearer ${await getAccessToken()}`,
+          },
+        })
+      ).json();
+      if (response) {
+        return {
+          success: true,
+          data: response.data,
+        };
+      } else {
+        return prepareServerError(response?.message);
+      }
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const paginatedBlog = async (
+    data: any
+  ): Promise<any> => {
+    try {
+      const blogResponse = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/blog/paginate-blog`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify(data),
+        })
+      ).json();
+      if (blogResponse?.success) {
+        return {
+          success: true,
+          data: blogResponse?.data,
+        };
+      } else {
+        return prepareServerError(blogResponse?.message);
+      }
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const getBlogById = async (id: string): Promise<any> => {
+    try {
+      const blogResponse = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/blog/get-by-id/${id}`, {
+          cache: "no-store",
+        })
+      ).json();
+      if (blogResponse?.success) {
+        return {
+          success: true,
+          data: blogResponse?.data,
+        };
+      } else {
+        return prepareServerError(blogResponse?.message);
+      }
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
  

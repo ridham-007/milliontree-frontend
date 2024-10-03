@@ -1,0 +1,233 @@
+.article-container {
+    padding: 10px 25px;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid hsl(var(--border));
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+}
+
+.article-container p {
+    font-size: 15px;
+    font-weight: normal;
+    width: 100%;
+    padding-bottom: 10px;
+    text-align: justify;
+}
+
+.article-container b {
+    font-size: 15px;
+    font-weight: 600;
+    width: 100%;
+    padding-bottom: 10px;
+    text-align: justify;
+}
+
+.article-container span {
+    font-size: 15px;
+    font-weight: 500;
+    width: 100%;
+    display: contents;
+    padding-bottom: 10px;
+    text-align: justify;
+}
+
+.article-container p:has(img), .article-container div:has(img), .article-container a:has(img) {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.article-container p>img, .article-container div>img, .article-container img {
+    margin: 16px 4px;
+    width: 90%;
+    max-height: 545px;
+    display: flex;
+    align-self: center;
+}
+
+.article-container a>img {
+    display: flex;
+    align-self: center;
+    width: 250px;
+    height: 250px;
+}
+
+.article-container strong {
+    text-transform: capitalize;
+    display: contents;
+}
+
+.article-container h2 {
+    font-size: 21px;
+    font-weight: 500;
+    font-family: system-ui;
+    padding: 10px 0px;
+}
+
+.article-container h3 {
+    font-size: 19px;
+    font-weight: 500;
+    padding: 10px 0px;
+    font-family: system-ui;
+}
+
+.article-container h4 {
+    font-size: 17px;
+    font-weight: 600;
+    padding: 10px 0px;
+    font-family: system-ui;
+}
+
+.article-container center {
+    text-transform: capitalize;
+}
+
+.article-container a {
+    font-size: 15px;
+    font-weight: 600;
+    color: #7ba1e9;
+    display: contents;
+}
+
+.article-container  a:hover {
+    color: red;
+}
+
+.article-container strong {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.article-container ul, .article-container ol {
+    margin: 8px;
+    padding-left: 24px;
+    list-style-type: none;
+}
+
+.article-container li {
+    list-style: inside;
+}
+
+.article-container div:has(table) {
+    display: flex;
+    width: 100%;
+    width:calc(100% - 1px) !important;
+    max-width: calc(100% - 1px) !important;
+    overflow-x: auto;
+}
+
+.article-container table {
+    margin: 12px 5px;
+    width:calc(100% - 1px) !important;
+    max-width: calc(100% - 1px) !important;
+    overflow-x: auto;
+}
+
+.article-container td {
+    padding: 5px 10px;
+    border-left: 1px solid hsl(var(--primary));
+    border-right: 1px solid hsl(var(--primary));
+}
+
+.article-container th {
+    padding: 5px 10px;
+    border-left: 1px solid hsl(var(--primary));
+    border-right: 1px solid hsl(var(--primary));
+    background: hsl(var(--primary));
+}
+
+.article-container tr {
+    border-bottom: 1px solid hsl(var(--primary));
+    border-top: 1px solid hsl(var(--primary));
+}
+
+.article-container tr:hover{
+    background-color: hsl(var(--primary-foreground));
+}
+
+.article-container tr:nth-child(odd){
+    background-color: hsl(var(--muted));
+}
+
+.article-container tr:nth-child(1){
+    background-color: hsl(var(--primary)) !important;
+    color: white;
+}
+
+.article-container tr:nth-child(1) td,.article-container tr:nth-child(1) th {
+    border-right: 1px solid white;
+    color: white;
+}
+
+
+.article-container .alert {
+    color: white;
+    background-color: hsl(346.8 87.2% 49.8%);
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.article-container .warning {
+    display: flex;
+    align-items: center;
+    color: #ffb000;
+    background-color: hsl(37.92deg 90.36% 43.66% / 90%);
+    border-radius: 8px;
+}
+
+.article-container .warning-text {
+    padding-left: 0px;
+    color: white;
+}
+
+.article-container .warning svg {
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+}
+
+.article-container .warning .warning-title {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    margin-left: 8px;
+}
+
+.article-container .checkbox {
+    display: flex;
+    padding-left: 8px;
+}
+
+.article-container .row-html {
+    min-height: 200px;
+    resize: vertical;
+    border-radius: 8px;
+    border: 0;
+    background-color: #1e2128;
+    font-family: Menlo, Monaco, Consolas, Courier New, monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    letter-spacing: -.2px;
+    color: #a1a7b6;
+    overscroll-behavior: contain;
+    margin: 4px;
+    padding: 8px;
+}
+
+.article-container li::first-letter, 
+.article-container p::first-letter,
+.article-container h1::first-letter,
+.article-container h2::first-letter,
+.article-container h3::first-letter,
+.article-container h4::first-letter,
+.article-container h5::first-letter,
+.article-container h6::first-letter,
+.article-container div::first-letter{
+    text-transform: uppercase;
+}
+
+.article-container video {
+    display: none;
+} 
