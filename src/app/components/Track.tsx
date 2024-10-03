@@ -225,7 +225,9 @@ export default function TrackPage() {
 
   useEffect(() => {
     const getTrees = async () => { 
-      const userId = Cookies.get("userId");
+    const user = JSON.parse(Cookies.get("user"));
+    const userId = user?.userId;
+
       if(!userId){
         router.push('/login')
       }
