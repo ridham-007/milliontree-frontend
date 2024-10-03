@@ -299,8 +299,9 @@ export default function LandingPage() {
   };
 
   const handleSubmit = async () => {
-    const token = Cookies.get("access_token");
-    const userId = Cookies.get("userId");
+    const user = JSON.parse(Cookies.get("user"));
+    const token = user?.accessToken;
+    const userId = user?.userId;
 
     if (!token) {
       router.push("/login");

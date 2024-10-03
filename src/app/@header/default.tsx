@@ -1,7 +1,6 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import { cookies } from "next/headers";
-const Cookies = require("js-cookie");
 
 const Default = async () => {
   const userCookie = await cookies().get("user")?.value;

@@ -89,10 +89,13 @@ const SignUpForm = () => {
       setLoading(true);
       const response = await signUpUser(userInfo);
       if (response?.success) {
-        // Cookies.set("access_token", response?.accessToken);
-        // Cookies.set("userId",response?.user?._id)
-        
-        Cookies.set("user", JSON.stringify(response))
+        const data = {
+          fName: response.fName,
+          lName: response.lName,
+          userId: response._id,
+          accessToken: response.accessToken
+      }
+        Cookies.set("user", JSON.stringify(data))
         toast(response?.message);
         router.push("/");
       } else {

@@ -17,7 +17,7 @@ interface navbarProps {
   userData?: any;
 }
 export default function Navbar(props: navbarProps) {
-  const userInfo: any = props?.userData?.user;
+  const userInfo: any = props?.userData;
   const userName = `${userInfo?.fName} ${userInfo?.lName}`;
 
   const navData = [
