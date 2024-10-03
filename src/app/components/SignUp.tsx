@@ -93,7 +93,8 @@ const SignUpForm = () => {
           fName: response.fName,
           lName: response.lName,
           userId: response._id,
-          accessToken: response.accessToken
+          userRole: response?.user?.userRole,
+          accessToken: response.accessToken,
       }
         Cookies.set("user", JSON.stringify(data))
         toast(response?.message);

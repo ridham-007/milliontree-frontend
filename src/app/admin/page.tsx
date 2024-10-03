@@ -14,7 +14,7 @@ export default async function AdminLayout(props:any) {
   }
   return (
     <div className="flex flex-1 flex-col w-full h-full">
-      {user?.user?.userRole && user?.user?.userRole === "admin" ? (
+      {user?.userRole && user?.userRole === "admin" ? (
         <Admin queryParams={props?.searchParams} authId={user?.user?._id} />
       ) : (
         <div className="flex justify-center items-center w-full h-full ">

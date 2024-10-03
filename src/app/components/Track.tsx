@@ -273,7 +273,7 @@ export default function TrackPage() {
         </div>
         <div className="flex self-end my-4 mr-4">
           <CustomSelection
-            className="!w-[220px] md:w-[380px] rounded-none "
+            className="!w-[220px] md:!w-[380px] rounded-none "
             placeholder={"Please select"}
             label="Select tree"
             data={treeNameData}

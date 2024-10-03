@@ -69,6 +69,7 @@ const LoginForm = () => {
               fName: response?.user?.fName,
               lName: response?.user?.lName,
               userId: response?.user?._id,
+              userRole: response?.user?.userRole,
               accessToken: response.accessToken
           }
           Cookies.set("user", JSON.stringify(data))
