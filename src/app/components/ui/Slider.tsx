@@ -84,7 +84,7 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
         <p className="text-[#3BAD49] text-[18px] font-normal">
           1/{Math.ceil(sliderImages.length / 4)}
         </p>
-        <div className="flex text-[#666666] gap-3">
+        <div className="flex text-[#666666] gap-[48px] sm:gap-3">
           <FaArrowLeftLong
             size={28}
             className="cursor-pointer w-8"
