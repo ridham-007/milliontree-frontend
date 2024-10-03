@@ -129,7 +129,6 @@ export default function Events() {
     },
   ];
 
-  const [menuOpen, setMenuOpen] = useState(false);
   const [expandedMonths, setExpandedMonths] = useState<{
     [key: number]: boolean;
   }>({});
@@ -184,24 +183,21 @@ export default function Events() {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
 
   return (
     <div className="flex flex-col w-full h-full gap-[64px]">
       <div className="flex justify-center items-center w-full px-[10px] flex-col max-w-[1280px] self-center">
-        <div className="w-full relative z-30 self-center">
+        <div className="w-full relative z-30 ">
           <Image
             src={"/images/event-banner.png"}
-            width={355}
-            height={310}
+            width={350}
+            height={350}
             alt=""
             unoptimized
-            className="flex sm:w-[1280px] sm:h-[350px] w-[355px] h-[310px] rounded-[40px] "
+            className="w-full h-[280px] sm:h-[350px] rounded-[40px] "
           />
           <p className="w-full top-32 text-[34px] sm:text-[44px] font-bold absolute text-white text-center tracking-[12px]">
-            EVENTS
+            EVENT
           </p>
         </div>
       </div>
