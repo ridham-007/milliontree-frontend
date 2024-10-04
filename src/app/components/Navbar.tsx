@@ -91,7 +91,7 @@ export default function Navbar(props: navbarProps) {
 
   return (
     <nav
-      className={`flex items-start w-full ${pathName === "/admin" ? "h-[90px] py-[10px] lg:py-[20px]" : "h-[230px] py-[40px] lg:py-[50px]"}
+      className={`flex items-start w-full ${pathName === "/admin" ? "h-[100px] md:h-[140px] py-[10px] lg:py-[20px]" : "h-[230px] py-[40px] lg:py-[50px]"}
        ${pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
         } shadow-lg px-3 sm:px-[30px] xl:px-[70px] py-[40px] lg:py-[50px] `}
       key="navbar"
@@ -201,8 +201,8 @@ export default function Navbar(props: navbarProps) {
                     <p className={`whitespace-nowrap w-full overflow-hidden ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} truncate`}>
                       {userName === undefined ? "User Name" : userName}
                     </p>
-                    <p className={`text-[12px] w-full break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`}>
-                      {userInfo?.email}
+                    <p className={`text-[12px] w-full cursor-pointer break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`} onClick={() => { userInfo?.userRole === 'admin' ? (router.push('/admin'), setAnchor(null)) : '' }}>
+                      {userInfo?.userRole === 'admin' ? "Settings" : ''}
                     </p>
                   </div>
                 </div>
