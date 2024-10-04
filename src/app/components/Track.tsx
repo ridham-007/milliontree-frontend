@@ -167,7 +167,7 @@ export default function TrackPage() {
   const handleSave = async () => {
     if (!formData?._id) {
       setIsLoading(false);
-      return toast.info("Select one tree to proceed");
+      return toast.info("Select tree to proceed");
     }
 
     if (!validateForm()) {
@@ -227,11 +227,12 @@ export default function TrackPage() {
   };
 
   useEffect(() => {
-    const getTrees = async () => { 
-    const user = JSON.parse(Cookies.get("user"));
-    const userId = user?.userId;
+    const getTrees = async () => {
+      // const user = JSON.parse(Cookies.get("user"));
+      const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+      const userId = user?.userId;
 
-      if(!userId){
+      if (!userId) {
         router.push('/login')
       }
 

@@ -30,12 +30,12 @@ export default function Footer() {
               className="border border-white rounded-full p-1 cursor-pointer"
               onClick={() =>
                 window.open(
-                  "https://www.linkedin.com/groups/14208374/",
+                  "https://www.linkedin.com/company/plantmilliontrees/",
                   "_blank"
                 )
               }
             />
-            
+
             {/* <RiYoutubeFill
               size={30}
               color="white"
@@ -50,12 +50,12 @@ export default function Footer() {
           </div>
           <div>
             <Image
-            src="/images/stanford-white.png"
-            height={200}
-            width={250}
-            alt="logo"
-            className="w-[170px] h-[100] md:w-[250px] md:h-[200]"
-          />
+              src="/images/stanford-white.png"
+              height={200}
+              width={250}
+              alt="logo"
+              className="w-[170px] h-[100] md:w-[250px] md:h-[200]"
+            />
           </div>
         </div>
       </div>

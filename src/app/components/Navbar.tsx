@@ -91,9 +91,9 @@ export default function Navbar(props: navbarProps) {
 
   return (
     <nav
-      className={`flex items-start w-full ${ pathName === "/admin" ? "h-[90px] py-[10px] lg:py-[20px]": "h-[230px] py-[40px] lg:py-[50px]"}
-       ${ pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
-      } shadow-lg px-3 sm:px-[30px] xl:px-[100px] py-[40px] lg:py-[50px] `}
+      className={`flex items-start w-full ${pathName === "/admin" ? "h-[90px] py-[10px] lg:py-[20px]" : "h-[230px] py-[40px] lg:py-[50px]"}
+       ${pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
+        } shadow-lg px-3 sm:px-[30px] xl:px-[70px] py-[40px] lg:py-[50px] `}
       key="navbar"
     >
       {/* mobile view menu is closed */}
@@ -136,25 +136,25 @@ export default function Navbar(props: navbarProps) {
           ))}
         </div>
         <div className="flex w-full items-center gap-5 justify-end">
-        <GrLinkedinOption
-          className="p-1 cursor-pointer size-[35px]"
-          onClick={() =>
-            window.open("https://www.linkedin.com/groups/14208374/", "_blank")
-          }
-        />
-      
+          <GrLinkedinOption
+            className="p-1 cursor-pointer size-[35px]"
+            onClick={() =>
+              window.open("https://www.linkedin.com/company/plantmilliontrees/", "_blank")
+            }
+          />
 
-        <CustomButton
-          label={"DONATE"}
-          className=" h-[50px] font-semibold tracking-wide rounded-full w-full !max-w-[210px]"
-          onClick={handleDonate}
-        />
+
+          <CustomButton
+            label={"DONATE"}
+            className=" h-[50px] font-semibold tracking-wide rounded-full w-full !max-w-[210px]"
+            onClick={handleDonate}
+          />
           {userInfo
-          ? !(pathName === "/login" || pathName === "/signup") && (
+            ? !(pathName === "/login" || pathName === "/signup") && (
               <button type="button" onClick={handleClick} className="w-10">
                 <Avatar
                   sx={{
-                    color: pathName === '/' ? '#3A8340' : '#f2f2f2', 
+                    color: pathName === '/' ? '#3A8340' : '#f2f2f2',
                     background: pathName === '/' ? '#f2f2f2' : '#3A8340',
                     width: "40px",
                   }}
@@ -164,7 +164,7 @@ export default function Navbar(props: navbarProps) {
                 </Avatar>
               </button>
             )
-          : !(pathName === "/login") && (
+            : !(pathName === "/login") && (
               <Link
                 href="/login"
                 className="text-white !w-[70px] bg-[#3A8340] py-2 px-3 font-semibold rounded-lg"
@@ -172,60 +172,60 @@ export default function Navbar(props: navbarProps) {
                 Log In
               </Link>
             )}
-        <BasePopup
-          id={id}
-          open={openPopup}
-          anchor={anchor}
-          ref={popupRef}
-          className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md ${pathName === "/" ? "bg-transparent" : "bg-white"} rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
-        >
-          <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
-          <div className="relative z-10">
-            {userInfo && (
-              <div className="flex gap-3">
-                {userInfo && (
-                  <>
-                    <Avatar
-                      sx={{
-                        color: "#3A8340",
-                        background: "#f2f2f2",
-                      }}
-                      className="avatar-container cursor-pointer"
-                    >
-                      {userInfo?.fName?.charAt(0) || "A"}
-                      {userInfo?.lName?.charAt(0) || "N"}
-                    </Avatar>
-                  </>
-                )}
-                <div className="w-[205px]">
-                  <p className={`whitespace-nowrap w-full overflow-hidden ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} truncate`}>
-                    {userName === undefined ? "User Name" : userName}
-                  </p>
-                  <p className={`text-[12px] w-full break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`}>
-                    {userInfo?.email}
-                  </p>
-                </div>
-              </div>
-            )}
-            <hr className={`h-[2px] border-0 ${pathName === "/" ? "bg-[#f2f2f24b]" : "bg-[#d7d7dd46]"} my-2`} />
-            <div className="flex w-full justify-between flex-col">
-              <button
-                className="flex w-24 h-10 text-[#f1c40f] font-medium text-[16px] justify-center items-center gap-4 cursor-pointer border border-[#f1c40f] rounded-md hover:shadow-md relative self-center"
-                type="submit"
-                onClick={() => {
-                  handleOnClick(userInfo ? "logOut" : "logIn");
-                }}
-              >
-                {userInfo ? "Log Out" : "Log In"}
-                {loading && (
-                  <div className="flex justify-center items-center w-full h-full absolute bg-white opacity-80 rounded-[12px]">
-                    <CircularProgress size={30} className="text-[#3A8340]" />
+          <BasePopup
+            id={id}
+            open={openPopup}
+            anchor={anchor}
+            ref={popupRef}
+            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md ${pathName === "/" ? "bg-transparent" : "bg-white"} rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
+          >
+            <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
+            <div className="relative z-10">
+              {userInfo && (
+                <div className="flex gap-3">
+                  {userInfo && (
+                    <>
+                      <Avatar
+                        sx={{
+                          color: "#3A8340",
+                          background: "#f2f2f2",
+                        }}
+                        className="avatar-container cursor-pointer"
+                      >
+                        {userInfo?.fName?.charAt(0) || "A"}
+                        {userInfo?.lName?.charAt(0) || "N"}
+                      </Avatar>
+                    </>
+                  )}
+                  <div className="w-[205px]">
+                    <p className={`whitespace-nowrap w-full overflow-hidden ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} truncate`}>
+                      {userName === undefined ? "User Name" : userName}
+                    </p>
+                    <p className={`text-[12px] w-full break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`}>
+                      {userInfo?.email}
+                    </p>
                   </div>
-                )}
-              </button>
+                </div>
+              )}
+              <hr className={`h-[2px] border-0 ${pathName === "/" ? "bg-[#f2f2f24b]" : "bg-[#d7d7dd46]"} my-2`} />
+              <div className="flex w-full justify-between flex-col">
+                <button
+                  className="flex w-24 h-10 text-[#f1c40f] font-medium text-[16px] justify-center items-center gap-4 cursor-pointer border border-[#f1c40f] rounded-md hover:shadow-md relative self-center"
+                  type="submit"
+                  onClick={() => {
+                    handleOnClick(userInfo ? "logOut" : "logIn");
+                  }}
+                >
+                  {userInfo ? "Log Out" : "Log In"}
+                  {loading && (
+                    <div className="flex justify-center items-center w-full h-full absolute bg-white opacity-80 rounded-[12px]">
+                      <CircularProgress size={30} className="text-[#3A8340]" />
+                    </div>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </BasePopup>
+          </BasePopup>
         </div>
       </div>
 

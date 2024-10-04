@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import CustomDate from "./ui/CustomDate";
 import CustomButton from "./ui/CustomButton";
@@ -84,179 +84,179 @@ const sliderImages = [
 
 const EventData = [
   {
-      "country": "United States",
-      "location": {
-          "latitude": 37.0902,
-          "longitude": -95.7129
-      }
+    "country": "United States",
+    "location": {
+      "latitude": 37.0902,
+      "longitude": -95.7129
+    }
   },
   {
-      "country": "Canada",
-      "location": {
-          "latitude": 56.1304,
-          "longitude": -106.3468
-      }
+    "country": "Canada",
+    "location": {
+      "latitude": 56.1304,
+      "longitude": -106.3468
+    }
   },
   {
-      "country": "Brazil",
-      "location": {
-          "latitude": -14.2350,
-          "longitude": -51.9253
-      }
+    "country": "Brazil",
+    "location": {
+      "latitude": -14.2350,
+      "longitude": -51.9253
+    }
   },
   {
-      "country": "Australia",
-      "location": {
-          "latitude": -25.2744,
-          "longitude": 133.7751
-      }
+    "country": "Australia",
+    "location": {
+      "latitude": -25.2744,
+      "longitude": 133.7751
+    }
   },
   {
-      "country": "India",
-      "location": {
-          "latitude": 20.5937,
-          "longitude": 78.9629
-      }
+    "country": "India",
+    "location": {
+      "latitude": 20.5937,
+      "longitude": 78.9629
+    }
   },
   {
-      "country": "China",
-      "location": {
-          "latitude": 35.8617,
-          "longitude": 104.1954
-      }
+    "country": "China",
+    "location": {
+      "latitude": 35.8617,
+      "longitude": 104.1954
+    }
   },
   {
-      "country": "Russia",
-      "location": {
-          "latitude": 61.5240,
-          "longitude": 105.3188
-      }
+    "country": "Russia",
+    "location": {
+      "latitude": 61.5240,
+      "longitude": 105.3188
+    }
   },
   {
-      "country": "Mexico",
-      "location": {
-          "latitude": 23.6345,
-          "longitude": -102.5528
-      }
+    "country": "Mexico",
+    "location": {
+      "latitude": 23.6345,
+      "longitude": -102.5528
+    }
   },
   {
-      "country": "United Kingdom",
-      "location": {
-          "latitude": 55.3781,
-          "longitude": -3.4360
-      }
+    "country": "United Kingdom",
+    "location": {
+      "latitude": 55.3781,
+      "longitude": -3.4360
+    }
   },
   {
-      "country": "Germany",
-      "location": {
-          "latitude": 51.1657,
-          "longitude": 10.4515
-      }
+    "country": "Germany",
+    "location": {
+      "latitude": 51.1657,
+      "longitude": 10.4515
+    }
   },
   {
-      "country": "France",
-      "location": {
-          "latitude": 46.6034,
-          "longitude": 1.8883
-      }
+    "country": "France",
+    "location": {
+      "latitude": 46.6034,
+      "longitude": 1.8883
+    }
   },
   {
-      "country": "Italy",
-      "location": {
-          "latitude": 41.8719,
-          "longitude": 12.5674
-      }
+    "country": "Italy",
+    "location": {
+      "latitude": 41.8719,
+      "longitude": 12.5674
+    }
   },
   {
-      "country": "Spain",
-      "location": {
-          "latitude": 40.4637,
-          "longitude": -3.7492
-      }
+    "country": "Spain",
+    "location": {
+      "latitude": 40.4637,
+      "longitude": -3.7492
+    }
   },
   {
-      "country": "South Africa",
-      "location": {
-          "latitude": -30.5595,
-          "longitude": 22.9375
-      }
+    "country": "South Africa",
+    "location": {
+      "latitude": -30.5595,
+      "longitude": 22.9375
+    }
   },
   {
-      "country": "Japan",
-      "location": {
-          "latitude": 36.2048,
-          "longitude": 138.2529
-      }
+    "country": "Japan",
+    "location": {
+      "latitude": 36.2048,
+      "longitude": 138.2529
+    }
   },
   {
-      "country": "South Korea",
-      "location": {
-          "latitude": 35.9078,
-          "longitude": 127.7669
-      }
+    "country": "South Korea",
+    "location": {
+      "latitude": 35.9078,
+      "longitude": 127.7669
+    }
   },
   {
-      "country": "Nigeria",
-      "location": {
-          "latitude": 9.0820,
-          "longitude": 8.6753
-      }
+    "country": "Nigeria",
+    "location": {
+      "latitude": 9.0820,
+      "longitude": 8.6753
+    }
   },
   {
-      "country": "Argentina",
-      "location": {
-          "latitude": -38.4161,
-          "longitude": -63.6167
-      }
+    "country": "Argentina",
+    "location": {
+      "latitude": -38.4161,
+      "longitude": -63.6167
+    }
   },
   {
-      "country": "Egypt",
-      "location": {
-          "latitude": 26.8206,
-          "longitude": 30.8025
-      }
+    "country": "Egypt",
+    "location": {
+      "latitude": 26.8206,
+      "longitude": 30.8025
+    }
   },
   {
-      "country": "Turkey",
-      "location": {
-          "latitude": 38.9637,
-          "longitude": 35.2433
-      }
+    "country": "Turkey",
+    "location": {
+      "latitude": 38.9637,
+      "longitude": 35.2433
+    }
   },
   {
-      "country": "Saudi Arabia",
-      "location": {
-          "latitude": 23.8859,
-          "longitude": 45.0792
-      }
+    "country": "Saudi Arabia",
+    "location": {
+      "latitude": 23.8859,
+      "longitude": 45.0792
+    }
   },
   {
-      "country": "Indonesia",
-      "location": {
-          "latitude": -0.7893,
-          "longitude": 113.9213
-      }
+    "country": "Indonesia",
+    "location": {
+      "latitude": -0.7893,
+      "longitude": 113.9213
+    }
   },
   {
-      "country": "Pakistan",
-      "location": {
-          "latitude": 30.3753,
-          "longitude": 69.3451
-      }
+    "country": "Pakistan",
+    "location": {
+      "latitude": 30.3753,
+      "longitude": 69.3451
+    }
   },
   {
-      "country": "Thailand",
-      "location": {
-          "latitude": 15.8700,
-          "longitude": 100.9925
-      }
+    "country": "Thailand",
+    "location": {
+      "latitude": 15.8700,
+      "longitude": 100.9925
+    }
   },
   {
-      "country": "Colombia",
-      "location": {
-          "latitude": 4.5709,
-          "longitude": -74.2973
-      }
+    "country": "Colombia",
+    "location": {
+      "latitude": 4.5709,
+      "longitude": -74.2973
+    }
   }
 ]
 
@@ -480,7 +480,8 @@ export default function LandingPage() {
   };
 
   const handleSubmit = async () => {
-    const user = JSON.parse(Cookies.get("user"));
+    // const user = JSON.parse(Cookies.get("user"));
+    const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
     const token = user?.accessToken;
     const userId = user?.userId;
 
@@ -618,6 +619,17 @@ export default function LandingPage() {
     fetchAllPlantedTrees();
   }, []);
 
+  const mapRef = useRef<HTMLDivElement>(null);
+
+  const handleScrollToMap = () => {
+    if (mapRef.current) {
+      mapRef.current.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
+  };
+
+
   return (
     <div>
       <div
@@ -639,12 +651,13 @@ export default function LandingPage() {
           <CustomButton
             label={"SEE TREE MAP"}
             className="rounded-full w-[280px] h-[70px] font-semibold tracking-wider text-[18px]"
+            onClick={handleScrollToMap}
           />
         </div>
       </div>
 
       <div className="flex flex-col w-full justify-center items-center md:w-[65%] lg:w-[73%] px-6 pt-[40px] sm:pt-[96px] pb-[74px] sm:pb-[104px] m-auto relative">
-        <div className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center">
+        <div ref={mapRef} className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center">
           Drive for <span className="underline">1M trees</span> planted by Me2We
           2030
         </div>
@@ -757,7 +770,7 @@ export default function LandingPage() {
 
         <div className="font-semibold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px] text-center">
           Numbers of Trees planted till date:{" "}
-          <span className="text-[#3BAD49]">1,000</span> 
+          <span className="text-[#3BAD49]">1,000</span>
         </div>
       </div>
 
@@ -893,9 +906,8 @@ export default function LandingPage() {
           <div className="flex w-1/2 justify-center items-center mt-6">
             <CustomButton
               label="Submit"
-              className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 uppercase ${
-                isLoading && "pointer-events-none"
-              }`}
+              className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 uppercase ${isLoading && "pointer-events-none"
+                }`}
               callback={handleSubmit}
               interactingAPI={isLoading}
             />
