@@ -19,6 +19,7 @@ interface EventData {
     region: string;
     images: string[];
     startDate: string,
+    placeId: string,
     latitude: number,
     longitude: number,
 }
@@ -30,9 +31,11 @@ export default function UpdateEvent({ data, setShowEditEvent, refetchData }: upd
         startDate: '',
         latitude: 0,
         longitude: 0,
+        placeId: '',
         images: [],
     };
     const [event, setEvent] = useState<EventData>(initialEventData);
+    console.log(event, "ccc")
     const [submitLoading, setSubmitLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -45,6 +48,7 @@ export default function UpdateEvent({ data, setShowEditEvent, refetchData }: upd
                 region: event.region,
                 latitude: event.latitude,
                 longitude: event.longitude,
+                placeId: event.placeId,
                 startDate: event.startDate,
             });
             if (response?.success) {
@@ -65,6 +69,7 @@ export default function UpdateEvent({ data, setShowEditEvent, refetchData }: upd
             location: string;
             latitude: number;
             longitude: number;
+            placeId: string;
         }
     ) => {
         if (event && event.target) {
@@ -80,6 +85,7 @@ export default function UpdateEvent({ data, setShowEditEvent, refetchData }: upd
                 region: data.location,
                 latitude: data.latitude,
                 longitude: data.longitude,
+                placeId: data.placeId
             }));
 
         }

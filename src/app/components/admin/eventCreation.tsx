@@ -26,6 +26,7 @@ interface regionImagesProps {
     images: string[];
     startDate: string,
     latitude: number,
+    placeId: string,
     longitude: number,
 }
 
@@ -36,6 +37,7 @@ export default function Event({ authId }: EventProps) {
         startDate: '',
         latitude: 0,
         longitude: 0,
+        placeId: '',
         images: [],
     };
 
@@ -109,7 +111,7 @@ export default function Event({ authId }: EventProps) {
         rows: eventsData?.events || [],
         pagination: {
             totalResults: eventsData?.total,
-            totalPages: eventsData?.totalPages,
+            totalPages: Math.ceil((eventsData?.total || 0) / limit),
             currentPage: page,
         },
     };
@@ -156,6 +158,7 @@ export default function Event({ authId }: EventProps) {
             location: string;
             latitude: number;
             longitude: number;
+            placeId: string;
         }
     ) => {
         if (event && event.target) {
@@ -206,6 +209,7 @@ export default function Event({ authId }: EventProps) {
                 region: data.location,
                 latitude: data.latitude,
                 longitude: data.longitude,
+                placeId: data.placeId
             }));
 
             if (!data.location) {

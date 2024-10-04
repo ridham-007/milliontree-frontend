@@ -163,7 +163,7 @@ export default function Events() {
                 }}
               >
                 <Typography>
-                  {cur.months.map((month:any, monthIndex: number) => (
+                  {cur.months.map((month: any, monthIndex: number) => (
                     <div
                       key={monthIndex}
                       className="border-t-[1px] border-[#666666]"
@@ -196,7 +196,7 @@ export default function Events() {
                             }}
                           >
                             <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                              {month?.events?.map((event:any, eventIndex: any) => (
+                              {month?.events?.map((event: any, eventIndex: any) => (
                                 <div
                                   key={eventIndex}
                                   className="flex w-full gap-2 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
@@ -210,7 +210,7 @@ export default function Events() {
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
                                     {event?.region}
                                   </div>
-                                  <div className="w-full sm:max-w-[300px] flex justify-center items-center">
+                                  {/* <div className="w-full sm:max-w-[300px] flex justify-center items-center">
                                     <Button
                                       aria-describedby={id}
                                       onClick={handleClick}
@@ -273,7 +273,7 @@ export default function Events() {
                                         </div>
                                       </LocalizationProvider>
                                     </Popover>
-                                  </div>
+                                  </div> */}
                                 </div>
                               ))}
                             </div>
@@ -295,7 +295,7 @@ export default function Events() {
           Completed events
         </div>
         <div className="flex flex-col w-full">
-          {groupEvents?.completed?.map((cur:any, yearIndex:number) => (
+          {groupEvents?.completed?.map((cur: any, yearIndex: number) => (
             <Accordion
               key={cur.year}
               className="border-t-[1px] border-[#666666]"
@@ -338,7 +338,7 @@ export default function Events() {
                 }}
               >
                 <Typography>
-                  {cur?.months?.map((month:any, monthIndex:number) => (
+                  {cur?.months?.map((month: any, monthIndex: number) => (
                     <div
                       key={monthIndex}
                       className="border-t-[1px] border-[#666666]"
@@ -365,7 +365,7 @@ export default function Events() {
                         <AccordionDetails>
                           <Typography>
                             <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                              {month?.events?.map((event:any, eventIndex:any) => (
+                              {month?.events?.map((event: any, eventIndex: any) => (
                                 <div
                                   key={eventIndex}
                                   className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
