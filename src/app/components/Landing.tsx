@@ -603,8 +603,6 @@ export default function LandingPage() {
     if (response?.success) {
       setRegionData(response?.data);
       setOpenEventModal(true);
-    } else {
-      toast(response?.message);
     }
   };
 
@@ -662,7 +660,7 @@ export default function LandingPage() {
           2030
         </div>
 
-        <ComposableMap className="flex justify-center items-center">
+        <ComposableMap className="flex justify-center items-center" >
           <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
             {({ geographies }) =>
               geographies.map((geo: any) => {
@@ -672,9 +670,9 @@ export default function LandingPage() {
                       key={geo.id}
                       geography={geo}
                       style={{
-                        default: { fill: "#EBEFF2" },
-                        hover: { fill: "#EBEFF2" },
-                        pressed: { fill: "#8C1515" },
+                        default: { fill: "#EBEFF2", outline: "none" },
+                        hover: { fill: "#EBEFF2", outline: "none" },
+                        pressed: { fill: "#8C1515", outline: "none" },
                       }}
                       onClick={() => {
                         fetchRegionImage(geo.properties.name);
