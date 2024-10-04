@@ -58,6 +58,10 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
               alt={image.alt}
               className="w-[380px] h-[320px] cursor-pointer rounded-[30px]"
               unoptimized
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/images/plantation-1.jpg";
+              }}
             />
             <div className="flex flex-col items-start w-full max-w-[380px] mt-[26px] gap-2 px-2">
               <p className="font-bold text-[20px] h-[32px] text-black">

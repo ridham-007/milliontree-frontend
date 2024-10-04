@@ -1,133 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { GoDash, GoPlus } from "react-icons/go";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import { PiCalendarDots } from "react-icons/pi";
 import Button from "@mui/material/Button";
 import Popover from "@mui/material/Popover";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { getGroupByEvents } from "../_actions/actions";
+import { Typography } from "@mui/material";
 
 export default function Events() {
-  const eventsData = [
-    {
-      year: 2024,
-      months: [
-        {
-          name: "December",
-          events: [
-            {
-              date: "10 December",
-              title: "Green Earth Initiative",
-              location: "Tokyo – Japan",
-            },
-            {
-              date: "24 December",
-              title: "Urban Forest Project. Roots for the Future",
-              location: "Sydney – Australia",
-            },
-          ],
-        },
-        {
-          name: "October",
-          events: [
-            {
-              date: "10 October",
-              title: "Green Earth Initiative",
-              location: "Tokyo – Japan",
-            },
-            {
-              date: "15 October",
-              title: "One Million Trees Campaign",
-              location: "São Paulo – Brazil",
-            },
-            {
-              date: "18 October",
-              title: "Trees for Tomorrow",
-              location: "Cape Town – South Africa",
-            },
-            {
-              date: "24 October",
-              title: "Urban Forest Project. Roots for the Future",
-              location: "Sydney – Australia",
-            },
-          ],
-        },
-        {
-          name: "September",
-          events: [
-            {
-              date: "10 September",
-              title: "Green Earth Initiative",
-              location: "Tokyo – Japan",
-            },
-          ],
-        },
-      ],
-    },
-  ];
-  const completedEventsData = [
-    {
-      year: 2024,
-      months: [
-        {
-          name: "June",
-          events: [
-            {
-              date: "10 June",
-              title: "Green Earth Initiative",
-              location: "Tokyo – Japan",
-            },
-            {
-              date: "24 June",
-              title: "Urban Forest Project. Roots for the Future",
-              location: "Sydney – Australia",
-            },
-          ],
-        },
-        {
-          name: "July",
-          events: [
-            {
-              date: "10 July",
-              title: "Plant for the Planet Day",
-              location: "New York City – United States",
-            },
-            {
-              date: "15 July",
-              title: "Tree of Life Celebration",
-              location: "Berlin – Germany",
-            },
-            {
-              date: "18 July",
-              title: "Roots for the Future. Earth Day Tree Drive",
-              location: "Cairo – Egypt",
-            },
-            {
-              date: "24 July",
-              title: "Green Canopy Challenge",
-              location: "Paris – France",
-            },
-          ],
-        },
-        {
-          name: "May",
-          events: [
-            {
-              date: "10 May",
-              title: "Green Earth Initiative",
-              location: "Tokyo – Japan",
-            },
-          ],
-        },
-      ],
-    },
-  ];
+  const [groupEvents, setGroupEvents] = useState<any>({});
+
+  useEffect(() => {
+    fetchGroupEvents()
+  }, [])
 
   const [expandedMonths, setExpandedMonths] = useState<{
     [key: number]: boolean;
@@ -184,6 +77,20 @@ export default function Events() {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+  const fetchGroupEvents = async () => {
+    const response = await getGroupByEvents();
+    if (response.success) {
+      setGroupEvents(response?.data);
+    }
+  };
+
+  const formatDate = (dateString: string, month: any): string => {
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2, "0"); // Get the day and pad with 0 if needed
+
+    return `${day} ${month}`;
+  };
   return (
     <div className="flex flex-col w-full h-full gap-[64px]">
       <div className="flex justify-center items-center w-full px-[10px] flex-col max-w-[1280px] self-center">
@@ -207,9 +114,9 @@ export default function Events() {
           Upcoming events
         </div>
         <div className="flex flex-col w-full">
-          {eventsData.map((yearData, yearIndex) => (
+          {groupEvents?.upcoming?.map((cur: any, yearIndex: number) => (
             <Accordion
-              key={yearData.year}
+              key={cur.year}
               className="border-t-[1px] border-[#666666]"
               sx={{
                 ".css-15v22id-MuiAccordionDetails-root": {
@@ -236,7 +143,7 @@ export default function Events() {
                 id={`panel-${yearIndex}-header`}
               >
                 <Typography className="font-bold text-[18px] sm:text-[20px] leading-[24px]">
-                  {yearData.year}
+                  {cur.year}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails
@@ -256,7 +163,7 @@ export default function Events() {
                 }}
               >
                 <Typography>
-                  {yearData.months.map((month, monthIndex) => (
+                  {cur.months.map((month:any, monthIndex: number) => (
                     <div
                       key={monthIndex}
                       className="border-t-[1px] border-[#666666]"
@@ -277,7 +184,7 @@ export default function Events() {
                           id={`panel-${monthIndex}-header`}
                         >
                           <Typography className="font-bold text-[18px] leading-[21px] sm:ml-[60px]">
-                            {month.name}
+                            {month.month}
                           </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
@@ -289,19 +196,19 @@ export default function Events() {
                             }}
                           >
                             <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                              {month.events.map((event, eventIndex) => (
+                              {month?.events?.map((event:any, eventIndex: any) => (
                                 <div
                                   key={eventIndex}
                                   className="flex w-full gap-2 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
                                 >
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] sm:ml-[60px]">
-                                    {event.date}
+                                    {formatDate(event?.startDate, month?.month)}
                                   </div>
                                   <div className="w-full sm:max-w-[300px] font-bold leading-[19px] text-center">
-                                    {event.title}
+                                    {event?.eventName}
                                   </div>
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event.location}
+                                    {event?.region}
                                   </div>
                                   <div className="w-full sm:max-w-[300px] flex justify-center items-center">
                                     <Button
@@ -388,9 +295,9 @@ export default function Events() {
           Completed events
         </div>
         <div className="flex flex-col w-full">
-          {completedEventsData.map((yearData, yearIndex) => (
+          {groupEvents?.completed?.map((cur:any, yearIndex:number) => (
             <Accordion
-              key={yearData.year}
+              key={cur.year}
               className="border-t-[1px] border-[#666666]"
               sx={{
                 ".css-ugwo3b-MuiAccordionDetails-root": {
@@ -417,7 +324,7 @@ export default function Events() {
                 id={`panel-${yearIndex}-header`}
               >
                 <Typography className="font-bold text-[20px] leading-[24px]">
-                  {yearData.year}
+                  {cur.year}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails
@@ -431,7 +338,7 @@ export default function Events() {
                 }}
               >
                 <Typography>
-                  {yearData.months.map((month, monthIndex) => (
+                  {cur?.months?.map((month:any, monthIndex:number) => (
                     <div
                       key={monthIndex}
                       className="border-t-[1px] border-[#666666]"
@@ -452,25 +359,25 @@ export default function Events() {
                           id={`panel-${monthIndex}-header`}
                         >
                           <Typography className="font-bold text-[18px] leading-[21px]">
-                            {month.name}
+                            {month?.month}
                           </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                           <Typography>
                             <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                              {month.events.map((event, eventIndex) => (
+                              {month?.events?.map((event:any, eventIndex:any) => (
                                 <div
                                   key={eventIndex}
                                   className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
                                 >
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event.date}
+                                    {formatDate(event?.startDate, month?.month)}
                                   </div>
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event.title}
+                                    {event?.eventName}
                                   </div>
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event.location}
+                                    {event?.region}
                                   </div>
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center"></div>
                                 </div>

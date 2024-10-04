@@ -182,6 +182,84 @@ export const updateUserInfo = async (
     }
   };
 
+  export const getAllEvents = async (): Promise<any> => {
+  
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/event/all-events`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        return prepareServerError(errorResponse?.message || 'An error occurred while fetching data.');
+      }
+  
+      const eventResponse = await response.json();
+  
+      return {
+        success: true,
+        data: eventResponse.data,
+      };
+    } catch (error: any) {
+      return prepareServerError(error?.message || 'An unexpected error occurred.');
+    }
+  };
+
+  export const getCompletedEvents = async (): Promise<any> => {
+  
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/event/completed`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        return prepareServerError(errorResponse?.message || 'An error occurred while fetching data.');
+      }
+  
+      const eventResponse = await response.json();
+  
+      return {
+        success: true,
+        data: eventResponse.data,
+      };
+    } catch (error: any) {
+      return prepareServerError(error?.message || 'An unexpected error occurred.');
+    }
+  };
+
+  export const getGroupByEvents = async (): Promise<any> => {
+  
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/event/grouped-by-month`, {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        return prepareServerError(errorResponse?.message || 'An error occurred while fetching data.');
+      }
+  
+      const eventResponse = await response.json();
+  
+      return {
+        success: true,
+        data: eventResponse.data,
+      };
+    } catch (error: any) {
+      return prepareServerError(error?.message || 'An unexpected error occurred.');
+    }
+  };
+
   export const createCheckoutSession = async (
     body: any
   ): Promise<any> => {

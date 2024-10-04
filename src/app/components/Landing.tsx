@@ -11,6 +11,8 @@ import {
   getPlantedTrees,
   getEventsByRegion,
   updateUserInfo,
+  getAllEvents,
+  getCompletedEvents,
 } from "@/app/_actions/actions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -82,185 +84,6 @@ const sliderImages = [
   },
 ];
 
-const EventData = [
-  {
-    "country": "United States",
-    "location": {
-      "latitude": 37.0902,
-      "longitude": -95.7129
-    }
-  },
-  {
-    "country": "Canada",
-    "location": {
-      "latitude": 56.1304,
-      "longitude": -106.3468
-    }
-  },
-  {
-    "country": "Brazil",
-    "location": {
-      "latitude": -14.2350,
-      "longitude": -51.9253
-    }
-  },
-  {
-    "country": "Australia",
-    "location": {
-      "latitude": -25.2744,
-      "longitude": 133.7751
-    }
-  },
-  {
-    "country": "India",
-    "location": {
-      "latitude": 20.5937,
-      "longitude": 78.9629
-    }
-  },
-  {
-    "country": "China",
-    "location": {
-      "latitude": 35.8617,
-      "longitude": 104.1954
-    }
-  },
-  {
-    "country": "Russia",
-    "location": {
-      "latitude": 61.5240,
-      "longitude": 105.3188
-    }
-  },
-  {
-    "country": "Mexico",
-    "location": {
-      "latitude": 23.6345,
-      "longitude": -102.5528
-    }
-  },
-  {
-    "country": "United Kingdom",
-    "location": {
-      "latitude": 55.3781,
-      "longitude": -3.4360
-    }
-  },
-  {
-    "country": "Germany",
-    "location": {
-      "latitude": 51.1657,
-      "longitude": 10.4515
-    }
-  },
-  {
-    "country": "France",
-    "location": {
-      "latitude": 46.6034,
-      "longitude": 1.8883
-    }
-  },
-  {
-    "country": "Italy",
-    "location": {
-      "latitude": 41.8719,
-      "longitude": 12.5674
-    }
-  },
-  {
-    "country": "Spain",
-    "location": {
-      "latitude": 40.4637,
-      "longitude": -3.7492
-    }
-  },
-  {
-    "country": "South Africa",
-    "location": {
-      "latitude": -30.5595,
-      "longitude": 22.9375
-    }
-  },
-  {
-    "country": "Japan",
-    "location": {
-      "latitude": 36.2048,
-      "longitude": 138.2529
-    }
-  },
-  {
-    "country": "South Korea",
-    "location": {
-      "latitude": 35.9078,
-      "longitude": 127.7669
-    }
-  },
-  {
-    "country": "Nigeria",
-    "location": {
-      "latitude": 9.0820,
-      "longitude": 8.6753
-    }
-  },
-  {
-    "country": "Argentina",
-    "location": {
-      "latitude": -38.4161,
-      "longitude": -63.6167
-    }
-  },
-  {
-    "country": "Egypt",
-    "location": {
-      "latitude": 26.8206,
-      "longitude": 30.8025
-    }
-  },
-  {
-    "country": "Turkey",
-    "location": {
-      "latitude": 38.9637,
-      "longitude": 35.2433
-    }
-  },
-  {
-    "country": "Saudi Arabia",
-    "location": {
-      "latitude": 23.8859,
-      "longitude": 45.0792
-    }
-  },
-  {
-    "country": "Indonesia",
-    "location": {
-      "latitude": -0.7893,
-      "longitude": 113.9213
-    }
-  },
-  {
-    "country": "Pakistan",
-    "location": {
-      "latitude": 30.3753,
-      "longitude": 69.3451
-    }
-  },
-  {
-    "country": "Thailand",
-    "location": {
-      "latitude": 15.8700,
-      "longitude": 100.9925
-    }
-  },
-  {
-    "country": "Colombia",
-    "location": {
-      "latitude": 4.5709,
-      "longitude": -74.2973
-    }
-  }
-]
-
-
 export default function LandingPage() {
   const router = useRouter();
   const contrastingColors = [
@@ -281,6 +104,9 @@ export default function LandingPage() {
   const [formData, setFormData] = useState<formDataProps>(initialFormData);
   const [errors, setErrors] = useState<any>({});
   const [plantedTrees, setPlantedTrees] = useState([]);
+  const [events, setAllEvents] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
+
   const [imageName, setImageName] = useState<any>("");
   const [isLoading, setIsLoading] = useState<any>(false);
   const [loading, setLoading] = useState<any>(false);
@@ -537,6 +363,31 @@ export default function LandingPage() {
     }
   };
 
+  const fetchAllEvents = async () => {
+    const response = await getAllEvents();
+    if (response.success) {
+      setAllEvents(response?.data);
+    }
+  };
+
+  const fetchCompletedEvents = async () => {
+    const response = await getCompletedEvents();
+    if (response.success) {
+      setCompletedEvents(response?.data);
+    }
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2, "0"); // Get the day and pad with 0 if needed
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed, so add 1
+    const year = date.getFullYear(); // Get the full year
+
+    return `${day}.${month}.${year}`;
+  };
+
+
   const regionModalData = (
     <div className="h-fit">
       <div className="flex justify-end px-8 py-4 border-b items-center">
@@ -615,6 +466,8 @@ export default function LandingPage() {
 
   useEffect(() => {
     fetchAllPlantedTrees();
+    fetchAllEvents();
+    fetchCompletedEvents();
   }, []);
 
   const mapRef = useRef<HTMLDivElement>(null);
@@ -626,7 +479,6 @@ export default function LandingPage() {
       });
     }
   };
-
 
   return (
     <div>
@@ -655,12 +507,15 @@ export default function LandingPage() {
       </div>
 
       <div className="flex flex-col w-full justify-center items-center md:w-[65%] lg:w-[73%] px-6 pt-[40px] sm:pt-[96px] pb-[74px] sm:pb-[104px] m-auto relative">
-        <div ref={mapRef} className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center">
+        <div
+          ref={mapRef}
+          className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center"
+        >
           Drive for <span className="underline">1M trees</span> planted by Me2We
           2030
         </div>
 
-        <ComposableMap className="flex justify-center items-center" >
+        <ComposableMap className="flex justify-center items-center">
           <Geographies geography="https://raw.githubusercontent.com/datasets/geo-boundaries-world-110m/master/countries.geojson">
             {({ geographies }) =>
               geographies.map((geo: any) => {
@@ -717,11 +572,11 @@ export default function LandingPage() {
               </Tooltip>
             );
           })}
-          {EventData?.map((plant: any, index: number) => {
-            const { location } = plant;
+          {events?.map((event: any, index: number) => {
+            const { latitude, longitude } = event;
             return (
               <Tooltip
-                title={`Events: ${plant?.trees?.length || 1}`}
+                title={`Events: ${event?.eventName || ""}`}
                 arrow
                 placement="top"
                 componentsProps={{
@@ -738,14 +593,8 @@ export default function LandingPage() {
                   },
                 }}
               >
-                <Marker
-                  key={index}
-                  coordinates={[location?.longitude, location?.latitude]}
-                >
-                  <circle
-                    r={`${plant?.trees?.length >= 4 ? "5px" : "4px"}`}
-                    fill={"#F1B932"}
-                  />
+                <Marker key={index} coordinates={[longitude, latitude]}>
+                  <circle r={`4px`} fill={"#F1B932"} />
                 </Marker>
               </Tooltip>
             );
@@ -754,7 +603,7 @@ export default function LandingPage() {
 
         <div className="absolute left-0 bottom-[25%] ml-5">
           <div className="flex gap-3 items-center justify-start">
-            {EventData?.length ? <IoCheckbox /> : <MdCheckBoxOutlineBlank />}
+            {events?.length ? <IoCheckbox /> : <MdCheckBoxOutlineBlank />}
             <div className="rounded-full border bg-[#F1B932] size-4" />
             <p className=" text-[12px] sm:text-[18px] font-medium">Events</p>
           </div>
@@ -762,7 +611,9 @@ export default function LandingPage() {
             {plantedTrees?.length ? <IoCheckbox /> : <MdCheckBoxOutlineBlank />}
 
             <div className="rounded-full border bg-[#368a3a] size-4" />
-            <p className=" text-[12px] sm:text-[18px] font-medium">Planted Tress</p>
+            <p className=" text-[12px] sm:text-[18px] font-medium">
+              Planted Tress
+            </p>
           </div>
         </div>
 
@@ -776,7 +627,21 @@ export default function LandingPage() {
         <p className="font-bold text-[44px] mt-[50px] sm:mt-[108px] mb-[45px]">
           Past Events
         </p>
-        <ImageSlider sliderImages={sliderImages} />
+        <ImageSlider
+          sliderImages={
+            completedEvents?.length > 0
+              ? completedEvents?.map((cur: any) => {
+                  return {
+                    src: cur?.images?.[0] || '/images/plantation-1.jpg',
+                    alt: "Plantation 1",
+                    name: cur?.eventName,
+                    location: cur?.region,
+                    date: formatDate(cur?.startDate),
+                  };
+                })
+              : []
+          }
+        />
       </div>
 
       <div className="flex flex-col lg:flex-row w-full py-[118px] px-[10px] lg:px-[80px] gap-[100px] lg:gap-0 ">
@@ -904,8 +769,9 @@ export default function LandingPage() {
           <div className="flex w-1/2 justify-center items-center mt-6">
             <CustomButton
               label="Submit"
-              className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 uppercase ${isLoading && "pointer-events-none"
-                }`}
+              className={`flex rounded-full w-[210px] h-[50px] !font-semibold my-1 uppercase ${
+                isLoading && "pointer-events-none"
+              }`}
               callback={handleSubmit}
               interactingAPI={isLoading}
             />
