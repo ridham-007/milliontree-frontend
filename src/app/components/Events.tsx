@@ -136,6 +136,7 @@ export default function Events() {
         setEventData({});
         setLoading(false);
         setOpenUploadImageModel(false);
+        fetchGroupEvents()
         toast(response?.message);
       } else {
         toast.error(response?.message);

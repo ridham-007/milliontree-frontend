@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { GrLinkedinOption } from "react-icons/gr";
-import { IoSettingsOutline } from "react-icons/io5";
+import { FaYoutube } from "react-icons/fa";
 import CustomButton from "./ui/CustomButton";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -53,7 +54,6 @@ export default function Navbar(props: navbarProps) {
 
   const handleLinkClick = (title: string) => {
     setSelected(title);
-    setIsMenuOpen(!isMenuOpen);
   };
 
   const handleOnClick = (value: string) => {
@@ -93,35 +93,22 @@ export default function Navbar(props: navbarProps) {
     <nav
       className={`flex items-start w-full ${pathName === "/admin" ? "h-[100px] md:h-[140px] py-[10px] lg:py-[20px]" : "h-[230px] py-[40px] lg:py-[50px]"}
        ${pathName === "/" ? "bg-none text-white" : "bg-[#F2F0EB] text-black"
-        } shadow-lg px-3 sm:px-[30px] xl:px-[70px] py-[40px] lg:py-[50px] `}
+        } shadow-lg px-3 sm:px-[30px] xl:px-[70px] py-[40px] lg:py-[50px] ${isMenuOpen ? "z-40 lg:z-20" : "z-20"}`}
       key="navbar"
     >
       {/* mobile view menu is closed */}
       {!isMenuOpen && (
-        <div className="flex w-full">
-          <div className="flex lg:h-[48px] items-center w-full">
+          <div className="flex h-[48px] items-center w-full">
             <Link href="/">
               <p className="flex text-[12px] sm:text-[14px] tracking-[4px] font-light text-nowrap ">
                 PLANT MILLION TREES
               </p>
             </Link>
           </div>
-
-          {/* Mobile Menu Icon */}
-          {/* <div className="lg:hidden flex items-center">
-            <button onClick={toggleMenu}>
-              {isMenuOpen ? (
-                <IoClose className="text-[20px] sm:text-[24px]" />
-              ) : (
-                <FiMenu className="text-[20px] sm:text-[24px]" />
-              )}
-            </button>
-          </div> */}
-        </div>
       )}
 
       {/* desktop view */}
-      <div className="w-full hidden lg:flex items-center justify-between gap-5">
+      <div className="w-full flex items-center justify-between gap-2 sm:gap-5">
         <div className="flex gap-3 lg:gap-5 items-center justify-start mt-[7px]">
           {navData.map((tab, index) => (
             <div key={index}>
@@ -135,9 +122,9 @@ export default function Navbar(props: navbarProps) {
             </div>
           ))}
         </div>
-        <div className="flex w-full items-center gap-5 justify-end">
+        <div className="flex w-full items-center gap-2 sm:gap-5 justify-end">
           <GrLinkedinOption
-            className="p-1 cursor-pointer size-[35px]"
+            className="hidden lg:flex p-1 cursor-pointer size-[35px]"
             onClick={() =>
               window.open("https://www.linkedin.com/company/plantmilliontrees/", "_blank")
             }
@@ -146,9 +133,18 @@ export default function Navbar(props: navbarProps) {
 
           <CustomButton
             label={"DONATE"}
-            className=" h-[50px] font-semibold tracking-wide rounded-full w-full !max-w-[210px]"
+            className="hidden lg:flex h-[50px] font-semibold tracking-wide rounded-full w-full !max-w-[210px]"
             onClick={handleDonate}
           />
+           <div className="lg:hidden flex items-center">
+            <button onClick={toggleMenu}>
+              {isMenuOpen ? (
+                <IoClose className="text-[20px] sm:text-[24px]" />
+              ) : (
+                <FiMenu className="text-[20px] sm:text-[24px]" />
+              )}
+            </button>
+          </div>
           {userInfo
             ? !(pathName === "/login" || pathName === "/signup") && (
               <button type="button" onClick={handleClick} className="w-10">
@@ -177,7 +173,7 @@ export default function Navbar(props: navbarProps) {
             open={openPopup}
             anchor={anchor}
             ref={popupRef}
-            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md bg-white rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
+            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md ${pathName === "/" ? "bg-transparent" : "bg-white"} rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
           >
             <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
             <div className="relative z-10">
@@ -190,18 +186,20 @@ export default function Navbar(props: navbarProps) {
                           color: "#3A8340",
                           background: "#f2f2f2",
                         }}
-                        className="avatar-container"
+                        className="avatar-container cursor-pointer"
                       >
                         {userInfo?.fName?.charAt(0) || "A"}
                         {userInfo?.lName?.charAt(0) || "N"}
                       </Avatar>
                     </>
                   )}
-                  <div className="flex items-center w-[205px]">
-                    <p className={`whitespace-nowrap w-full overflow-hidden text-[#000] truncate`}>
+                  <div className="w-[205px]">
+                    <p className={`whitespace-nowrap w-full overflow-hidden ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} truncate`}>
                       {userName === undefined ? "User Name" : userName}
                     </p>
-                    {userInfo?.userRole === 'admin' ? <IoSettingsOutline className="w-[25px] h-[25px] cursor-pointer" color="#000" onClick={() => {(router.push('/admin'), setAnchor(null))}} /> : "" }
+                    <p className={`text-[12px] w-full cursor-pointer break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`} onClick={() => { userInfo?.userRole === 'admin' ? (router.push('/admin'), setAnchor(null)) : '' }}>
+                      {userInfo?.userRole === 'admin' ? "Settings" : ''}
+                    </p>
                   </div>
                 </div>
               )}
@@ -229,8 +227,8 @@ export default function Navbar(props: navbarProps) {
 
       {/* mobile view */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-0 right-0 w-full bg-[#3BAD49] text-[#fff] shadow-lg flex flex-col mb-[500px] pt-[40px] pb-[320px]">
-          <div className="flex !pt-0 p-[10px]">
+        <div className="lg:hidden absolute top-0 right-0 w-full h-[100vh] bg-[#3BAD49] text-[#fff] shadow-lg flex flex-col">
+          <div className="flex py-12 px-[10px]">
             <div className="flex lg:h-[48px] items-center w-full gap-1">
               <Link href="/">
                 <p className="flex text-[12px] sm:text-[14px] tracking-[4px] font-light text-nowrap">
