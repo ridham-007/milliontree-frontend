@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { GrLinkedinOption } from "react-icons/gr";
-import { FaYoutube } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
 import CustomButton from "./ui/CustomButton";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
@@ -54,6 +53,7 @@ export default function Navbar(props: navbarProps) {
 
   const handleLinkClick = (title: string) => {
     setSelected(title);
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const handleOnClick = (value: string) => {
@@ -177,7 +177,7 @@ export default function Navbar(props: navbarProps) {
             open={openPopup}
             anchor={anchor}
             ref={popupRef}
-            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md ${pathName === "/" ? "bg-transparent" : "bg-white"} rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
+            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md bg-white rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
           >
             <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
             <div className="relative z-10">
@@ -190,20 +190,18 @@ export default function Navbar(props: navbarProps) {
                           color: "#3A8340",
                           background: "#f2f2f2",
                         }}
-                        className="avatar-container cursor-pointer"
+                        className="avatar-container"
                       >
                         {userInfo?.fName?.charAt(0) || "A"}
                         {userInfo?.lName?.charAt(0) || "N"}
                       </Avatar>
                     </>
                   )}
-                  <div className="w-[205px]">
-                    <p className={`whitespace-nowrap w-full overflow-hidden ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} truncate`}>
+                  <div className="flex items-center w-[205px]">
+                    <p className={`whitespace-nowrap w-full overflow-hidden text-[#000] truncate`}>
                       {userName === undefined ? "User Name" : userName}
                     </p>
-                    <p className={`text-[12px] w-full cursor-pointer break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`} onClick={() => { userInfo?.userRole === 'admin' ? (router.push('/admin'), setAnchor(null)) : '' }}>
-                      {userInfo?.userRole === 'admin' ? "Settings" : ''}
-                    </p>
+                    {userInfo?.userRole === 'admin' ? <IoSettingsOutline className="w-[25px] h-[25px] cursor-pointer" color="#000" onClick={() => {(router.push('/admin'), setAnchor(null))}} /> : "" }
                   </div>
                 </div>
               )}
