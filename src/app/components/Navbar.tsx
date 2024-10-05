@@ -174,7 +174,7 @@ export default function Navbar(props: navbarProps) {
             open={openPopup}
             anchor={anchor}
             ref={popupRef}
-            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md ${pathName === "/" ? "bg-transparent" : "bg-white"} rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
+            className={`relative flex flex-col w-[280px] sm:w-[300px] shadow-md bg-white rounded-md py-3 px-5 gap-4 border border-[#f2f2f24b] z-40 backdrop-blur-[2px]`}
           >
             <div className="absolute inset-0 bg-transparent backdrop-blur-sm"></div>
             <div className="relative z-10">
@@ -202,7 +202,7 @@ export default function Navbar(props: navbarProps) {
                   </div>
                 </div>
               )}
-              <hr className={`h-[2px] border-0 ${pathName === "/" ? "bg-[#f2f2f24b]" : "bg-[#d7d7dd46]"} my-2`} />
+              <hr className={`h-[2px] border-0 bg-[#d7d7dd46] my-2`} />
               <div className="flex w-full justify-between flex-col">
                 <button
                   className="flex w-24 h-10 text-[#f1c40f] font-medium text-[16px] justify-center items-center gap-4 cursor-pointer border border-[#f1c40f] rounded-md hover:shadow-md relative self-center"
