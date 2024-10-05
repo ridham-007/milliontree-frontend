@@ -9,7 +9,7 @@ import CustomButton from "./ui/CustomButton";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { FiMenu } from "react-icons/fi";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoSettingsOutline } from "react-icons/io5";
 import { Avatar, CircularProgress } from "@mui/material";
 import { Unstable_Popup as BasePopup } from "@mui/base/Unstable_Popup";
 const Cookies = require("js-cookie");
@@ -187,20 +187,18 @@ export default function Navbar(props: navbarProps) {
                           color: "#3A8340",
                           background: "#f2f2f2",
                         }}
-                        className="avatar-container cursor-pointer"
+                        className="avatar-container"
                       >
                         {userInfo?.fName?.charAt(0) || "A"}
                         {userInfo?.lName?.charAt(0) || "N"}
                       </Avatar>
                     </>
                   )}
-                  <div className="w-[205px]">
-                    <p className={`whitespace-nowrap w-full overflow-hidden ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} truncate`}>
+                  <div className="flex items-center w-[205px]">
+                    <p className={`whitespace-nowrap w-full overflow-hidden text-[#000] truncate`}>
                       {userName === undefined ? "User Name" : userName}
                     </p>
-                    <p className={`text-[12px] w-full cursor-pointer break-words  ${pathName === "/" ? "text-[#cacace]" : "text-[#a5a5a9]"} text-ellipsis line-clamp-1`} onClick={() => { userInfo?.userRole === 'admin' ? (router.push('/admin'), setAnchor(null)) : '' }}>
-                      {userInfo?.userRole === 'admin' ? "Settings" : ''}
-                    </p>
+                    {userInfo?.userRole === 'admin' ? <IoSettingsOutline className="w-[25px] h-[25px] cursor-pointer" color="#000" onClick={() => {(router.push('/admin'), setAnchor(null))}} /> : "" }
                   </div>
                 </div>
               )}
