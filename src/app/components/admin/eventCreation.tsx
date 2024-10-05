@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { addupdateEvent, deleteEvent, paginatedEvents } from "@/app/_actions/actions";
+import { addUpdateEvent, deleteEvent, paginatedEvents } from "@/app/_actions/actions";
 import { toast } from "react-toastify";
 import CustomButton from "../ui/CustomButton";
 import InputField from "../ui/CustomInputFild";
@@ -19,7 +19,6 @@ import UpdateEvent from "./updateEvent";
 interface EventProps {
     authId?: string;
 }
-
 interface regionImagesProps {
     eventName: string;
     region: string;
@@ -50,9 +49,9 @@ export default function Event({ authId }: EventProps) {
     const [eventsData, setEventsData] = useState<any>({});
     const [loading, setLoading] = useState(true);
     const handleModelOpen = () => setOpenModel(true);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     let limit = 5;
-
+    
     const handlePagination = (curPage: number) => {
         setPage(curPage);
     };
@@ -60,7 +59,7 @@ export default function Event({ authId }: EventProps) {
     const events = async () => {
         setLoading(true)
         let updatedEventData: any = {
-            page: page,
+            page: page + 1,
             limit: limit,
         }
         try {
@@ -113,6 +112,7 @@ export default function Event({ authId }: EventProps) {
             totalResults: eventsData?.total,
             totalPages: Math.ceil((eventsData?.total || 0) / limit),
             currentPage: page,
+            rowPerPage: limit
         },
     };
 
@@ -164,13 +164,12 @@ export default function Event({ authId }: EventProps) {
         if (event && event.target) {
             const { name, value, type, files } = event.target;
             if (type === 'file' && files) {
-                const fileArray = Array.from(files); // Convert FileList to array
-
-                const fileNames = fileArray.map((file) => file.name); // Store file names as strings
+                const fileArray = Array.from(files);
+                const imageUrls = fileArray.map(file => URL.createObjectURL(file));
 
                 setEventData((prevData) => ({
                     ...prevData,
-                    images: [...prevData.images, ...fileNames],
+                    images: [...prevData.images, ...imageUrls],
                 }));
             } else {
                 setEventData((prevData) => ({
@@ -264,17 +263,17 @@ export default function Event({ authId }: EventProps) {
                 const uploadedImages = await Promise.all(
                     imageFiles?.map(async (image: any) => {
                         const { url } = await uploadFile("planted-tree", image);
-                        return url; // Return the uploaded URL
+                        return url;
                     })
                 );
-                finalUserDetails = { ...eventData, images: uploadedImages }; // Set the array of image URLs
+                finalUserDetails = { ...eventData, images: uploadedImages }; 
             } catch (error) {
                 console.error("Error uploading image file(s):", error);
                 return;
             }
         }
         try {
-            const response = await addupdateEvent(finalUserDetails);
+            const response = await addUpdateEvent(finalUserDetails);
             if (response?.success) {
                 toast(response?.message);
                 setOpenModel(false);
@@ -310,101 +309,109 @@ export default function Event({ authId }: EventProps) {
 
 
     const modelData = (
-        <>
-            <div className="flex justify-between px-8 py-4 border-b items-center">
-                <p className="text-[22px] font-semibold">Add Event</p>
-                <RiCloseCircleLine size={24} onClick={handleModelClose} className="cursor-pointer" />
+      <>
+        <div className="flex justify-between px-8 py-4 border-b items-center">
+          <p className="text-[22px] font-semibold">Add Event</p>
+          <RiCloseCircleLine
+            size={24}
+            onClick={handleModelClose}
+            className="cursor-pointer"
+          />
+        </div>
+        <div className="flex flex-col gap-5 w-full px-8 py-4">
+          <div>
+            <InputField
+              name="eventName"
+              placeholder="Enter your name"
+              type="text"
+              onChange={handleEventDataChange}
+              value={eventData.eventName}
+              className="text-[16px] mt-[8px] rounded-[8px] border border-[#f4f4f4]"
+              label={"Event name"}
+              bgColor="#F4F4F4"
+            />
+            {errors.eventName && (
+              <p className="text-red-500 text-sm mt-1">{errors.eventName}</p>
+            )}
+          </div>
+          <div>
+            <PlacesAutocomplete
+              name="region"
+              className="mt-[8px] w-full rounded-[8px] border border-[#f4f4f4] z-[99999]"
+              placeholder="Region of the event?"
+              label="Region"
+              onChange={handleEventDataChange}
+              value={eventData.region}
+            />
+            {errors.region && (
+              <p className="text-red-500 text-sm mt-1">{errors.region}</p>
+            )}
+          </div>
+          <div>
+            <label className="font-medium">Event Date</label>
+            <CustomDate
+              value={eventData.startDate}
+              onChange={handleDateChange}
+              className="border border-[#999999] mt-[9px] sm:w-[298px] !h-[48px] "
+            />
+            {errors.startDate && (
+              <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>
+            )}
+          </div>
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              multiple 
+              className="hidden w-full sm:w-max"
+              id="plant-image"
+              name="images"
+              onChange={handleEventDataChange}
+            />
+            <label
+              htmlFor="plant-image"
+              className="flex sm:w-max gap-[10px] border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
+            >
+              <p className="text-nowrap">Attach photo</p>
+              <CustomButton
+                label="Choose File"
+                className="flex px-2 w-full sm:w-max h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
+              />
+            </label>
+          </div>
+          <div className="flex flex-wrap max-h-[150px] overflow-y-auto gap-2 custom-scrollbar">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {eventData.images.map((image, index) => (
+                <div
+                  key={index}
+                  className="relative flex flex-col items-center bg-[#f2f0eb] p-2"
+                >
+                  <img
+                    src={image}
+                    alt={`Preview ${index + 1}`}
+                    className="w-32 h-32 object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute top-1 right-1 bg-gray-500 text-white rounded-full p-1"
+                  >
+                    <IoMdClose size={20} />
+                  </button>
+                </div>
+              ))}
             </div>
-            <div className="flex flex-col gap-5 w-full px-8 py-4">
-                <div>
-                    <InputField
-                        name="eventName"
-                        placeholder="Enter your name"
-                        type="text"
-                        onChange={handleEventDataChange}
-                        value={eventData.eventName}
-                        className="text-[16px] mt-[8px] rounded-[8px] border border-[#f4f4f4]"
-                        label={"Event name"}
-                        bgColor="#F4F4F4"
-                    />
-                    {errors.eventName && (
-                        <p className="text-red-500 text-sm mt-1">{errors.eventName}</p>
-                    )}
-                </div>
-                <div>
-                    <PlacesAutocomplete
-                        name="region"
-                        className="mt-[8px] w-full rounded-[8px] border border-[#f4f4f4] z-[99999]"
-                        placeholder="Region of the event?"
-                        label="Region"
-                        onChange={handleEventDataChange}
-                        value={eventData.region}
-                    />
-                    {errors.region && (
-                        <p className="text-red-500 text-sm mt-1">{errors.region}</p>
-                    )}
-                </div>
-                <div>
-                    <label className="font-medium">Event Date</label>
-                    <CustomDate
-                        value={eventData.startDate}
-                        onChange={handleDateChange}
-                        className="border border-[#999999] mt-[9px] sm:w-[298px] !h-[48px] "
-                    />
-                    {errors.startDate && (
-                        <p className="text-red-500 text-sm mt-1">
-                            {errors.startDate}
-                        </p>
-                    )}
-                </div>
-                <div>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        multiple // Allow multiple image uploads
-                        className="hidden w-full sm:w-max"
-                        id="plant-image"
-                        name="images"
-                        onChange={handleEventDataChange}
-                    />
-                    <label
-                        htmlFor="plant-image"
-                        className="flex sm:w-max gap-[10px] border-dashed border items-center border-[#777777] rounded-[10px] p-[15px]"
-                    >
-                        <p className="text-nowrap">Attach photo</p>
-                        <CustomButton
-                            label="Choose File"
-                            className="flex px-2 w-full sm:w-max h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                        />
-                    </label>
-                </div>
-                <div className="flex flex-wrap max-h-[100px] overflow-y-auto gap-2 custom-scrollbar">
-                    {eventData.images.map((image, index) => (
-                        <div
-                            key={index}
-                            className="flex gap-2 w-max h-max items-center bg-[#d0cfcf] rounded-full p-2 pl-3"
-                        >
-                            <p>{image}</p>
-                            <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="ml-2 text-white rounded-full p-1"
-                            >
-                                <IoMdClose size={20} color="gray" />
-                            </button>
-                        </div>
-                    ))}
-                </div>
-                <div className="flex w-full justify-end pt-4">
-                    <CustomButton
-                        label="Save"
-                        className="flex px-2 !w-[70px] h-[42px] !bg-[#306E1D] !text-white border !border-[#306E1D]"
-                        callback={handleSave}
-                        interactingAPI={loading}
-                    />
-                </div>
-            </div>
-        </>
+          </div>
+          <div className="flex w-full justify-end pt-4">
+            <CustomButton
+              label="Save"
+              className="flex px-2 !w-[70px] h-[42px] !bg-[#306E1D] !text-white border !border-[#306E1D]"
+              callback={handleSave}
+              interactingAPI={loading}
+            />
+          </div>
+        </div>
+      </>
     );
 
     useEffect(() => {

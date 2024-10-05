@@ -115,8 +115,8 @@ const DataTable: React.FC<DataTableProps> = ({
   eventSelection,
 }) => {
   const { columns, rows, handlePagination, handleRowLimit } = tableConfig;
-  const [page, setPage] = useState(0); // Adjust page start from 0
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [page, setPage] = useState(0); 
+  const [rowsPerPage, setRowsPerPage] = useState(tableConfig?.rowPerPage);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [menuKey, setMenuKey] = React.useState<string | null>(null);
@@ -346,7 +346,7 @@ const DataTable: React.FC<DataTableProps> = ({
               />
             ) : (
               <TablePaginationActions
-                count={rows.length}
+                count={tableConfig?.pagination?.totalPages}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 onPageChange={handleChangePage}

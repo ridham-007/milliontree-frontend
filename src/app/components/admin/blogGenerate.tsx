@@ -53,11 +53,11 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
   };
   const [blog, setBlog] = useState<FormData>(initialFormData);
   const [showEditBlog, setSHowEditBlog] = useState(false);
-  const [editBlogData, setEditBlogData] = useState<any>({});  //when click on edit set data 
+  const [editBlogData, setEditBlogData] = useState<any>({}); 
   const [submitLoading, setSubmitLoading] = useState(false);
   const [blogsData, setBlogsData] = useState<any>({});
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [open, setOpen] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
 
@@ -72,7 +72,7 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
   const paginatedBlogs = async () => {
     setLoading(true)
     let updatedEventData: any = {
-      page: page,
+      page: page + 1,
       limit: limit,
     }
     try {
@@ -166,7 +166,6 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
           jsonContent: blog.content.jsonData
         }
       });
-      console.log({ response });
       setBlog(initialFormData);
       setSubmitLoading(false);
       paginatedBlogs()
@@ -187,8 +186,6 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
       setSHowEditBlog(true)
     } else if (type === "delete") {
       const response = await deleteBlog(item?._id);
-      console.log(response);
-
       if (response) {
         await paginatedBlogs();
       }
@@ -224,8 +221,9 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
     rows: blogsData?.blogs || [],
     pagination: {
       totalResults: blogsData?.total,
-      totalPages: blogsData?.totalPages,
+      totalPages: Math.ceil((blogsData?.total || 0) / limit),
       currentPage: page,
+      rowPerPage: limit
     },
   };
 

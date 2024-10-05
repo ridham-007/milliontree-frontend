@@ -285,7 +285,7 @@ export const createCheckoutSession = async (
   }
 };
 
-export const addupdateEvent = async (
+export const addUpdateEvent = async (
   body: any
 ): Promise<any> => {
   try {
