@@ -12,10 +12,16 @@ import CustomModal from "./ui/CustomModel";
 import { IoMdClose } from "react-icons/io";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { getDownloadURL, uploadBytes, ref } from "firebase/storage";
 import { fireStorage } from "@/utils/firebase";
+import Button from "@mui/material/Button";
 
+import { IconButton, Modal } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import CloseIcon from "@mui/icons-material/Close";
+import CollectionsIcon from "@mui/icons-material/Collections";
 
 interface imagesProps {
   images: string[];
@@ -26,51 +32,56 @@ export default function Events() {
   const [openUploadImageModel, setOpenUploadImageModel] = useState(false);
   const [imageFiles, setImageFiles] = useState<any>([]);
   const [loading, setLoading] = useState(false);
-  
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const [galleryImage, setGalleryImage] = useState([]);
+
   const handleUploadImageModelOpen = (event: any) => {
     setOpenUploadImageModel(true);
     setEventData(event);
   };
-  
+
   const handleUploadImageModelClose = () => {
     setOpenUploadImageModel(false);
-    setEventData({})
+    setEventData({});
   };
-  console.log({eventData});
-  
+  console.log({ eventData });
+
   const handleEventDataChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     if (event && event.target) {
       const { name, value, type, files } = event.target;
-      if (type === 'file' && files) {
+      if (type === "file" && files) {
         const fileArray = Array.from(files); // Convert FileList to array
 
         // const fileNames = fileArray.map((file) => file.name); // Store file names as strings
         const fileUrls = fileArray.map((file) => URL.createObjectURL(file));
 
-        setEventData((prevData:any) => ({
+        setEventData((prevData: any) => ({
           ...prevData,
           // images: [...prevData.images, ...fileNames],
           images: [...prevData.images, ...fileUrls],
         }));
-      } 
+      }
       if (files && files[0]) {
         const file = files[0];
-        setImageFiles((prev: any) => ([
-          ...prev,
-          file,
-        ]));
+        setImageFiles((prev: any) => [...prev, file]);
       }
     }
   };
 
   const removeImage = (indexToRemove: number) => {
-    setEventData((prevData:any) => ({
+    setEventData((prevData: any) => ({
       ...prevData,
-      images: prevData.images.filter((cur:any, index:any) => index !== indexToRemove),
+      images: prevData.images.filter(
+        (cur: any, index: any) => index !== indexToRemove
+      ),
     }));
-    setImageFiles((prevFiles: any) => prevFiles.filter((_cur: any, index: number) => index !== indexToRemove));
+    setImageFiles((prevFiles: any) =>
+      prevFiles.filter((_cur: any, index: number) => index !== indexToRemove)
+    );
   };
 
   const uploadFile = async (
@@ -94,9 +105,11 @@ export default function Events() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     let finalUserDetails = { ...eventData };
-    const validImages = eventData.images.filter((image: any) => !image.startsWith("blob:"));
+    const validImages = eventData.images.filter(
+      (image: any) => !image.startsWith("blob:")
+    );
 
     if (imageFiles && imageFiles?.length > 0) {
       try {
@@ -111,7 +124,6 @@ export default function Events() {
           ...eventData,
           images: [...validImages, ...uploadedImages], // Combine old and new images
         };
-       
       } catch (error) {
         console.error("Error uploading image file(s):", error);
         setLoading(false);
@@ -123,7 +135,7 @@ export default function Events() {
       if (response?.success) {
         setEventData({});
         setLoading(false);
-        setOpenUploadImageModel(false)
+        setOpenUploadImageModel(false);
         toast(response?.message);
       } else {
         toast.error(response?.message);
@@ -136,12 +148,15 @@ export default function Events() {
   const modelData = (
     <>
       <div className="flex justify-between px-8 py-4 border-b items-center">
-        <p className="text-[22px] font-semibold">Upload event images</p>
-        <RiCloseCircleLine size={24} onClick={handleUploadImageModelClose} className="cursor-pointer" />
+        <p className="text-[22px] font-semibold">Event images</p>
+        <RiCloseCircleLine
+          size={24}
+          onClick={handleUploadImageModelClose}
+          className="cursor-pointer"
+        />
       </div>
       <div className="flex flex-col gap-5 w-full px-8 py-4">
         <div>
-        <label className="font-semibold">Upload new images</label>
           <input
             type="file"
             accept="image/*"
@@ -165,29 +180,30 @@ export default function Events() {
         <div className="flex h-full w-full border rounded-lg p-2">
           <div className="flex flex-wrap justify-center w-full h-[155px] overflow-y-auto gap-2 custom-scrollbar p-2">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {eventData && (eventData?.images?.map((imageUrl:any, index:number) => (
-            <div
-              key={index}
-              className="flex gap-2 w-max h-max items-center bg-[#d0cfcf] rounded-xl relative"
-            >
-              <Image
-                src={imageUrl}
-                alt={`Preview ${index}`}
-                width={100}
-                height={100}
-                className="w-full sm:w-[140px] h-[140px] object-cover rounded-xl transition-opacity duration-300" // Add any styles for image preview
-              />
-              <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity duration-300 rounded-xl" />
-              <button
-                type="button"
-                onClick={() => removeImage(index)}
-                className="ml-2 text-white rounded-full p-[2px] bg-white absolute top-2 right-2"
-              >
-                <IoMdClose size={16} color="gray" />
-              </button>
+              {eventData &&
+                eventData?.images?.map((imageUrl: any, index: number) => (
+                  <div
+                    key={index}
+                    className="flex gap-2 w-max h-max items-center bg-[#d0cfcf] rounded-xl relative"
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={`Preview ${index}`}
+                      width={100}
+                      height={100}
+                      className="w-full sm:w-[140px] h-[140px] object-cover rounded-xl transition-opacity duration-300" // Add any styles for image preview
+                    />
+                    <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity duration-300 rounded-xl" />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(index)}
+                      className="ml-2 text-white rounded-full p-[2px] bg-white absolute top-2 right-2"
+                    >
+                      <IoMdClose size={16} color="gray" />
+                    </button>
+                  </div>
+                ))}
             </div>
-          )))}
-          </div>
           </div>
         </div>
         <div className="flex w-full justify-end pt-4">
@@ -202,10 +218,9 @@ export default function Events() {
     </>
   );
 
-
   useEffect(() => {
-    fetchGroupEvents()
-  }, [])
+    fetchGroupEvents();
+  }, []);
 
   const [expandedMonths, setExpandedMonths] = useState<{
     [key: number]: boolean;
@@ -276,6 +291,36 @@ export default function Events() {
 
     return `${day} ${month}`;
   };
+
+  const openGallery = () => setIsOpen(true);
+
+  // Close Modal
+  const closeGallery = () => setIsOpen(false);
+
+  const goNext = () => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % galleryImage.length);
+        setIsAnimating(false);
+      }, 100); // Duration of the animation
+    }
+  };
+
+  // Go to Previous Image
+  const goPrev = () => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex(
+          (prevIndex) =>
+            (prevIndex - 1 + galleryImage.length) % galleryImage.length
+        );
+        setIsAnimating(false);
+      }, 100);
+    }
+  };
+
   return (
     <div className="flex flex-col w-full h-full gap-[64px]">
       <div className="flex justify-center items-center w-full px-[10px] flex-col max-w-[1280px] self-center">
@@ -300,41 +345,12 @@ export default function Events() {
         </div>
         <div className="flex flex-col w-full">
           {groupEvents?.upcoming?.map((cur: any, yearIndex: number) => {
-            console.log({cur});
-            
-            return(
-            <Accordion
-              key={cur.year}
-              className="border-t-[1px] border-[#666666]"
-              sx={{
-                ".css-15v22id-MuiAccordionDetails-root": {
-                  padding: 0,
-                },
-                ".css-llkuq-MuiAccordionDetails-root": {
-                  padding: 0,
-                },
-                ".css-5ritna-MuiAccordionDetails-root": {
-                  padding: 0,
-                },
-              }}
-            >
-              <AccordionSummary
-                expandIcon={
-                  expandedYears[yearIndex] ? (
-                    <GoDash className="text-[20px] sm:text-[22px]text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
-                  ) : (
-                    <GoPlus className="text-[20px] sm:text-[22px]text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
-                  )
-                }
-                onClick={() => handleToggleYear(yearIndex)}
-                aria-controls={`panel-${yearIndex}-content`}
-                id={`panel-${yearIndex}-header`}
-              >
-                <Typography className="font-bold text-[18px] sm:text-[20px] leading-[24px]">
-                  {cur.year}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails
+            console.log({ cur });
+
+            return (
+              <Accordion
+                key={cur.year}
+                className="border-t-[1px] border-[#666666]"
                 sx={{
                   ".css-15v22id-MuiAccordionDetails-root": {
                     padding: 0,
@@ -342,146 +358,138 @@ export default function Events() {
                   ".css-llkuq-MuiAccordionDetails-root": {
                     padding: 0,
                   },
-                  ".css-1pxj72g-MuiAccordionDetails-root": {
-                    padding: 0,
-                  },
-                  ".css-1faarcj-MuiAccordionDetails-root": {
+                  ".css-5ritna-MuiAccordionDetails-root": {
                     padding: 0,
                   },
                 }}
               >
-                <Typography>
-                  {cur.months.map((month: any, monthIndex: number) => (
-                    <div
-                      key={monthIndex}
-                      className="border-t-[1px] border-[#666666]"
-                    >
-                      <Accordion
-                        expanded={expandedMonths[monthIndex]}
-                        onChange={() => handleToggleMonth(monthIndex)}
+                <AccordionSummary
+                  expandIcon={
+                    expandedYears[yearIndex] ? (
+                      <GoDash className="text-[20px] sm:text-[22px]text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
+                    ) : (
+                      <GoPlus className="text-[20px] sm:text-[22px]text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
+                    )
+                  }
+                  onClick={() => handleToggleYear(yearIndex)}
+                  aria-controls={`panel-${yearIndex}-content`}
+                  id={`panel-${yearIndex}-header`}
+                >
+                  <Typography className="font-bold text-[18px] sm:text-[20px] leading-[24px]">
+                    {cur.year}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  sx={{
+                    ".css-15v22id-MuiAccordionDetails-root": {
+                      padding: 0,
+                    },
+                    ".css-llkuq-MuiAccordionDetails-root": {
+                      padding: 0,
+                    },
+                    ".css-1pxj72g-MuiAccordionDetails-root": {
+                      padding: 0,
+                    },
+                    ".css-1faarcj-MuiAccordionDetails-root": {
+                      padding: 0,
+                    },
+                  }}
+                >
+                  <Typography>
+                    {cur.months.map((month: any, monthIndex: number) => (
+                      <div
+                        key={monthIndex}
+                        className="border-t-[1px] border-[#666666]"
                       >
-                        <AccordionSummary
-                          expandIcon={
-                            expandedMonths[monthIndex] ? (
-                              <GoDash className="text-[20px] sm:text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
-                            ) : (
-                              <GoPlus className="text-[20px] sm:text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
-                            )
-                          }
-                          aria-controls={`panel-${monthIndex}-content`}
-                          id={`panel-${monthIndex}-header`}
+                        <Accordion
+                          expanded={expandedMonths[monthIndex]}
+                          onChange={() => handleToggleMonth(monthIndex)}
                         >
-                          <Typography className="font-bold text-[18px] leading-[21px] sm:ml-[60px]">
-                            {month.month}
-                          </Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                          <Typography
-                            sx={{
-                              ".css-1pxj72g-MuiAccordionDetails-root": {
-                                padding: 0,
-                              },
-                            }}
+                          <AccordionSummary
+                            expandIcon={
+                              expandedMonths[monthIndex] ? (
+                                <GoDash className="text-[20px] sm:text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
+                              ) : (
+                                <GoPlus className="text-[20px] sm:text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
+                              )
+                            }
+                            aria-controls={`panel-${monthIndex}-content`}
+                            id={`panel-${monthIndex}-header`}
                           >
-                            <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                              {month?.events?.map((event: any, eventIndex: any) => (
-                                <div
-                                  key={eventIndex}
-                                  className="flex w-full gap-2 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
-                                >
-                                  <div className="w-full sm:max-w-[300px] font-normal leading-[19px] sm:ml-[60px]">
-                                    {formatDate(event?.startDate, month?.month)}
-                                  </div>
-                                  <div className="w-full sm:max-w-[300px] font-bold leading-[19px] text-center">
-                                    {event?.eventName}
-                                  </div>
-                                  <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event?.region}
-                                  </div>
-                                  <div className="w-full sm:max-w-[300px]">
-                                  <CustomButton
-                                       label="Upload Image"
-                                       className={''}
-                                       callback={()=>{handleUploadImageModelOpen(event)}}
-                                     />
-                                  </div>
-                                  <CustomModal handleClose={handleUploadImageModelClose} open={openUploadImageModel} modelData={modelData} />
-                                  {/* <div className="w-full sm:max-w-[300px] flex justify-center items-center">
-                                    <Button
-                                      aria-describedby={id}
-                                      onClick={handleClick}
-                                      className="text-black capitalize"
+                            <Typography className="font-bold text-[18px] leading-[21px] sm:ml-[60px]">
+                              {month.month}
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Typography
+                              sx={{
+                                ".css-1pxj72g-MuiAccordionDetails-root": {
+                                  padding: 0,
+                                },
+                              }}
+                            >
+                              <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
+                                {month?.events?.map(
+                                  (event: any, eventIndex: any) => (
+                                    <div
+                                      key={eventIndex}
+                                      className="flex w-full gap-2 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
                                     >
-                                      <div className="flex gap-1 sm:gap-2 sm:bg-[#F2F0EB] rounded-[25px] py-[8px] px-[5px] sm:px-[20px] justify-center items-center cursor-pointer">
-                                        <PiCalendarDots className="text-[17px] sm:text-[18px]" />
-                                        <div className="font-normal leading-[19px] hidden sm:block">
-                                          Schedule
-                                        </div>
+                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] sm:ml-[60px]">
+                                        {formatDate(
+                                          event?.startDate,
+                                          month?.month
+                                        )}
                                       </div>
-                                    </Button>
-                                    <Popover
-                                      id={id}
-                                      open={open}
-                                      anchorEl={anchorEl}
-                                      onClose={handleClose}
-                                      anchorOrigin={{
-                                        vertical: "bottom",
-                                        horizontal: "left",
-                                      }}
-                                      className="box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;"
-                                      sx={{
-                                        ".css-uywun8-MuiPaper-root-MuiPopover-paper":
-                                          {
-                                            boxShadow: "initial",
-                                          },
-                                      }}
-                                    >
-                                      <LocalizationProvider
-                                        dateAdapter={AdapterDayjs}
-                                      >
-                                        <div className="bg-[#EEF2EB] pb-4">
-                                          <DateCalendar
+                                      <div className="w-full sm:max-w-[300px] font-bold leading-[19px] text-center">
+                                        {event?.eventName}
+                                      </div>
+                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                        {event?.region}
+                                      </div>
+                                      <div className="flex items-center">
+                                      {event?.images?.length > 0 ? (
+                                        <Button
+                                          onClick={() => {
+                                            openGallery();
+                                            setGalleryImage(
+                                              event?.images || []
+                                            );
+                                          }}
+                                        >
+                                          <CollectionsIcon
                                             sx={{
-                                              ".css-23p0if-MuiButtonBase-root-MuiPickersDay-root.Mui-selected":
-                                                {
-                                                  backgroundColor: "#3BAD49",
-                                                },
-                                              ".css-1wy8uaa-MuiButtonBase-root-MuiPickersDay-root.Mui-selected":
-                                                {
-                                                  backgroundColor: "#3BAD49",
-                                                },
-                                              ".css-uywun8-MuiPaper-root-MuiPopover-paper":
-                                                {
-                                                  backgroundColor: "#EEF2EB",
-                                                },
-                                              ".css-1wy8uaa-MuiButtonBase-root-MuiPickersDay-root:hover":
-                                                {
-                                                  backgroundColor: "#d7f1db",
-                                                },
+                                              color: "#000",
                                             }}
                                           />
-                                          <button
-                                            type="button"
-                                            className="flex bg-[#F1B932] font-normal leading-[19px] mx-auto py-[7px] px-[20px] rounded-[25px]"
-                                          >
-                                            Schedule
-                                          </button>
-                                        </div>
-                                      </LocalizationProvider>
-                                    </Popover>
-                                  </div> */}
-                                </div>
-                              ))}
-                            </div>
-                          </Typography>
-                        </AccordionDetails>
-                      </Accordion>
-                    </div>
-                  ))}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
-          )})}
+                                        </Button>
+                                      ) : (
+                                        <></>
+                                      )}
+                                      <div className="w-full sm:max-w-[300px] mr-4">
+                                        <CustomButton
+                                          label="Upload Image"
+                                          className={""}
+                                          callback={() => {
+                                            handleUploadImageModelOpen(event);
+                                          }}
+                                        />
+                                      </div>
+                                      </div>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </Typography>
+                          </AccordionDetails>
+                        </Accordion>
+                      </div>
+                    ))}
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            );
+          })}
         </div>
       </div>
 
@@ -561,23 +569,57 @@ export default function Events() {
                         <AccordionDetails>
                           <Typography>
                             <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                              {month?.events?.map((event: any, eventIndex: any) => (
-                                <div
-                                  key={eventIndex}
-                                  className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
-                                >
-                                  <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {formatDate(event?.startDate, month?.month)}
+                              {month?.events?.map(
+                                (event: any, eventIndex: any) => (
+                                  <div
+                                    key={eventIndex}
+                                    className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
+                                  >
+                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                      {formatDate(
+                                        event?.startDate,
+                                        month?.month
+                                      )}
+                                    </div>
+                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                      {event?.eventName}
+                                    </div>
+                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                      {event?.region}
+                                    </div>
+                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center"></div>
+                                    <div className="flex items-center">
+                                      {event?.images?.length > 0 ? (
+                                        <Button
+                                          onClick={() => {
+                                            openGallery();
+                                            setGalleryImage(
+                                              event?.images || []
+                                            );
+                                          }}
+                                        >
+                                          <CollectionsIcon
+                                            sx={{
+                                              color: "#000",
+                                            }}
+                                          />
+                                        </Button>
+                                      ) : (
+                                        <></>
+                                      )}
+                                      <div className="w-full sm:max-w-[300px] gap-4 mr-4">
+                                        <CustomButton
+                                          label="Upload Image"
+                                          className={""}
+                                          callback={() => {
+                                            handleUploadImageModelOpen(event);
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event?.eventName}
-                                  </div>
-                                  <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                    {event?.region}
-                                  </div>
-                                  <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center"></div>
-                                </div>
-                              ))}
+                                )
+                              )}
                             </div>
                           </Typography>
                         </AccordionDetails>
@@ -590,6 +632,64 @@ export default function Events() {
           ))}
         </div>
       </div>
+
+      <Modal
+        open={isOpen}
+        onClose={() => {
+          closeGallery();
+          setGalleryImage([]);
+        }}
+      >
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4">
+          <div className="relative w-full h-full flex items-center justify-center p-4">
+            <IconButton
+              className="!absolute top-5 right-5 !text-white z-10"
+              onClick={closeGallery}
+            >
+              <CloseIcon fontSize="large" />
+            </IconButton>
+
+            <IconButton
+              className="!absolute left-5 top-1/2 transform -translate-y-1/2 !text-white z-10"
+              onClick={goPrev}
+            >
+              <ArrowBackIosIcon fontSize="large" />
+            </IconButton>
+
+            <div className="relative w-full f-full overflow-hidden">
+              <div
+                className={` w-full h-full transition-transform duration-500 transform`}
+              >
+                <Image
+                  src={galleryImage[currentIndex]}
+                  alt={`image-${currentIndex}`}
+                  className="!w-full !h-full rounded-lg"
+                  unoptimized
+                  width={100}
+                  height={100}
+                  objectFit="cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = "/images/plantation-1.jpg";
+                  }}
+                />
+              </div>
+            </div>
+
+            <IconButton
+              className="!absolute right-5 top-1/2 transform -translate-y-1/2 !text-white z-10"
+              onClick={goNext}
+            >
+              <ArrowForwardIosIcon fontSize="large" />
+            </IconButton>
+          </div>
+        </div>
+      </Modal>
+      <CustomModal
+        handleClose={handleUploadImageModelClose}
+        open={openUploadImageModel}
+        modelData={modelData}
+      />
     </div>
   );
 }
