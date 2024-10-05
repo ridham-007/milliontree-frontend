@@ -5,18 +5,203 @@ import { GoDash, GoPlus } from "react-icons/go";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import Box from "@mui/material/Box";
-import { PiCalendarDots } from "react-icons/pi";
-import Button from "@mui/material/Button";
-import Popover from "@mui/material/Popover";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
-import { getGroupByEvents } from "../_actions/actions";
+import { addUpdateEvent, getGroupByEvents } from "../_actions/actions";
 import { Typography } from "@mui/material";
+import CustomButton from "./ui/CustomButton";
+import CustomModal from "./ui/CustomModel";
+import { IoMdClose } from "react-icons/io";
+import { RiCloseCircleLine } from "react-icons/ri";
+import { toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
+import { getDownloadURL, uploadBytes, ref } from "firebase/storage";
+import { fireStorage } from "@/utils/firebase";
 
+
+interface imagesProps {
+  images: string[];
+}
 export default function Events() {
   const [groupEvents, setGroupEvents] = useState<any>({});
+  const [eventData, setEventData] = useState<any>();
+  const [openUploadImageModel, setOpenUploadImageModel] = useState(false);
+  const [imageFiles, setImageFiles] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
+  
+  const handleUploadImageModelOpen = (event: any) => {
+    setOpenUploadImageModel(true);
+    setEventData(event);
+  };
+  
+  const handleUploadImageModelClose = () => {
+    setOpenUploadImageModel(false);
+    setEventData({})
+  };
+  console.log({eventData});
+  
+  const handleEventDataChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event && event.target) {
+      const { name, value, type, files } = event.target;
+      if (type === 'file' && files) {
+        const fileArray = Array.from(files); // Convert FileList to array
+
+        // const fileNames = fileArray.map((file) => file.name); // Store file names as strings
+        const fileUrls = fileArray.map((file) => URL.createObjectURL(file));
+
+        setEventData((prevData:any) => ({
+          ...prevData,
+          // images: [...prevData.images, ...fileNames],
+          images: [...prevData.images, ...fileUrls],
+        }));
+      } 
+      if (files && files[0]) {
+        const file = files[0];
+        setImageFiles((prev: any) => ([
+          ...prev,
+          file,
+        ]));
+      }
+    }
+  };
+
+  const removeImage = (indexToRemove: number) => {
+    setEventData((prevData:any) => ({
+      ...prevData,
+      images: prevData.images.filter((cur:any, index:any) => index !== indexToRemove),
+    }));
+    setImageFiles((prevFiles: any) => prevFiles.filter((_cur: any, index: number) => index !== indexToRemove));
+  };
+
+  const uploadFile = async (
+    bucket: string,
+    file: File
+  ): Promise<{ url: string; name: string }> => {
+    try {
+      return new Promise(async (resolve, reject) => {
+        if (!file) resolve({ url: "", name: "" });
+        const fileName = file.name || `${uuidv4()}`;
+        const storageRef = ref(fireStorage, `${bucket}/${fileName}`);
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        resolve({ url, name: file.name });
+      });
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    let finalUserDetails = { ...eventData };
+    const validImages = eventData.images.filter((image: any) => !image.startsWith("blob:"));
+
+    if (imageFiles && imageFiles?.length > 0) {
+      try {
+        const uploadedImages = await Promise.all(
+          imageFiles?.map(async (image: any) => {
+            const { url } = await uploadFile("planted-tree", image);
+            return url; // Return the uploaded URL
+          })
+        );
+        // finalUserDetails = { ...eventData, images: uploadedImages }; // Set the array of image URLs
+        finalUserDetails = {
+          ...eventData,
+          images: [...validImages, ...uploadedImages], // Combine old and new images
+        };
+       
+      } catch (error) {
+        console.error("Error uploading image file(s):", error);
+        setLoading(false);
+        return;
+      }
+    }
+    try {
+      const response = await addUpdateEvent(finalUserDetails);
+      if (response?.success) {
+        setEventData({});
+        setLoading(false);
+        setOpenUploadImageModel(false)
+        toast(response?.message);
+      } else {
+        toast.error(response?.message);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  const modelData = (
+    <>
+      <div className="flex justify-between px-8 py-4 border-b items-center">
+        <p className="text-[22px] font-semibold">Upload event images</p>
+        <RiCloseCircleLine size={24} onClick={handleUploadImageModelClose} className="cursor-pointer" />
+      </div>
+      <div className="flex flex-col gap-5 w-full px-8 py-4">
+        <div>
+        <label className="font-semibold">Upload new images</label>
+          <input
+            type="file"
+            accept="image/*"
+            multiple // Allow multiple image uploads
+            className="hidden w-full sm:w-max"
+            id="plant-image"
+            name="images"
+            onChange={handleEventDataChange}
+          />
+          <label
+            htmlFor="plant-image"
+            className="flex w-full gap-[10px] justify-center border-dashed border items-center border-[#777777] rounded-[10px] p-[40px] mt-1"
+          >
+            <p className="text-nowrap">Attach photo</p>
+            <CustomButton
+              label="Choose File"
+              className="flex px-2 w-full sm:w-max h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
+            />
+          </label>
+        </div>
+        <div className="flex h-full w-full border rounded-lg p-2">
+          <div className="flex flex-wrap justify-center w-full h-[155px] overflow-y-auto gap-2 custom-scrollbar p-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {eventData && (eventData?.images?.map((imageUrl:any, index:number) => (
+            <div
+              key={index}
+              className="flex gap-2 w-max h-max items-center bg-[#d0cfcf] rounded-xl relative"
+            >
+              <Image
+                src={imageUrl}
+                alt={`Preview ${index}`}
+                width={100}
+                height={100}
+                className="w-full sm:w-[140px] h-[140px] object-cover rounded-xl transition-opacity duration-300" // Add any styles for image preview
+              />
+              <div className="absolute inset-0 bg-black opacity-0 hover:opacity-30 transition-opacity duration-300 rounded-xl" />
+              <button
+                type="button"
+                onClick={() => removeImage(index)}
+                className="ml-2 text-white rounded-full p-[2px] bg-white absolute top-2 right-2"
+              >
+                <IoMdClose size={16} color="gray" />
+              </button>
+            </div>
+          )))}
+          </div>
+          </div>
+        </div>
+        <div className="flex w-full justify-end pt-4">
+          <CustomButton
+            label="Save"
+            className="flex px-2 !w-[70px] h-[42px] !bg-[#306E1D] !text-white border !border-[#306E1D]"
+            callback={handleSave}
+            interactingAPI={loading}
+          />
+        </div>
+      </div>
+    </>
+  );
+
 
   useEffect(() => {
     fetchGroupEvents()
@@ -114,7 +299,10 @@ export default function Events() {
           Upcoming events
         </div>
         <div className="flex flex-col w-full">
-          {groupEvents?.upcoming?.map((cur: any, yearIndex: number) => (
+          {groupEvents?.upcoming?.map((cur: any, yearIndex: number) => {
+            console.log({cur});
+            
+            return(
             <Accordion
               key={cur.year}
               className="border-t-[1px] border-[#666666]"
@@ -210,6 +398,14 @@ export default function Events() {
                                   <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
                                     {event?.region}
                                   </div>
+                                  <div className="w-full sm:max-w-[300px]">
+                                  <CustomButton
+                                       label="Upload Image"
+                                       className={''}
+                                       callback={()=>{handleUploadImageModelOpen(event)}}
+                                     />
+                                  </div>
+                                  <CustomModal handleClose={handleUploadImageModelClose} open={openUploadImageModel} modelData={modelData} />
                                   {/* <div className="w-full sm:max-w-[300px] flex justify-center items-center">
                                     <Button
                                       aria-describedby={id}
@@ -285,7 +481,7 @@ export default function Events() {
                 </Typography>
               </AccordionDetails>
             </Accordion>
-          ))}
+          )})}
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import InputField from "./ui/CustomInputFild";
 import CustomButton from "./ui/CustomButton";
 import { useState } from "react";
-import { addupdateEvent, deleteUserById, getUserByEmail } from "../_actions/actions";
+import { addUpdateEvent, deleteUserById, getUserByEmail } from "../_actions/actions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import CustomModal from "./ui/CustomModel";
@@ -241,7 +241,7 @@ export default function SearchTree(props: SearchTreeProps) {
       }
     }
     try {
-      const { response } = await addupdateEvent(finalUserDetails);
+      const { response } = await addUpdateEvent(finalUserDetails);
       if (response?.success) {
         toast(response?.message);
       } else {
