@@ -54,6 +54,7 @@ export default function Navbar(props: navbarProps) {
 
   const handleLinkClick = (title: string) => {
     setSelected(title);
+    setIsMenuOpen(false)
   };
 
   const handleOnClick = (value: string) => {
