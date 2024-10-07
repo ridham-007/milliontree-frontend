@@ -71,7 +71,7 @@ const CustomSelection = (props: CustomSelectionProps) => {
       </label>
       <div className={`${props?.className}`}>
         {props.icon && (
-          <GrLocation size={30} color="#FF772E" />
+          <GrLocation size={30} color="#3a8340" />
         )}
         {!props.Autocomplete ? (
           <Select
@@ -100,12 +100,12 @@ const CustomSelection = (props: CustomSelectionProps) => {
                 }: { isDisabled: boolean; isSelected: boolean; isFocused: boolean },
               ) => ({
                 ...styles,
-                backgroundColor: isDisabled ? "red" : isSelected ? "#FF772E" : "#FFFFFF",
+                backgroundColor: isDisabled ? "red" : isSelected ? "#3a8340" : "#FFFFFF",
                 color: isSelected ? "#FFFFFF" : "#000000",
                 cursor: isDisabled ? "cursor-pointer" : "cursor-pointer",
                 "&:hover": {
                   backgroundColor:
-                    !isDisabled && !isSelected && isFocused ? "#ff772edc" : "#FF772E",
+                    !isDisabled && !isSelected && isFocused ? "#306e1d9e" : "#3a8340",
                   color: isSelected ? "#FFFFFF" : "#000000"
                 },
               }),

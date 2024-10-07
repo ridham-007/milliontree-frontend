@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BlogGenerate from "./admin/blogGenerate";
 import Sidebar from "./ui/SideBar";
 import Event from "./admin/eventCreation";
+import UserUpdate from "./admin/userInfoUpdate";
 interface AdminProps {
   queryParams?: any;
   authId?: any;
@@ -11,6 +12,7 @@ interface AdminProps {
 
 export default function Admin({ queryParams, authId }: AdminProps) {
   const [selectedTab, setSelectedTab] = useState<string | null>('blog');
+
   const handleSidebarItemClick = (label: string) => {
     setSelectedTab(label);
   };
@@ -22,6 +24,7 @@ export default function Admin({ queryParams, authId }: AdminProps) {
         <div className="w-full bg-[#FAFAFA]">
           {selectedTab === "blog" && <BlogGenerate authId={authId} />}
           {selectedTab === "event" && <Event />}
+          {selectedTab === "users" && <UserUpdate />}
         </div>
       </div>
     </div>
