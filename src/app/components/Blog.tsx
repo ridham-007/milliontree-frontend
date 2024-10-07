@@ -6,6 +6,8 @@ import Pagination from "./ui/Pagination";
 import { useRouter } from "next/navigation";
 import { paginatedBlog } from "../_actions/actions";
 import Loader from "./Loader";
+import CustomButton from "./ui/CustomButton";
+const Cookies = require("js-cookie");
  
 export default function Blog() {
   const initialValue = {
@@ -17,10 +19,19 @@ export default function Blog() {
   const [blog, setBlog] = useState<any>();
   const [loading, setLoading] = useState(true);
   const [loader, setLoader] = useState(false);
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
   const router = useRouter()
 
   const handlePageChange = (page: number) => {
     setBlogsData({ ...blogsData, page: page });
+  };
+
+  const handleAddBlogClick = () => {
+    const queryString = new URLSearchParams({
+      // ...queryParams, 
+      tab: 'blog',
+    }).toString();
+    router.push(`/admin?${queryString}`);
   };
   
   const fetchBlogs = async () => {
@@ -61,7 +72,14 @@ export default function Blog() {
        {loading ? (
             <Loader show={true} />
           ) : (
-          <>
+          <div className="w-full">
+            { user?.userRole === 'admin' && <div className="flex w-full sm:justify-end pb-10 sm:px-3">
+        <CustomButton
+            label="Add blog"
+            className="rounded-lg font-semibold text-[18px]"
+            onClick={handleAddBlogClick}
+          />
+        </div>}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 w-full justify-items-center sm:px-5">
           <Card 
           data={blog?.blogs}
@@ -76,7 +94,7 @@ export default function Blog() {
             currentPage={blog?.page}
           />}
          </div>
-         </>
+         </div>
          )}
         </div>
         </div>
