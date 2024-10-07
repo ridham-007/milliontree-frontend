@@ -31,14 +31,14 @@ const Sidebar = ({
   };
   console.log({ queryParams });
 
-  // useEffect(() => {
-  //   if (queryParams?.tab) {
-  //     onSidebarItemClick(queryParams?.tab);
-  //     setSelected(queryParams?.tab);
-  //   } else {
-  //     onSidebarItemClick(selected);
-  //   }
-  // }, [queryParams?.tab, selected, onSidebarItemClick]);
+  useEffect(() => {
+    if (queryParams?.tab) {
+      onSidebarItemClick(queryParams?.tab);
+      setSelected(queryParams?.tab);
+    } else {
+      onSidebarItemClick(selected);
+    }
+  }, []);
 
   const tabData: any = pathName === "/admin" && adminData;
 

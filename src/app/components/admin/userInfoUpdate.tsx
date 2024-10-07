@@ -213,8 +213,10 @@ export default function UserUpdate({ }: UserUpdateProps) {
 
   return (
     <>
+    <div className="flex flex-col w-full h-full bg-white items-center px-3 sm:px-5 gap-5 py:py-5 sm:py-10">
         <DataTable tableConfig={tableConfig} isLoading={loading} fixRow={true} />
         <CustomModal handleClose={handleModelClose} open={openModel} modelData={modelData} />
+    </div>
     </>
   );
 }

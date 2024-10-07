@@ -355,14 +355,14 @@ export default function Events({queryParams}:eventProps) {
       </div>
       {/*  Upcoming events */}
       <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] md:px-[80px]">
-     {/* { user?.userRole === 'admin' &&
+     { user?.userRole === 'admin' &&
         <div className={`${user?.userRole !== 'admin' ? 'hidden' : 'flex'} sm:justify-end w-full gap-3`}>
           <CustomButton
             label="Add event"
             className="rounded-lg font-semibold text-[18px]"
             onClick={handleAddEventClick}
           />
-      </div> } */}
+      </div> }
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Upcoming events
         </div>

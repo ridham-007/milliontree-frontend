@@ -198,7 +198,7 @@ export default function Navbar(props: navbarProps) {
                     <p className={`whitespace-nowrap w-full overflow-hidden text-[#000] truncate`}>
                       {userName === undefined ? "User Name" : userName}
                     </p>
-                    {userInfo?.userRole === 'admin' ? <IoSettingsOutline className="w-[25px] h-[25px] cursor-pointer" color="#000" onClick={() => {(router.push('/admin'), setAnchor(null))}} /> : "" }
+                    {/* {userInfo?.userRole === 'admin' ? <IoSettingsOutline className="w-[25px] h-[25px] cursor-pointer" color="#000" onClick={() => {(router.push('/admin'), setAnchor(null))}} /> : "" } */}
                   </div>
                 </div>
               )}
