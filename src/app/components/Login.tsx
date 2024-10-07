@@ -90,7 +90,7 @@ const LoginForm = () => {
         <div className="flex flex-col w-full max-w-[1280px] gap-6 lg:gap-[70px]">
           <div className="w-full relative z-30">
             <Image src={'/images/landing-bg.png'} width={350} height={350} alt="" unoptimized className="w-full h-[240px] sm:h-[350px] rounded-[20px] lg:rounded-[40px]" />
-            <p className="w-full top-[100px] sm:top-[150px] text-[34px] sm:text-[44px] font-bold absolute text-white text-center leading-[41px] tracking-[12px]">LogIn</p>
+            <p className="w-full top-[100px] sm:top-[150px] text-[34px] sm:text-[44px] font-bold absolute text-white text-center leading-[41px] tracking-[12px]">Login</p>
           </div>
           <div className="flex flex-col w-full justify-center items-center py-[50px] md:py-0 px-3 sm:px-0">
             <form

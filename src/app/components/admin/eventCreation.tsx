@@ -87,6 +87,18 @@ export default function Event({ authId }: EventProps) {
         }
     };
 
+    const formatDate: any = (dateString: string) => {
+        const [datePart] = dateString.split('T');
+        const [year, month, day] = datePart.split('-');
+    
+        const months = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const monthName = months[parseInt(month) - 1];
+        return `${monthName} ${parseInt(day)}, ${year}`;
+      }
+
     const tableConfig = {
         notFoundData: 'No events found',
         actionPresent: true,
@@ -105,6 +117,10 @@ export default function Event({ authId }: EventProps) {
             {
                 field: "startDate",
                 headerName: "Event Date",
+                customRender: (row: any) => {
+                    const formattedDate = formatDate(row?.startDate);
+                    return <div>{formattedDate}</div>;
+                  },
             },
         ],
         rows: eventsData?.events || [],

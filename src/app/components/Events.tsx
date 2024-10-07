@@ -1,13 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { GoDash, GoPlus } from "react-icons/go";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import { addUpdateEvent, getGroupByEvents } from "../_actions/actions";
-import { Typography } from "@mui/material";
-import CustomButton from "./ui/CustomButton";
+import { Hidden, Typography } from "@mui/material";
 import CustomModal from "./ui/CustomModel";
 import { IoMdClose } from "react-icons/io";
 import { RiCloseCircleLine } from "react-icons/ri";
@@ -22,11 +22,15 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
 import CollectionsIcon from "@mui/icons-material/Collections";
+import { useRouter } from "next/navigation";
+import CustomButton from "./ui/CustomButton";
+const Cookies = require("js-cookie");
 
-interface imagesProps {
-  images: string[];
+// const CustomButton = dynamic(() => import("../components/ui/CustomButton"), { ssr: false });
+interface eventProps {
+  queryParams?:any
 }
-export default function Events() {
+export default function Events({queryParams}:eventProps) {
   const [groupEvents, setGroupEvents] = useState<any>({});
   const [eventData, setEventData] = useState<any>();
   const [openUploadImageModel, setOpenUploadImageModel] = useState(false);
@@ -36,6 +40,8 @@ export default function Events() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [galleryImage, setGalleryImage] = useState([]);
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+  const router = useRouter();
 
   const handleUploadImageModelOpen = (event: any) => {
     setOpenUploadImageModel(true);
@@ -46,7 +52,15 @@ export default function Events() {
     setOpenUploadImageModel(false);
     setEventData({});
   };
-  console.log({ eventData });
+
+  const handleAddEventClick = () => {
+    const queryString = new URLSearchParams({
+      // ...queryParams,
+      tab: 'event',
+    }).toString();
+
+    router.push(`/admin?${queryString}`);
+  };
 
   const handleEventDataChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -340,7 +354,15 @@ export default function Events() {
         </div>
       </div>
       {/*  Upcoming events */}
-      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px]">
+      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] md:px-[80px]">
+     {/* { user?.userRole === 'admin' &&
+        <div className={`${user?.userRole !== 'admin' ? 'hidden' : 'flex'} sm:justify-end w-full gap-3`}>
+          <CustomButton
+            label="Add event"
+            className="rounded-lg font-semibold text-[18px]"
+            onClick={handleAddEventClick}
+          />
+      </div> } */}
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Upcoming events
         </div>
@@ -429,8 +451,9 @@ export default function Events() {
                                 },
                               }}
                             >
-                              <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
-                                {month?.events?.map(
+                              <div className="flex flex-col w-full overflow-x-auto custom-scrollbar text-[14px] sm:text-[16px] px-2 sm:px-0">
+                                <div className="min-w-[500px]">                                
+                                  {month?.events?.map(
                                   (event: any, eventIndex: any) => (
                                     <div
                                       key={eventIndex}
@@ -448,7 +471,7 @@ export default function Events() {
                                       <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
                                         {event?.region}
                                       </div>
-                                      <div className="flex items-center">
+                                      <div className="flex items-center pr-4">
                                       {event?.images?.length > 0 ? (
                                         <Button
                                           onClick={() => {
@@ -465,9 +488,9 @@ export default function Events() {
                                           />
                                         </Button>
                                       ) : (
-                                        <></>
+                                        <div className="w-max min-w-16"></div>
                                       )}
-                                      <div className="w-full sm:max-w-[300px] mr-4">
+                                      <div className="flex justify-end w-full sm:max-w-[300px]">
                                         <CustomButton
                                           label="Upload Image"
                                           className={""}
@@ -480,6 +503,7 @@ export default function Events() {
                                     </div>
                                   )
                                 )}
+                                </div>
                               </div>
                             </Typography>
                           </AccordionDetails>
@@ -495,7 +519,7 @@ export default function Events() {
       </div>
 
       {/* Completed events */}
-      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] sm:px-[80px] mb-[100px]">
+      <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] md:px-[80px] mb-[100px]">
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Completed events
         </div>
@@ -569,7 +593,8 @@ export default function Events() {
                         </AccordionSummary>
                         <AccordionDetails>
                           <Typography>
-                            <div className="flex flex-col w-full text-[14px] sm:text-[16px] px-2 sm:px-0">
+                            <div className="flex flex-col w-[510px] overflow-x-auto custom-scrollbar sm:w-full text-[14px] sm:text-[16px] px-2 sm:px-0 ">
+                            <div className="min-w-[500px]">                                
                               {month?.events?.map(
                                 (event: any, eventIndex: any) => (
                                   <div
@@ -606,7 +631,7 @@ export default function Events() {
                                           />
                                         </Button>
                                       ) : (
-                                        <></>
+                                        <div className="w-max min-w-16"></div>
                                       )}
                                       <div className="w-full sm:max-w-[300px] gap-4 mr-4">
                                         <CustomButton
@@ -621,6 +646,7 @@ export default function Events() {
                                   </div>
                                 )
                               )}
+                              </div>
                             </div>
                           </Typography>
                         </AccordionDetails>

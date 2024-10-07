@@ -276,7 +276,7 @@ export default function TrackPage() {
           <CustomSelection
             className="!w-[220px] md:!w-[380px] rounded-none "
             placeholder={"Please select"}
-            label="Select tree"
+            label="Select event"
             data={treeNameData}
             value={selectTree}
             onChange={(value: any) => setSelectTree(value)}
