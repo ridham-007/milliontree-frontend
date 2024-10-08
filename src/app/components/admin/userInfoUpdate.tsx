@@ -37,7 +37,6 @@ export default function UserUpdate({ }: UserUpdateProps) {
     const [loading, setLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [usersData, setUsersData] = useState<any>();
-    const [showEditUser, setShowEditUser] = useState(false);
     const [openModel, setOpenModel] = useState(false);
     const [page, setPage] = useState(0);
     let limit = 5;
@@ -53,10 +52,9 @@ export default function UserUpdate({ }: UserUpdateProps) {
     const handleActionMenu = async (type: any, item: any) => {
         if (type === "edit") {
             setEditUserData(item)
-            setShowEditUser(true)
             setOpenModel(true)
         } else if (type === "delete") {
-            // const response = await deleteEvent(item?._id);
+            // const response = await deleteUser(item?._id);
             // if (response) {
             //     await events();
             // }
@@ -90,9 +88,11 @@ export default function UserUpdate({ }: UserUpdateProps) {
             if (response?.success) {
                 setUsersData(response?.data);
                 setLoading(false)
-            } 
+            }else {
+              console.error("Failed to fetch users:", response?.message);
+          }
         } catch (error) {
-            console.error("Error fetching events:", error);
+            console.error("Error fetching users:", error);
         }
     };
 

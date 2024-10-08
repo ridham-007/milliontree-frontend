@@ -368,8 +368,6 @@ export default function Events({queryParams}:eventProps) {
         </div>
         <div className="flex flex-col w-full">
           {groupEvents?.upcoming?.map((cur: any, yearIndex: number) => {
-            console.log({ cur });
-
             return (
               <Accordion
                 key={cur.year}

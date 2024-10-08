@@ -4,9 +4,9 @@ interface CustomModalProps {
     handleClose?:any;
     open?:any;
     modelData?: any;
+    modelWidth?: any;
 }
-const CustomModal = ({ handleClose, open, modelData }: CustomModalProps) => {
-
+const CustomModal = ({ handleClose, open, modelData, modelWidth }: CustomModalProps) => {
   return (
     <>
       <Modal open={open} onClose={handleClose}>
@@ -24,8 +24,8 @@ const CustomModal = ({ handleClose, open, modelData }: CustomModalProps) => {
             maxWidth: {
               xs: "94%",
               sm: "500px",
-              md: "600px",
-              lg: "700px",
+              md: "700px",
+              lg: modelWidth ? modelWidth : '700px',
             },
           }}
         >

@@ -30,7 +30,7 @@ const SignUpForm = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-
+    const trimmedValue = value.trim();
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
@@ -38,7 +38,7 @@ const SignUpForm = () => {
 
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
-      [name]: value,
+      [name]: trimmedValue,
     }));
   };
 
