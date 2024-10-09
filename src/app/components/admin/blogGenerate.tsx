@@ -462,7 +462,7 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
           <DataTable
             tableConfig={tableConfig}
             isLoading={loading}
-            fixRow={true}
+            paginatedData={true}
           />
           <CustomModal handleClose={handleClose} open={open} modelData={modelData} modelWidth= '1050px'/>
         </div>

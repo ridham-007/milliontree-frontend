@@ -1,6 +1,9 @@
-"use client";
-
-import * as React from "react";
+import * as React from 'react';
+import { useTheme } from '@mui/material/styles';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LastPageIcon from '@mui/icons-material/LastPage';
 import {
   Table,
   TableBody,
@@ -9,25 +12,18 @@ import {
   TableHead,
   TableRow,
   TableFooter,
+  TablePagination,
   Paper,
   IconButton,
   Box,
   Menu,
   MenuItem,
   ListItemIcon,
-} from "@mui/material";
-import {
-  FirstPage as FirstPageIcon,
-  LastPage as LastPageIcon,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-} from "@mui/icons-material";
-import { useTheme } from "@mui/material/styles";
-import { useEffect, useState } from "react";
-import { MdOutlineEdit, MdOutlineMoreVert } from "react-icons/md";
-import { GrView } from "react-icons/gr";
-import { RiDeleteBinLine } from "react-icons/ri";
-import Loader from "../Loader";
+} from '@mui/material';
+import { MdOutlineEdit, MdOutlineMoreVert } from 'react-icons/md';
+import { GrView } from 'react-icons/gr';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import Loader from '../Loader';
 
 interface TablePaginationActionsProps {
   count: number;
@@ -35,7 +31,7 @@ interface TablePaginationActionsProps {
   rowsPerPage: number;
   onPageChange: (
     event: React.MouseEvent<HTMLButtonElement>,
-    newPage: number
+    newPage: number,
   ) => void;
 }
 
@@ -43,19 +39,21 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
-  const handleFirstPageButtonClick = (event: any) => {
+  const handleFirstPageButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     onPageChange(event, 0);
   };
 
-  const handleBackButtonClick = (event: any) => {
+  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, page - 1);
   };
 
-  const handleNextButtonClick = (event: any) => {
+  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, page + 1);
   };
 
-  const handleLastPageButtonClick = (event: any) => {
+  const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
@@ -66,121 +64,87 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
         disabled={page === 0}
         aria-label="first page"
       >
-        {theme.direction === "rtl" ? <LastPageIcon /> : <FirstPageIcon />}
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
       </IconButton>
       <IconButton
         onClick={handleBackButtonClick}
         disabled={page === 0}
         aria-label="previous page"
       >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowRight />
-        ) : (
-          <KeyboardArrowLeft />
-        )}
+        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="next page"
       >
-        {theme.direction === "rtl" ? (
-          <KeyboardArrowLeft />
-        ) : (
-          <KeyboardArrowRight />
-        )}
+        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
       </IconButton>
       <IconButton
         onClick={handleLastPageButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="last page"
       >
-        {theme.direction === "rtl" ? <FirstPageIcon /> : <LastPageIcon />}
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
       </IconButton>
     </Box>
   );
 }
 
-interface DataTableProps {
-  tableConfig?: any;
-  isLoading?: boolean;
-  fixRow?: boolean;
-  eventSelection?: any;
-}
-
-const DataTable: React.FC<DataTableProps> = ({
-  tableConfig,
-  isLoading,
-  fixRow,
-  eventSelection,
-}) => {
-  const { columns, rows, handlePagination, handleRowLimit } = tableConfig;
-  const [page, setPage] = useState(0); 
-  const [rowsPerPage, setRowsPerPage] = useState(tableConfig?.rowPerPage);
+export default function DataTable({ tableConfig, isLoading, paginatedData }: any) {
+    const { handlePagination, pagination } = tableConfig;
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(paginatedData ? pagination?.rowPerPage : 5);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const [menuKey, setMenuKey] = React.useState<string | null>(null);
+  const open = Boolean(anchorEl);
+  
+  const rows = tableConfig?.rows || [];
+  const columns = tableConfig?.columns || [];
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    key: string
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setMenuKey(key);
-  };
+  const displayRows = paginatedData
+    ? rows
+    : rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  const handleClose = (type: any, item: any) => {
-    tableConfig.onActionClick(type, item);
-    setAnchorEl(null);
-  };
+    const updatedColumns = [...tableConfig.columns];
+    if (tableConfig.actionPresent) {
+      updatedColumns.push({
+        field: "action",
+        headerName: "Action",
+      });
+    }
 
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    newPage: number
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number,
   ) => {
-    if (fixRow) {
-      handlePagination(newPage);
-    }
+   if (paginatedData) {
+    handlePagination(newPage)
+   }
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const newRowsPerPage = parseInt(event.target.value, 10);
-    if (fixRow) {
-      handleRowLimit(newRowsPerPage);
-    }
-    setRowsPerPage(newRowsPerPage);
-    setPage(0); // Reset to first page when changing rows per page
+    setRowsPerPage(parseInt(event.target.value));
+    setPage(0);
   };
 
-  const updatedColumns = [...tableConfig.columns];
-  if (tableConfig.actionPresent) {
-    updatedColumns.push({
-      field: "action",
-      headerName: "Action",
-    });
-  }
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, key: string) => {
+    setAnchorEl(event.currentTarget);
+    setMenuKey(key);
+  };
 
-  const displayRows = fixRow
-    ? rows
-    : rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
-  useEffect(() => {
-    if (eventSelection) {
-      setPage(0); // Reset to first page when event selection changes
-    }
-  }, [eventSelection]);
+   const handleClose = (type: any, item: any) => {
+    tableConfig.onActionClick(type, item);
+    setAnchorEl(null);
+  };
 
   return (
-    <TableContainer
-      sx={{ maxHeight: 440 }}
-      className="custom-scrollbar"
-      component={Paper}
-    >
-      <Table>
-        <TableHead>
+    <TableContainer component={Paper}>
+      <Table aria-label="custom pagination table">
+      <TableHead>
           <TableRow sx={{ background: "#FFFFFF" }}>
             {updatedColumns.map((column: any) => (
               <TableCell
@@ -329,34 +293,18 @@ const DataTable: React.FC<DataTableProps> = ({
         </TableBody>
         <TableFooter>
           <TableRow>
-            {/* {!fixRow && ( 
-              <TablePaginationActions
-                count={rows.length}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-              />
-             )} */}
-            {fixRow ? (
-              <TablePaginationActions
-                count={tableConfig?.pagination?.totalPages}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-              />
-            ) : (
-              <TablePaginationActions
-                count={tableConfig?.pagination?.totalPages}
-                page={page}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-              />
-            )}
+          <TablePagination
+              rowsPerPageOptions={[]}
+              count={paginatedData ? tableConfig?.pagination?.totalResults : rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
           </TableRow>
         </TableFooter>
       </Table>
     </TableContainer>
   );
-};
-
-export default DataTable;
+}
