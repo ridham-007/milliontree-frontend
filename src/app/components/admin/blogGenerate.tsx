@@ -256,10 +256,10 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
           const Status = cur?.status === true ? "Publish" : "UnPublish";
           return (
             <div
-              className={`w-max flex  border ${
+              className={`w-max flex ${
                 Status === "Publish"
-                  ? "text-[#4ad29e] bg-[#e3fff5] border-[#4ad29e]"
-                  : "text-[#3A8340] border-[#3A8340] bg-[#fff4ee]"
+                  ? "text-[#4fb658] bg-[#e7fae9]"
+                  : "text-[#eab63c] bg-[#fcf4e2]"
               } px-6 py-1 text-[16px] font-medium items-center rounded-md `}
             >
               {Status}
