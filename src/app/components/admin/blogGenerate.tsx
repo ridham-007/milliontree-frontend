@@ -204,7 +204,7 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
           title: blog.title,
           createDate: blog.createDate,
           creditBy: blog.creditBy,
-          content: blog.content.htmlData,
+          content: blog.content.htmlData ? blog.content.htmlData : 'Hello',
           featureImage: uploadedImageUrl || blog.featureImage,
           status: blog.status,
           location: blog.location,
@@ -224,9 +224,9 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
 
   const handleActionMenu = async (type: any, item: any) => {
     if (type === "view") {
-      if (window) {
-        window.open(`${process.env.NEXT_PUBLIC_URL}/blog-preview/${item?._id}`);
-      }
+      // if (window) {
+      //   window.open(`${process.env.NEXT_PUBLIC_URL}/blog-preview/${item?._id}`);
+      // }
     } else if (type === "edit") {
       setEditBlogData(item);
       setSHowEditBlog(true);

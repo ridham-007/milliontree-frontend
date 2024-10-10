@@ -173,7 +173,7 @@ export default function UpdateBlog({
         addUpdateBlog: {
           _id: data._id,
           title: blog.title,
-          content: blog.content.htmlData,
+          content: blog.content.htmlData ? blog.content.htmlData : 'Hello',
           creditBy: blog.creditBy,
           createDate: blog.createDate,
           location: blog.location,
