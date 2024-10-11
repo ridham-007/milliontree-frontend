@@ -352,7 +352,7 @@ export default function TrackPage() {
                   alt="Day 1"
                   width={100}
                   height={100}
-                  className="w-full h-[250px] object-contain"
+                  className="w-full h-[250px] sm:h-[200px] lg:h-[250px] object-fill"
                   unoptimized
                 />
                 <button
@@ -404,7 +404,7 @@ export default function TrackPage() {
                   alt="Day 60"
                   width={100}
                   height={100}
-                  className="w-full h-[250px] object-contain"
+                  className="w-full h-[250px] sm:h-[200px] lg:h-[250px] object-fill"
                   unoptimized
                 />
                 <button
@@ -456,12 +456,12 @@ export default function TrackPage() {
                     alt="Day 90"
                     width={100}
                     height={100}
-                    className="w-full h-[250px] object-contain"
+                    className="w-full h-[250px] sm:h-[200px] lg:h-[250px] object-fill"
                     unoptimized
                   />
                   <button
                     type="button"
-                    onClick={() => handleDeleteImage(60)}
+                    onClick={() => handleDeleteImage(90)}
                     className="absolute top-1 right-[6px] bg-gray-500 text-white rounded-full p-1"
                   >
                     <IoMdClose size={20} />
