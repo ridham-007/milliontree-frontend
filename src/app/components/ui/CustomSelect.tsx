@@ -30,8 +30,8 @@ const CustomSelection = (props: CustomSelectionProps) => {
       ...base,
       border: '1px solid #D4D7DD',
       boxShadow: "none",
-      height: props.inputStyles || '46px',
-      borderRadius: "8px",
+      height: props.inputStyles || '48px',
+      borderRadius: '0px',
       paddingY: '12px',
       paddingX: '16px'
     }),
@@ -126,7 +126,6 @@ const CustomSelection = (props: CustomSelectionProps) => {
             sx={{
               background: 'white',
               '.MuiInputBase-root.MuiOutlinedInput-root': {
-                borderRadius: '8px',
                 height: '46px',
                 paddingY: '12px',
                 // border: 'none',

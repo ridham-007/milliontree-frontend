@@ -15,6 +15,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { useRouter } from "next/navigation";
 import CustomSelection from "./ui/CustomSelect";
+import { IoMdClose } from "react-icons/io";
 const Cookies = require("js-cookie");
 
 export default function TrackPage() {
@@ -164,6 +165,18 @@ export default function TrackPage() {
     }
   };
 
+  const handleDeleteImage = (day: number) => {
+    setFormData((prevData: any) => ({
+      ...prevData,
+      images: prevData.images.filter((img: any) => img.day !== day),
+    }));
+    setImageFiles((prevFiles) => {
+      const updatedFiles = { ...prevFiles };
+      delete updatedFiles[day];
+      return updatedFiles;
+    });
+  };
+
   const handleSave = async () => {
     if (!formData?._id) {
       setIsLoading(false);
@@ -226,25 +239,26 @@ export default function TrackPage() {
     }));
   };
 
+  const getTrees = async () => {
+    // const user = JSON.parse(Cookies.get("user"));
+    const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+    const userId = user?.userId;
+
+    if (!userId) {
+      router.push("/login");
+    }
+
+    const userInfo = await getTreesByUserById(userId);
+
+    if (userInfo?.data?.success) {
+      setTreeData(userInfo?.data?.tree);
+      setTreeNameData(transformedData(userInfo?.data?.tree));
+    }
+  };
+
   useEffect(() => {
-    const getTrees = async () => {
-      // const user = JSON.parse(Cookies.get("user"));
-      const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
-      const userId = user?.userId;
-
-      if (!userId) {
-        router.push('/login')
-      }
-
-      const userInfo = await getTreesByUserById(userId);
-
-      if (userInfo?.data?.success) {
-        setTreeData(userInfo?.data?.tree);
-        setTreeNameData(transformedData(userInfo?.data?.tree));
-      }
-    };
     getTrees();
-  }, [isRefresh]);
+  }, [isRefresh, selectTree]);
 
   const selectedTreeDetails = treeData.find(
     (tree: any) => tree._id === selectTree?.value
@@ -272,41 +286,64 @@ export default function TrackPage() {
             TRACK MY TREE
           </p>
         </div>
-        <div className="flex self-end my-4 mr-4">
+        <div className="flex w-full justify-end my-4">
+          <div className="w-full max-w-[380px]">
           <CustomSelection
-            className="!w-[220px] md:!w-[380px] rounded-none "
+            className="w-full rounded-none "
             placeholder={"Please select"}
             label="Select event"
             data={treeNameData}
             value={selectTree}
             onChange={(value: any) => setSelectTree(value)}
           />
+          </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row w-full gap-[25px] md:gap-[46px]">
-          {/* Column 1: Tree Name and Day 1 Image */}
-          <div className="flex flex-col w-full gap-[15px] md:gap-[55px]">
-            {/* Tree Name Input */}
-            <div className="flex flex-col justify-center w-full lg:max-w-[380px]">
-              <InputField
-                name="treeName"
-                placeholder="Enter your tree name"
-                type="text"
-                onChange={handleChange}
-                value={formData.treeName}
-                className="text-[16px] mt-[8px] border border-[#cccccc]"
-              />
-              {errors.treeName && (
-                <p className="text-red-500 text-sm mt-1">{errors.treeName}</p>
-              )}
-            </div>
-
-            {/* Day 1 Image Handling */}
-            <div className="flex flex-col w-full lg:max-w-[380px] gap-2">
-              <label className="text-[16px] text-[#404040] font-semibold">
-                Day 1
-              </label>
-              {formData.images.find((img: any) => img.day === 1)?.image ? (
+        <div className="flex flex-col items-end justify-between sm:flex-row w-full gap-[15px] md:gap-[55px] py-2 sm:py-8">
+          <div className="flex flex-col w-full lg:max-w-[380px]">
+            <InputField
+              name="treeName"
+              placeholder="Enter your tree name"
+              type="text"
+              onChange={handleChange}
+              value={formData.treeName}
+              className="text-[16px] border border-[#cccccc]"
+            />
+            {errors.treeName && (
+              <p className="text-red-500 text-sm mt-1">{errors.treeName}</p>
+            )}
+          </div>
+          <div className="flex flex-col w-full lg:max-w-[380px]">
+            <InputField
+              name="cohort"
+              placeholder="Cohort"
+              type="text"
+              onChange={handleChange}
+              value={formData.cohort}
+              className="text-[16px] border border-[#cccccc]"
+            />
+            {errors.cohort && (
+              <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
+            )}
+          </div>
+          <div className="flex flex-col w-full lg:max-w-[380px]">
+            <CustomDate
+              value={formData.datePlanted}
+              onChange={handleDateChange}
+              className="border border-[#cccccc] !pt-0 !h-[48px]"
+            />
+            {errors.datePlanted && (
+              <p className="text-red-500 text-sm mt-1">{errors.datePlanted}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-col items-start justify-between sm:flex-row w-full gap-[15px] md:gap-[55px]">
+          <div className="flex flex-col w-full lg:max-w-[380px] gap-2">
+            <label className="text-[16px] text-[#404040] font-semibold">
+              Day 1
+            </label>
+            {formData.images.find((img: any) => img.day === 1)?.image ? (
+              <div className="w-full h-auto relative">
                 <Image
                   src={
                     formData.images.find((img: any) => img.day === 1)?.image ??
@@ -318,58 +355,47 @@ export default function TrackPage() {
                   className="w-full h-[250px] object-contain"
                   unoptimized
                 />
-              ) : (
-                <>
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      id="plant-image-1"
-                      name="image"
-                      onChange={(e: any) => handleImageChange(e, 1)}
+                <button
+                  type="button"
+                  onClick={() => handleDeleteImage(1)}
+                  className="absolute top-1 right-[6px] bg-gray-500 text-white rounded-full p-1"
+                >
+                  <IoMdClose size={20} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="plant-image-1"
+                    name="image"
+                    onChange={(e: any) => handleImageChange(e, 1)}
+                  />
+                  <label
+                    htmlFor="plant-image-1"
+                    className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
+                  >
+                    <p className="text-nowrap text-[#555555] font-normal">
+                      Attach photo
+                    </p>
+                    <CustomButton
+                      label="Choose File"
+                      className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-[#666666] rounded-full border !p-2 md:!py-1 -z-10"
                     />
-                    <label
-                      htmlFor="plant-image-1"
-                      className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
-                    >
-                      <p className="text-nowrap text-[#555555] font-normal">
-                        Attach photo
-                      </p>
-                      <CustomButton
-                        label="Choose File"
-                        className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-[#666666] rounded-full border !p-2 md:!py-1 -z-10"
-                      />
-                    </label>
-                  </div>
-                </>
-              )}
-            </div>
+                  </label>
+                </div>
+              </>
+            )}
           </div>
-
-          {/* Column 2: Cohort and Day 60 Image */}
-          <div className="flex flex-col w-full gap-[15px] md:gap-[55px]">
-            {/* Cohort Input */}
-            <div className="flex flex-col w-full lg:max-w-[380px]">
-              <InputField
-                name="cohort"
-                placeholder="Cohort"
-                type="text"
-                onChange={handleChange}
-                value={formData.cohort}
-                className="text-[16px] mt-[8px] border border-[#cccccc]"
-              />
-              {errors.cohort && (
-                <p className="text-red-500 text-sm mt-1">{errors.cohort}</p>
-              )}
-            </div>
-
-            {/* Day 60 Image Handling */}
-            <div className="flex flex-col w-full lg:max-w-[380px] gap-2">
-              <label className="text-[16px] text-[#404040] font-semibold">
-                Day 60
-              </label>
-              {formData.images.find((img: any) => img.day === 60)?.image ? (
+          <div className="flex flex-col w-full lg:max-w-[380px] gap-2">
+            <label className="text-[16px] text-[#404040] font-semibold">
+              Day 60
+            </label>
+            {formData.images.find((img: any) => img.day === 60)?.image ? (
+              <div className="w-full h-auto relative">
                 <Image
                   src={
                     formData.images.find((img: any) => img.day === 60)?.image ??
@@ -381,68 +407,66 @@ export default function TrackPage() {
                   className="w-full h-[250px] object-contain"
                   unoptimized
                 />
-              ) : (
-                <>
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      id="plant-image-60"
-                      name="image"
-                      onChange={(e: any) => handleImageChange(e, 60)}
+                <button
+                  type="button"
+                  onClick={() => handleDeleteImage(60)}
+                  className="absolute top-1 right-[6px] bg-gray-500 text-white rounded-full p-1"
+                >
+                  <IoMdClose size={20} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="plant-image-60"
+                    name="image"
+                    onChange={(e: any) => handleImageChange(e, 60)}
+                  />
+                  <label
+                    htmlFor="plant-image-60"
+                    className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
+                  >
+                    <p className="text-nowrap text-[#555555] font-normal">
+                      Attach photo
+                    </p>
+                    <CustomButton
+                      label="Choose File"
+                      className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-[#666666] rounded-full border !p-2 md:!py-1 -z-10"
                     />
-                    <label
-                      htmlFor="plant-image-60"
-                      className="flex justify-between items-center w-full cursor-pointer border border-[#999999] p-2"
-                    >
-                      <p className="text-nowrap text-[#555555] font-normal">
-                        Attach photo
-                      </p>
-                      <CustomButton
-                        label="Choose File"
-                        className="flex !bg-[#DDDDDD] text-[12px] sm:text-[16px] sm:!px-4 w-fit !text-[#666666] rounded-full border !p-2 md:!py-1 -z-10"
-                      />
-                    </label>
-                  </div>
-                </>
-              )}
-            </div>
+                  </label>
+                </div>
+              </>
+            )}
           </div>
-
-          {/* Column 3: Date Planted and Day 90 Image */}
-          <div className="flex flex-col w-full mt-2 gap-[15px] md:gap-[55px]">
-            {/* Date Planted Input */}
-            <div className="flex flex-col w-full lg:max-w-[380px]">
-              <CustomDate
-                value={formData.datePlanted}
-                onChange={handleDateChange}
-                className="border border-[#cccccc] !pt-0 !h-[48px]"
-              />
-              {errors.datePlanted && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.datePlanted}
-                </p>
-              )}
-            </div>
-
-            {/* Day 90 Image Handling */}
             <div className="flex flex-col w-full lg:max-w-[380px] gap-2">
               <label className="text-[16px] text-[#404040] font-semibold">
                 Day 90
               </label>
               {formData.images.find((img: any) => img.day === 90)?.image ? (
-                <Image
-                  src={
-                    formData.images.find((img: any) => img.day === 90)?.image ??
-                    ""
-                  }
-                  alt="Day 90"
-                  width={100}
-                  height={100}
-                  className="w-full h-[250px] object-contain"
-                  unoptimized
-                />
+                <div className="w-full h-auto relative">
+                  <Image
+                    src={
+                      formData.images.find((img: any) => img.day === 90)
+                        ?.image ?? ""
+                    }
+                    alt="Day 90"
+                    width={100}
+                    height={100}
+                    className="w-full h-[250px] object-contain"
+                    unoptimized
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteImage(60)}
+                    className="absolute top-1 right-[6px] bg-gray-500 text-white rounded-full p-1"
+                  >
+                    <IoMdClose size={20} />
+                  </button>
+                </div>
               ) : (
                 <>
                   <div>
@@ -470,7 +494,6 @@ export default function TrackPage() {
                 </>
               )}
             </div>
-          </div>
         </div>
         <CustomButton
           label="SAVE"
