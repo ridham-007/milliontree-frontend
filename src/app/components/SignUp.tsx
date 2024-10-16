@@ -25,12 +25,12 @@ const SignUpForm = () => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<LoginUser>(loginInitialValues);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+  // const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-
+    const trimmedValue = value.trim();
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
@@ -38,7 +38,7 @@ const SignUpForm = () => {
 
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
-      [name]: value,
+      [name]: trimmedValue,
     }));
   };
 
@@ -70,9 +70,9 @@ const SignUpForm = () => {
       newErrors.password = "Password must be at least 8 characters";
     }
 
-    if (!isTermsAccepted) {
-      newErrors.terms = "You must accept the terms and conditions";
-    }
+    // if (!isTermsAccepted) {
+    //   newErrors.terms = "You must accept the terms and conditions";
+    // }
 
     if (userInfo.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
@@ -105,13 +105,13 @@ const SignUpForm = () => {
       setLoading(false);
     }
   };
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const checked = event.target.checked;
-    setIsTermsAccepted(checked);
-    if (checked) {
-      setErrors({ ...errors, terms: '' });
-    }
-  };
+  // const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const checked = event.target.checked;
+  //   setIsTermsAccepted(checked);
+  //   if (checked) {
+  //     setErrors({ ...errors, terms: '' });
+  //   }
+  // };
 
   const handleLogin = () => {
     router.push("/login");
@@ -204,7 +204,7 @@ const SignUpForm = () => {
                     </span>
                   )}
                 </div>
-                <div className="relative">
+                {/* <div className="relative">
                   <div className="flex gap-3 text-[17px] text-[#727885] font-normal">
                     <input
                       type="checkbox"
@@ -215,7 +215,7 @@ const SignUpForm = () => {
                     <p>Accept terms and conditions</p>
                   </div>
                   {errors?.terms && <p className="text-red-500 text-sm">{errors.terms}</p>}
-                </div>
+                </div> */}
                 <div className="mt-2">
                   <CustomButton
                     label="Sign Up"

@@ -56,7 +56,7 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
               height={320}
               width={380}
               alt={image.alt}
-              className="w-[380px] h-[320px] cursor-pointer rounded-[30px]"
+              className="w-[380px] h-[320px] rounded-[30px]"
               unoptimized
               onError={(e) => {
                 const target = e.target as HTMLImageElement;

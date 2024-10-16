@@ -443,7 +443,7 @@ export default function Event({ authId }: EventProps) {
                     <CustomButton label={'Create Event'} callback={handleModelOpen} />
                     <CustomModal handleClose={handleModelClose} open={openModel} modelData={modelData} />
                 </div>
-                <DataTable tableConfig={tableConfig} isLoading={loading} fixRow={true} />
+                <DataTable tableConfig={tableConfig} isLoading={loading} paginatedData={true} />
             </div>)}
         </>
     );

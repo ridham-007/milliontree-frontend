@@ -25,7 +25,7 @@ const LoginForm = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-
+    const trimmedValue = value.trim();
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
@@ -33,8 +33,12 @@ const LoginForm = () => {
 
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
-      [name]: value,
+      [name]: trimmedValue,
     }));
+  };
+
+  const handleForgotPasswordClick = () => {
+    router.push(`/forgot-password?email=${encodeURIComponent(userInfo.email)}`);
   };
 
   const validateForm = () => {
@@ -138,11 +142,11 @@ const LoginForm = () => {
                     </span>
                   )}
                 </div>
-                {/* <div className="flex justify-end mt-2">
-                <div className="text-[#2979FF] font-medium leading-6 cursor-pointer">
+                <div className="flex justify-end mt-2">
+                <div className="text-[#2979FF] font-medium leading-6 cursor-pointer" onClick={handleForgotPasswordClick}>
                   Forgot password
                 </div>
-              </div> */}
+              </div>
                 <div className="mt-2">
                   <CustomButton label="Log In" className="w-full" type="submit" interactingAPI={loading} />
                 </div>

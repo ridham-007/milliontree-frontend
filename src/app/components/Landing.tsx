@@ -104,6 +104,7 @@ export default function LandingPage() {
   const [formData, setFormData] = useState<formDataProps>(initialFormData);
   const [errors, setErrors] = useState<any>({});
   const [plantedTrees, setPlantedTrees] = useState([]);
+  const [totalPlantedTrees, setTotalPlantedTrees] = useState<number>(0);
   const [events, setAllEvents] = useState([]);
   const [completedEvents, setCompletedEvents] = useState([]);
 
@@ -305,6 +306,13 @@ export default function LandingPage() {
     }
   };
 
+  const fetchAllPlantedTrees = async () => {
+    const response = await getPlantedTrees();
+    if (response.success) {
+      setPlantedTrees(response?.data);
+    }
+  };
+
   const handleSubmit = async () => {
     // const user = JSON.parse(Cookies.get("user"));
     const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
@@ -345,6 +353,7 @@ export default function LandingPage() {
 
         if (res?.success) {
           toast.success("Plant tree successfully.");
+          router.push('/track-my-tree')
         }
       } catch (error) {
         console.log(error);
@@ -354,13 +363,6 @@ export default function LandingPage() {
     }
     setFormData(initialFormData);
     setIsLoading(false);
-  };
-
-  const fetchAllPlantedTrees = async () => {
-    const response = await getPlantedTrees();
-    if (response.success) {
-      setPlantedTrees(response?.data);
-    }
   };
 
   const fetchAllEvents = async () => {
@@ -469,6 +471,14 @@ export default function LandingPage() {
     fetchAllEvents();
     fetchCompletedEvents();
   }, []);
+
+  useEffect(() => {
+    const total = plantedTrees?.reduce((sum: number, plant: any) => {
+      return sum + (plant?.trees?.length || 0);
+    }, 0);
+
+    setTotalPlantedTrees(1000 + total || 0); // Update state with the calculated total
+  }, [plantedTrees]);
 
   const mapRef = useRef<HTMLDivElement>(null);
 
@@ -619,7 +629,7 @@ export default function LandingPage() {
 
         <div className="font-semibold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px] text-center">
           Numbers of Trees planted till date:{" "}
-          <span className="text-[#3BAD49]">1,000</span>
+          <span className="text-[#3BAD49]">{totalPlantedTrees}</span>
         </div>
       </div>
 

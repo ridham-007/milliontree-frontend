@@ -32,6 +32,7 @@ const CustomDate = (props: InputFieldProps) => {
         sx={{
           "& .MuiStack-root": {
             width: "100%",
+            paddingTop: '0px',
           },
           "& .css-qgk9ur-MuiStack-root": {
             overflow: "hidden",
@@ -43,9 +44,7 @@ const CustomDate = (props: InputFieldProps) => {
             components={["DatePicker"]}
             sx={{
               ".MuiOutlinedInput-root": {
-                // borderRadius: "8px",
                 width: "100%",
-                // backgroundColor: '#F4F4F4'
               },
               ".MuiFormControl-root": {
                 ...inputCss,
@@ -78,7 +77,7 @@ const CustomDate = (props: InputFieldProps) => {
               minDate={minDate ? dayjs() : undefined}
               sx={{
                 ".MuiOutlinedInput-input ": {
-                  paddingY: "12px",
+                  paddingY: "12.5px",
                   borderRadius: disabled ? "8px" : "8px",
                 },
                 ".MuiButtonBase-root .MuiPickersDay-root.Mui-selected": {

@@ -164,7 +164,7 @@ export default function Navbar(props: navbarProps) {
             : !(pathName === "/login") && (
               <Link
                 href="/login"
-                className="text-white !w-[70px] bg-[#3A8340] py-2 px-3 font-semibold rounded-lg"
+                className="text-white text-nowrap !w-[70px] bg-[#3A8340] py-2 px-3 font-semibold rounded-lg"
               >
                 Log In
               </Link>

@@ -111,4 +111,90 @@ export const signInUser = async (
     }
   };
 
+  export const forgotPassword = async (
+    email: string
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/user/forgot-password`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify({ email }),
+        })
+      ).json();
+      return response;
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const resendOtpCode = async (
+    email: string,
+    code: string
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/user/resend-code`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify({ email, code }),
+        })
+      ).json();
+      return response;
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const resetCode = async (
+    email: string,
+    code: string
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(
+          `${process.env.NEXT_PUBLIC_URL}/user/validate-reset-code`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json;charset=UTF-8",
+            },
+            body: JSON.stringify({ email, code }),
+          }
+        )
+      ).json();
+      return response;
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
+  export const resetPassword = async (
+    email: string,
+    newPassword: string
+  ): Promise<any> => {
+    try {
+      const response = await (
+        await fetch(`${process.env.NEXT_PUBLIC_URL}/user/reset-password`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          body: JSON.stringify({ email, newPassword }),
+        })
+      ).json();
+      return response;
+    } catch (error: any) {
+      return prepareServerError(error?.message);
+    }
+  };
+
  
