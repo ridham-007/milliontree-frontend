@@ -275,7 +275,7 @@ export default function TrackPage() {
       <div className="flex flex-col w-full max-w-[1280px]">
         <div className="w-full relative z-30">
           <Image
-            src={"/images/TrackMyTree-bg.png"}
+            src={"/images/TrackMyTree-bg.webp"}
             width={350}
             height={350}
             alt=""

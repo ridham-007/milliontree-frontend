@@ -32,7 +32,7 @@ import CustomSelection from "./ui/CustomSelect";
 import CustomModal from "./ui/CustomModel";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { FaChevronLeft } from "react-icons/fa";
-import landingBackground from "../../../public/images/landing-bg.png";
+import landingBackground from "../../../public/images/landing-bg.webp";
 import ImageSlider from "./ui/Slider";
 import ButtonPrefix from "../../../public/images/btn-logo.png";
 import { IoCheckbox } from "react-icons/io5";
@@ -353,7 +353,7 @@ export default function LandingPage() {
 
         if (res?.success) {
           toast.success("Plant tree successfully.");
-          router.push('/track-my-tree')
+          router.push("/track-my-tree");
         }
       } catch (error) {
         console.log(error);
@@ -388,7 +388,6 @@ export default function LandingPage() {
 
     return `${day}.${month}.${year}`;
   };
-
 
   const regionModalData = (
     <div className="h-fit">
@@ -516,11 +515,53 @@ export default function LandingPage() {
         </div>
       </div>
 
+      <div
+        className="flex flex-col w-full justify-center gap-10 lg:w-[83%] mx-auto px-8 md:px-[50px] xl:px-[100px] py-14"
+        ref={mapRef}
+      >
+        <div className="font-bold text-[32px] sm:text-[44px] text-center">
+          About Us
+        </div>
+        <div className="flex flex-col gap-4 ">
+          <div className=" text-[16px] sm:text-[18px]">
+            To unite the Stanford community in a global effort to plant a
+            million trees by 2030, promoting sustainability, environmental
+            stewardship, and community engagement.
+          </div>
+          <div className="text-[21px] font-semibold">Vision</div>
+          <div className="  text-[16px] sm:text-[18px]">
+            Empowered by the Stanford LEAD philosophy of changing organizations,
+            changing lives, and changing the world, the
+            <Link href={"https://leadme2we.com/"} target={"_blank"}>
+              <span className="underline text-[#3A8340] mx-1">
+                {" "}
+                Stanford Me2We Community
+              </span>
+            </Link>
+            envisions a world where our collective efforts make a tangible
+            impact on the environment, creating a better place for future
+            generations. We strive to inspire a culture of sustainability and
+            social responsibility that extends beyond our campuses, fostering a
+            global community that works together to protect and preserve our
+            planet.
+          </div>
+          <div className="text-[21px] font-semibold mt-2">Our Goals</div>
+          <div className="  text-[16px] sm:text-[18px]">
+            Plant a million trees: Collaborate with local organizations,
+            governments, and communities to plant a million trees globally by
+            2030. Raise awareness: Educate the Stanford community about the
+            importance of reforestation, climate change, and sustainability.
+          </div>
+          <div className="  text-[16px] sm:text-[18px]">
+            Foster community engagement: Encourage Stanford students, alumni,
+            and staff to participate in tree-planting events, promoting a sense
+            of community and social responsibility.
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-col w-full justify-center items-center md:w-[65%] lg:w-[73%] px-6 pt-[40px] sm:pt-[96px] pb-[74px] sm:pb-[104px] m-auto relative">
-        <div
-          ref={mapRef}
-          className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center"
-        >
+        <div className="text-[34px] sm:text-[44px] font-bold leading-[41px] sm:leading-[53px] text-center">
           Drive for <span className="underline">1M trees</span> planted by Me2We
           2030
         </div>
@@ -642,7 +683,7 @@ export default function LandingPage() {
             completedEvents?.length > 0
               ? completedEvents?.map((cur: any) => {
                   return {
-                    src: cur?.images?.[0] || '/images/plantation-1.jpg',
+                    src: cur?.images?.[0] || "/images/plantation-1.jpg",
                     alt: "Plantation 1",
                     name: cur?.eventName,
                     location: cur?.region,
@@ -791,7 +832,10 @@ export default function LandingPage() {
           <p className="text-[34px] font-bold leading-[41px]">Our Partner</p>
           <p className="font-montserrat text-[20px] font-normal leading-[24.38px] text-center mt-[74px] sm:mt-[89px]">
             Click
-            <Link href={"https://www.evertreen.com/"} target={"_blank"}>
+            <Link
+              href={"https://www.evertreen.com/forest/66608f4c1a183"}
+              target={"_blank"}
+            >
               <span className="underline text-[#3A8340] mx-1">here</span>
             </Link>
             to learn about Me2We Forecast

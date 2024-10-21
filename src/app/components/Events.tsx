@@ -28,9 +28,9 @@ const Cookies = require("js-cookie");
 
 // const CustomButton = dynamic(() => import("../components/ui/CustomButton"), { ssr: false });
 interface eventProps {
-  queryParams?:any
+  queryParams?: any;
 }
-export default function Events({queryParams}:eventProps) {
+export default function Events({ queryParams }: eventProps) {
   const [groupEvents, setGroupEvents] = useState<any>({});
   const [eventData, setEventData] = useState<any>();
   const [openUploadImageModel, setOpenUploadImageModel] = useState(false);
@@ -56,7 +56,7 @@ export default function Events({queryParams}:eventProps) {
   const handleAddEventClick = () => {
     const queryString = new URLSearchParams({
       // ...queryParams,
-      tab: 'event',
+      tab: "event",
     }).toString();
 
     router.push(`/admin?${queryString}`);
@@ -150,7 +150,7 @@ export default function Events({queryParams}:eventProps) {
         setEventData({});
         setLoading(false);
         setOpenUploadImageModel(false);
-        fetchGroupEvents()
+        fetchGroupEvents();
         toast(response?.message);
       } else {
         toast.error(response?.message);
@@ -238,11 +238,16 @@ export default function Events({queryParams}:eventProps) {
   }, []);
 
   const [expandedMonths, setExpandedMonths] = useState<{
-    [key: number]: boolean;
-  }>({});
+    [yearIndex: number]: { [monthIndex: number]: boolean };
+  }>({
+    0: { 0: true },
+  });
+
   const [expandedYears, setExpandedYears] = useState<{
     [key: number]: boolean;
-  }>({});
+  }>({
+    0: true,
+  });
 
   const [expandedCompletedMonths, setExpandedCompletedMonths] = useState<{
     [key: number]: boolean;
@@ -251,10 +256,13 @@ export default function Events({queryParams}:eventProps) {
     [key: number]: boolean;
   }>({});
 
-  const handleToggleMonth = (monthIndex: number) => {
+  const handleToggleMonth = (yearIndex: number, monthIndex: number) => {
     setExpandedMonths((prev) => ({
       ...prev,
-      [monthIndex]: !prev[monthIndex],
+      [yearIndex]: {
+        ...prev[yearIndex],
+        [monthIndex]: !prev[yearIndex]?.[monthIndex],
+      },
     }));
   };
   const handleToggleCompletedMonth = (monthIndex: number) => {
@@ -337,11 +345,11 @@ export default function Events({queryParams}:eventProps) {
   };
 
   return (
-    <div className="flex flex-col w-full h-full gap-[64px]">
+    <div className="flex flex-col w-full h-full gap-[64px] ">
       <div className="flex justify-center items-center w-full px-[10px] flex-col max-w-[1280px] self-center">
         <div className="w-full relative z-30 ">
           <Image
-            src={"/images/event-banner.png"}
+            src={"/images/event-banner.webp"}
             width={350}
             height={350}
             alt=""
@@ -355,14 +363,19 @@ export default function Events({queryParams}:eventProps) {
       </div>
       {/*  Upcoming events */}
       <div className="flex flex-col w-full gap-4 sm:gap-6 px-[10px] md:px-[80px]">
-     { user?.userRole === 'admin' &&
-        <div className={`${user?.userRole !== 'admin' ? 'hidden' : 'flex'} sm:justify-end w-full gap-3`}>
-          <CustomButton
-            label="Add event"
-            className="rounded-lg font-semibold text-[18px]"
-            onClick={handleAddEventClick}
-          />
-      </div> }
+        {user?.userRole === "admin" && (
+          <div
+            className={`${
+              user?.userRole !== "admin" ? "hidden" : "flex"
+            } sm:justify-end w-full gap-3`}
+          >
+            <CustomButton
+              label="Add event"
+              className="rounded-lg font-semibold text-[18px]"
+              onClick={handleAddEventClick}
+            />
+          </div>
+        )}
         <div className="font-bold text-[22px] sm:text-[32px] leading-[26px] sm:leading-[39px]">
           Upcoming events
         </div>
@@ -370,6 +383,7 @@ export default function Events({queryParams}:eventProps) {
           {groupEvents?.upcoming?.map((cur: any, yearIndex: number) => {
             return (
               <Accordion
+                expanded={expandedYears[yearIndex] || false}
                 key={cur.year}
                 className="border-t-[1px] border-[#666666]"
                 sx={{
@@ -423,12 +437,16 @@ export default function Events({queryParams}:eventProps) {
                         className="border-t-[1px] border-[#666666]"
                       >
                         <Accordion
-                          expanded={expandedMonths[monthIndex]}
-                          onChange={() => handleToggleMonth(monthIndex)}
+                          expanded={
+                            expandedMonths[yearIndex]?.[monthIndex] || false
+                          }
+                          onChange={() =>
+                            handleToggleMonth(yearIndex, monthIndex)
+                          }
                         >
                           <AccordionSummary
                             expandIcon={
-                              expandedMonths[monthIndex] ? (
+                              expandedMonths[yearIndex]?.[monthIndex] ? (
                                 <GoDash className="text-[20px] sm:text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
                               ) : (
                                 <GoPlus className="text-[20px] sm:text-[22px] border-[1px] border-[#000] text-[#000] rounded-full" />
@@ -437,7 +455,7 @@ export default function Events({queryParams}:eventProps) {
                             aria-controls={`panel-${monthIndex}-content`}
                             id={`panel-${monthIndex}-header`}
                           >
-                            <Typography className="font-bold text-[18px] leading-[21px] sm:ml-[60px]">
+                            <Typography className="font-bold text-[18px] leading-[21px]">
                               {month.month}
                             </Typography>
                           </AccordionSummary>
@@ -449,58 +467,60 @@ export default function Events({queryParams}:eventProps) {
                                 },
                               }}
                             >
-                              <div className="flex flex-col w-full overflow-x-auto custom-scrollbar text-[14px] sm:text-[16px] px-2 sm:px-0">
-                                <div className="min-w-[500px]">                                
+                              <div className="flex flex-col w-full overflow-x-auto custom-scrollbar  text-[14px] sm:text-[16px] px-2 sm:px-0">
+                                <div className="min-w-[500px]">
                                   {month?.events?.map(
-                                  (event: any, eventIndex: any) => (
-                                    <div
-                                      key={eventIndex}
-                                      className="flex w-full gap-2 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
-                                    >
-                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] sm:ml-[60px]">
-                                        {formatDate(
-                                          event?.startDate,
-                                          month?.month
-                                        )}
+                                    (event: any, eventIndex: any) => (
+                                      <div
+                                        key={eventIndex}
+                                        className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
+                                      >
+                                        <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                          {formatDate(
+                                            event?.startDate,
+                                            month?.month
+                                          )}
+                                        </div>
+                                        <div className="w-full sm:max-w-[300px] font-bold leading-[19px] text-center">
+                                          {event?.eventName}
+                                        </div>
+                                        <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                          {event?.region}
+                                        </div>
+                                        <div className="flex items-center pr-4">
+                                          {event?.images?.length > 0 ? (
+                                            <Button
+                                              onClick={() => {
+                                                openGallery();
+                                                setGalleryImage(
+                                                  event?.images || []
+                                                );
+                                              }}
+                                            >
+                                              <CollectionsIcon
+                                                sx={{
+                                                  color: "#000",
+                                                }}
+                                              />
+                                            </Button>
+                                          ) : (
+                                            <div className="w-max min-w-16"></div>
+                                          )}
+                                          <div className="flex justify-end w-full sm:max-w-[300px]">
+                                            <CustomButton
+                                              label="Upload Image"
+                                              className={""}
+                                              callback={() => {
+                                                handleUploadImageModelOpen(
+                                                  event
+                                                );
+                                              }}
+                                            />
+                                          </div>
+                                        </div>
                                       </div>
-                                      <div className="w-full sm:max-w-[300px] font-bold leading-[19px] text-center">
-                                        {event?.eventName}
-                                      </div>
-                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                        {event?.region}
-                                      </div>
-                                      <div className="flex items-center pr-4">
-                                      {event?.images?.length > 0 ? (
-                                        <Button
-                                          onClick={() => {
-                                            openGallery();
-                                            setGalleryImage(
-                                              event?.images || []
-                                            );
-                                          }}
-                                        >
-                                          <CollectionsIcon
-                                            sx={{
-                                              color: "#000",
-                                            }}
-                                          />
-                                        </Button>
-                                      ) : (
-                                        <div className="w-max min-w-16"></div>
-                                      )}
-                                      <div className="flex justify-end w-full sm:max-w-[300px]">
-                                        <CustomButton
-                                          label="Upload Image"
-                                          className={""}
-                                          callback={() => {
-                                            handleUploadImageModelOpen(event);
-                                          }}
-                                        />
-                                      </div>
-                                      </div>
-                                    </div>
-                                  )
-                                )}
+                                    )
+                                  )}
                                 </div>
                               </div>
                             </Typography>
@@ -591,59 +611,59 @@ export default function Events({queryParams}:eventProps) {
                         </AccordionSummary>
                         <AccordionDetails>
                           <Typography>
-                            <div className="flex flex-col w-[510px] overflow-x-auto custom-scrollbar sm:w-full text-[14px] sm:text-[16px] px-2 sm:px-0 ">
-                            <div className="min-w-[500px]">                                
-                              {month?.events?.map(
-                                (event: any, eventIndex: any) => (
-                                  <div
-                                    key={eventIndex}
-                                    className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
-                                  >
-                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                      {formatDate(
-                                        event?.startDate,
-                                        month?.month
-                                      )}
-                                    </div>
-                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                      {event?.eventName}
-                                    </div>
-                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
-                                      {event?.region}
-                                    </div>
-                                    <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center"></div>
-                                    <div className="flex items-center">
-                                      {event?.images?.length > 0 ? (
-                                        <Button
-                                          onClick={() => {
-                                            openGallery();
-                                            setGalleryImage(
-                                              event?.images || []
-                                            );
-                                          }}
-                                        >
-                                          <CollectionsIcon
-                                            sx={{
-                                              color: "#000",
+                            <div className="flex flex-col w-full overflow-x-auto custom-scrollbar  text-[14px] sm:text-[16px] px-2 sm:px-0">
+                              <div className="min-w-[500px]">
+                                {month?.events?.map(
+                                  (event: any, eventIndex: any) => (
+                                    <div
+                                      key={eventIndex}
+                                      className="flex w-full gap-3 sm:justify-between border-t-[1px] border-[#666666] py-2 items-center"
+                                    >
+                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                        {formatDate(
+                                          event?.startDate,
+                                          month?.month
+                                        )}
+                                      </div>
+                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                        {event?.eventName}
+                                      </div>
+                                      <div className="w-full sm:max-w-[300px] font-normal leading-[19px] text-center">
+                                        {event?.region}
+                                      </div>
+                                      {/* <div className="w-full font-normal leading-[19px] text-center"></div> */}
+                                      <div className="flex items-center">
+                                        {event?.images?.length > 0 ? (
+                                          <Button
+                                            onClick={() => {
+                                              openGallery();
+                                              setGalleryImage(
+                                                event?.images || []
+                                              );
+                                            }}
+                                          >
+                                            <CollectionsIcon
+                                              sx={{
+                                                color: "#000",
+                                              }}
+                                            />
+                                          </Button>
+                                        ) : (
+                                          <div className="w-max min-w-16"></div>
+                                        )}
+                                        <div className="w-full sm:max-w-[300px] gap-4 mr-4">
+                                          <CustomButton
+                                            label="Upload Image"
+                                            className={""}
+                                            callback={() => {
+                                              handleUploadImageModelOpen(event);
                                             }}
                                           />
-                                        </Button>
-                                      ) : (
-                                        <div className="w-max min-w-16"></div>
-                                      )}
-                                      <div className="w-full sm:max-w-[300px] gap-4 mr-4">
-                                        <CustomButton
-                                          label="Upload Image"
-                                          className={""}
-                                          callback={() => {
-                                            handleUploadImageModelOpen(event);
-                                          }}
-                                        />
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                )
-                              )}
+                                  )
+                                )}
                               </div>
                             </div>
                           </Typography>

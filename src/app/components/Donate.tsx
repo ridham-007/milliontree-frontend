@@ -10,7 +10,7 @@ const Donate = () => {
         <div className="flex flex-col w-full max-w-[1280px] gap-[61px] ">
           <div className="w-full relative z-30">
             <Image
-              src={"/images/donate-bg.png"}
+              src={"/images/donate-bg.webp"}
               width={350}
               height={350}
               alt=""
