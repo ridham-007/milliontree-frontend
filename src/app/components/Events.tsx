@@ -251,10 +251,15 @@ export default function Events({ queryParams }: eventProps) {
 
   const [expandedCompletedMonths, setExpandedCompletedMonths] = useState<{
     [key: number]: boolean;
-  }>({});
+  }>({
+    0: true,
+  });
+
   const [expandedCompletedYears, setExpandedCompletedYears] = useState<{
     [key: number]: boolean;
-  }>({});
+  }>({
+    0: true,
+  });
 
   const handleToggleMonth = (yearIndex: number, monthIndex: number) => {
     setExpandedMonths((prev) => ({
@@ -545,6 +550,7 @@ export default function Events({ queryParams }: eventProps) {
           {groupEvents?.completed?.map((cur: any, yearIndex: number) => (
             <Accordion
               key={cur.year}
+              expanded={expandedCompletedYears[yearIndex]}
               className="border-t-[1px] border-[#666666]"
               sx={{
                 ".css-ugwo3b-MuiAccordionDetails-root": {
