@@ -490,13 +490,13 @@ export default function LandingPage() {
   };
 
   return (
-    <div>
+    <>
       <div
         className="flex w-full h-screen bg-cover bg-top bg-no-repeat "
         style={{ backgroundImage: `url(${landingBackground.src})` }}
       >
         <div className="absolute inset-0 opacity-20 bg-black"></div>
-        <div className="flex justify-center items-center w-full flex-col gap-7 z-10">
+        <div className="flex h-dvh justify-center items-center w-full flex-col gap-7 z-10">
           <p className="w-full text-[#F1B932] font-montserrat text-[19px] sm:text-[40px] lg:text-[64px] font-semibold tracking-[1.1em] text-center">
             Welcome to
           </p>
@@ -859,6 +859,6 @@ export default function LandingPage() {
           modelData={imagePreview}
         />{" "}
       </div>
-    </div>
+      </>
   );
 }
