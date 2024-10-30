@@ -29,7 +29,6 @@ const Sidebar = ({
     setSelected(label);
     onSidebarItemClick(label);
   };
-  console.log({ queryParams });
 
   useEffect(() => {
     if (queryParams?.tab) {

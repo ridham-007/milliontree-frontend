@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GrLocation } from "react-icons/gr";
 import Autocomplete from "react-google-autocomplete";
 interface PlacesAutocompleteProps {
@@ -15,15 +15,19 @@ interface PlacesAutocompleteProps {
 
 const PlacesAutocomplete = (props: PlacesAutocompleteProps) => {
   const { placeholder, name, className, onChange, value, label, icon, showBorder = true } = props;
-  const [inputValue, setInputValue] = useState(value || "");
+  const [inputValue, setInputValue] = useState(value);
 
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
+  
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
     if (onChange) {
-      onChange(event, { name: event.target.value, latitude: 0, longitude: 0, placeId: "" });
+      onChange(event, { location: event.target.value });
     }
   };
-
+  
   return (
     <div className="flex flex-col w-full">
       {label && <label className="font-medium text-[16px] leading-[24px] text-[#3E4654]">
@@ -48,9 +52,9 @@ const PlacesAutocomplete = (props: PlacesAutocompleteProps) => {
               const placeId = place?.place_id;
               onChange(null, {
                 location,
-                latitude: latitude || 0,
-                longitude: longitude || 0,
-                placeId: placeId || "",
+                latitude,
+                longitude,
+                placeId,
               });
             }
           }}

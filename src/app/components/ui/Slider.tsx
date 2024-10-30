@@ -40,7 +40,6 @@ const ImageSlider: React.FC<SliderProps> = ({ sliderImages }) => {
   };
 
   const handleBeforeChange = (oldIndex: any, newIndex: any) => {
-    console.log({ oldIndex, newIndex });
   };
 
   return (
