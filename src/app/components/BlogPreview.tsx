@@ -56,7 +56,7 @@ export default function BlogPreview({ data }: BlogPreviewProps) {
             alt=""
             unoptimized
             className="w-full md:w-[380px] lg:w-[500px] h-[286px] lg:h-[400px] rounded-[20px] lg:rounded-[30px]"
-          />
+          />  
           <div className="w-full text-[14px] md:text-[18px] leading-7 article-container">{data?.description}</div>
         </div>
         <div className="w-full text-[14px] md:text-[18px] leading-7 font-medium article-container">{parse(data?.content || '')}</div>

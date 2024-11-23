@@ -13,6 +13,7 @@ export default function Blog() {
   const initialValue = {
     page: 1,
     limit: 4,
+    status: true
   };
   
   const [blogsData, setBlogsData] = useState<any>(initialValue);

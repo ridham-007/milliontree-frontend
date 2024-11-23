@@ -9,7 +9,7 @@ interface CustomModalProps {
 const CustomModal = ({ handleClose, open, modelData, modelWidth }: CustomModalProps) => {
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} onClose={handleClose} disableEnforceFocus>
         <Box
           sx={{
             position: 'absolute',

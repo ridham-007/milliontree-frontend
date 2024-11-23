@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal, Switch } from "@mui/material";
+import { Switch } from "@mui/material";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
@@ -11,7 +11,6 @@ import {
 import { toast } from "react-toastify";
 import UpdateBlog from "./updateBlog";
 import CustomButton from "../ui/CustomButton";
-import RichTextEditor from "../RichTextEditor";
 import InputField from "../ui/CustomInputFild";
 import CustomTextField from "../ui/CustomTextField";
 import CustomDate from "../ui/CustomDate";
@@ -21,10 +20,12 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { RiCloseCircleLine } from "react-icons/ri";
 import CustomModal from "../ui/CustomModel";
+import dynamic from "next/dynamic";
+const CustomEditor = dynamic( () => import( '../custom-editor' ), { ssr: false } );
+
 interface blogGenerateProps {
   authId?: string;
 }
-
 interface FormData {
   title: string;
   content: any;
@@ -42,7 +43,7 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
   const initialFormData: FormData = {
     title: "",
     featureImage: "",
-    content: { jsonData: {}, htmlContent: "" },
+    content: "",
     description: "",
     location: "",
     creditBy: "",
@@ -90,60 +91,11 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
     }
   };
 
-  const isObject = (item: any) => {
-    return item && typeof item === "object" && !Array.isArray(item);
-  };
-
-  const convertDeepMergeEquivalent = (path: string, value: any) => {
-    if (!path) {
-      return value;
-    }
-
-    const keys = path.split(".");
-    const result = {};
-    let current: any = result;
-
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      if (i === keys.length - 1) {
-        current[key] = value;
-      } else {
-        current[key] = {};
-        current = current[key];
-      }
-    }
-    return result;
-  };
-
-  function mergeDeep(target: any, source: any) {
-    let output = Object.assign({}, target);
-    if (isObject(target) && isObject(source)) {
-      Object.keys(source).forEach((key) => {
-        if (isObject(source[key])) {
-          if (!(key in target)) Object.assign(output, { [key]: source[key] });
-          else output[key] = mergeDeep(target[key], source[key]);
-        } else {
-          Object.assign(output, { [key]: source[key] });
-        }
-      });
-    }
-    return output;
-  }
-
-  const handleOnChange = (key: keyof FormData, value: any, parentKey?: string) => {
-    if (parentKey !== undefined && parentKey !== null) {
-      let change: any = {};
-      change[key] = value;
-      change = convertDeepMergeEquivalent(parentKey, change);
-      let articleCopy = Object.assign({}, blog);
-      let finalArticle = mergeDeep(articleCopy, change);
-      setBlog(finalArticle);
-    } else {
+  const handleOnChange = (key: keyof FormData, value: any) => {
       setBlog((prevState) => ({
         ...prevState,
         [key]: value,
       }));
-    }
   };
 
   const handleBlogImageChange = (
@@ -197,6 +149,7 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
         return;
       }
     }
+    setSubmitLoading(false);
     try {
       const response: any = await addUpdateBlog({
         addUpdateBlog: {
@@ -204,13 +157,13 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
           title: blog.title,
           createDate: blog.createDate,
           creditBy: blog.creditBy,
-          content: blog.content.htmlData ? blog.content.htmlData : 'Hello',
+          content: blog.content? blog.content : 'Hello',
           featureImage: uploadedImageUrl || blog.featureImage,
           status: blog.status,
           location: blog.location,
           slug: blog.slug,
           description: blog.description,
-          jsonContent: blog.content.jsonData,
+          jsonContent: blog.jsonContent,
         },
       });
       setBlog(initialFormData);
@@ -241,7 +194,7 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
   const tableConfig = {
     notFoundData: "No blogs found",
     actionPresent: true,
-    actionList: ["view", "edit", "delete"],
+    actionList: ["edit", "delete"],
     handlePagination: handlePagination,
     onActionClick: handleActionMenu,
     columns: [
@@ -293,156 +246,136 @@ export default function BlogGenerate({ authId }: blogGenerateProps) {
         />
       </div>
       <div className="flex flex-col w-full h-[480px] overflow-y-auto custom-scrollbar py-4 px-8 gap-5">
-                <InputField
-                    name="title"
-                    placeholder="Enter Title"
-                    type="text"
-                    className="mt-[8px] border border-[#cccccc]"
-                    label="Title"
-                    value={blog?.title}
-                    onChange={(e: any) =>
-                      handleOnChange("title", e.target.value)
-                    }
-                  />
-                  <div className="flex flex-col sm:flex-row w-full gap-5">
-                    <InputField
-                      name="slug"
-                      placeholder="Slug"
-                      type="text"
-                      className="mt-[8px] border border-[#cccccc]"
-                      label="Slug"
-                      value={blog?.slug}
-                      onChange={(e: any) =>
-                        handleOnChange("slug", e.target.value)
-                      }
-                    />
-                    <div className="flex flex-col gap-2">
-                      <label className="font-medium leading-[24px] text-nowrap">
-                        Publish blog
-                      </label>
-                      <Switch
-                        checked={blog?.status}
-                        onChange={() => handleOnChange("status", !blog.status)}
-                        sx={{
-                          "& .MuiSwitch-switchBase.Mui-checked": {
-                            color: "#3A8340",
-                          },
-                          "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
-                            {
-                              backgroundColor: "#3A8340",
-                            },
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col sm:flex-row w-full gap-5">
-                    <InputField
-                      name="creditBy"
-                      placeholder="Credit By"
-                      className="mt-[8px] border border-[#cccccc]"
-                      label="Credit By"
-                      value={blog?.creditBy}
-                      onChange={(e: any) =>
-                        handleOnChange("creditBy", e.target.value)
-                      }
-                      type="text"
-                    />
-                    <CustomDate
-                      label="Create Date"
-                      value={blog.createDate}
-                      minDate={true}
-                      className="h-[48px] mt-2 border border-[#cccccc]"
-                      onChange={(newValue: any) => {
-                        handleOnChange("createDate", newValue);
-                      }}
-                    />
-                  </div>
-                  <InputField
-                    name="location"
-                    placeholder="Enter location"
-                    className="mt-[8px] border border-[#cccccc]"
-                    label="Location"
-                    value={blog?.location}
-                    onChange={(e: any) =>
-                      handleOnChange("location", e.target.value)
-                    }
-                    type="text"
-                  />
-                  <CustomTextField
-                    name="description"
-                    placeholder="Describe about your event and important information "
-                    className="mt-[8px]"
-                    label="Description"
-                    value={blog?.description}
-                    onChange={(e: any) =>
-                      handleOnChange("description", e.target.value)
-                    }
-                    height="120px"
-                  />
-                  <div className="flex flex-col sm:flex-row w-full gap-5">
-                    <div className="w-full sm:w-[50%]">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden w-full sm:w-max"
-                        id="plant-image"
-                        name="featureImage"
-                        onChange={handleBlogImageChange}
-                      />
-                      <label
-                        htmlFor="plant-image"
-                        className="flex w-full gap-[10px] justify-center border-dashed border items-center border-[#777777] rounded-[10px] px-[40px] py-[40px] lg:py-[50px] mt-1"
-                      >
-                        <p className="text-nowrap">Attach photo</p>
-                        <CustomButton
-                          label="Choose File"
-                          className="flex px-2 w-full sm:w-max h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
-                        />
-                      </label>
-                    </div>
-                    <div className="w-full sm:w-[50%]">
-                      {blog.featureImage && (
-                          <Image
-                            src={blog.featureImage}
-                            alt="Selected Preview"
-                            width={150}
-                            height={150}
-                            unoptimized
-                            className="w-[150px] h-[150px] rounded"
-                          />
-                      )}
-                    </div>
-                  </div>
-                  <div className="w-full">
-                    <label className="font-medium leading-[24px]">
-                      Content
-                    </label>
-                    {pageLoaded && (
-                      <RichTextEditor
-                        content={{
-                          jsonData: {},
-                          htmlContent: blog?.content?.htmlData,
-                        }}
-                        onChange={(Content: any) => {
-                          handleOnChange("content", Content);
-                        }}
-                      />
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-end gap-4 p-4">
-                  <CustomButton
-                    label="Cancel"
-                    callback={handleClose}
-                    className="!text-black !bg-transparent"
-                  />
-                  <CustomButton
-                    label="Submit"
-                    callback={handleSubmit}
-                    interactingAPI={submitLoading || false}
-                    className="!w-[90px]"
-                  />
-                </div>
+        <InputField
+          name="title"
+          placeholder="Enter Title"
+          type="text"
+          className="mt-[8px] border border-[#cccccc]"
+          label="Title"
+          value={blog?.title}
+          onChange={(e: any) => handleOnChange("title", e.target.value)}
+        />
+        <div className="flex flex-col sm:flex-row w-full gap-5">
+          <InputField
+            name="slug"
+            placeholder="Slug"
+            type="text"
+            className="mt-[8px] border border-[#cccccc]"
+            label="Slug"
+            value={blog?.slug}
+            onChange={(e: any) => handleOnChange("slug", e.target.value)}
+          />
+          <div className="flex flex-col gap-2">
+            <label className="font-medium leading-[24px] text-nowrap">
+              Publish blog
+            </label>
+            <Switch
+              checked={blog?.status}
+              onChange={() => handleOnChange("status", !blog.status)}
+              sx={{
+                "& .MuiSwitch-switchBase.Mui-checked": {
+                  color: "#3A8340",
+                },
+                "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
+                  backgroundColor: "#3A8340",
+                },
+              }}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row w-full gap-5">
+          <InputField
+            name="creditBy"
+            placeholder="Credit By"
+            className="mt-[8px] border border-[#cccccc]"
+            label="Credit By"
+            value={blog?.creditBy}
+            onChange={(e: any) => handleOnChange("creditBy", e.target.value)}
+            type="text"
+          />
+          <CustomDate
+            label="Create Date"
+            value={blog.createDate}
+            minDate={true}
+            className="h-[48px] mt-2 border border-[#cccccc]"
+            onChange={(newValue: any) => {
+              handleOnChange("createDate", newValue);
+            }}
+          />
+        </div>
+        <InputField
+          name="location"
+          placeholder="Enter location"
+          className="mt-[8px] border border-[#cccccc]"
+          label="Location"
+          value={blog?.location}
+          onChange={(e: any) => handleOnChange("location", e.target.value)}
+          type="text"
+        />
+        <CustomTextField
+          name="description"
+          placeholder="Describe about your event and important information "
+          className="mt-[8px]"
+          label="Description"
+          value={blog?.description}
+          onChange={(e: any) => handleOnChange("description", e.target.value)}
+          height="120px"
+        />
+        <div className="flex flex-col sm:flex-row w-full gap-5">
+          <div className="w-full sm:w-[50%]">
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden w-full sm:w-max"
+              id="plant-image"
+              name="featureImage"
+              onChange={handleBlogImageChange}
+            />
+            <label
+              htmlFor="plant-image"
+              className="flex w-full gap-[10px] justify-center border-dashed border items-center border-[#777777] rounded-[10px] px-[40px] py-[40px] lg:py-[50px] mt-1"
+            >
+              <p className="text-nowrap">Attach photo</p>
+              <CustomButton
+                label="Choose File"
+                className="flex px-2 w-full sm:w-max h-max !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white -z-10"
+              />
+            </label>
+          </div>
+          <div className="w-full sm:w-[50%]">
+            {blog.featureImage && (
+              <Image
+                src={blog.featureImage}
+                alt="Selected Preview"
+                width={150}
+                height={150}
+                unoptimized
+                className="w-[150px] h-[150px] rounded"
+              />
+            )}
+          </div>
+        </div>
+        <div className="w-full">
+          <label className="font-medium leading-[24px]">Content</label>
+          <div id="editor"></div>
+          {pageLoaded && (
+            <CustomEditor data={blog?.content} onChange={handleOnChange} />
+          )}
+        </div>
+      </div>
+      <div className="flex justify-end gap-4 p-4">
+        <CustomButton
+          label="Cancel"
+          callback={handleClose}
+          className="!text-black !bg-transparent"
+        />
+        <CustomButton
+          label="Submit"
+          callback={handleSubmit}
+          interactingAPI={submitLoading || false}
+          className="!w-[90px]"
+        />
+      </div>
     </>
   );
 

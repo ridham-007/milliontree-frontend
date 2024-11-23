@@ -82,5 +82,12 @@ body {
   background: #9b9b9b; 
 }
 
+.ck.ck-editor__main > .ck-editor__editable:not(.ck-focused){
+  padding: 0px 24px !important;
+}
+
+.ck.ck-editor__main > .ck-editor__editable{
+  padding: 0px 30px;
+}
 
 

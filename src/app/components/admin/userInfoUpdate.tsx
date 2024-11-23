@@ -1,15 +1,8 @@
 "use client";
 
-import { Modal, Switch } from "@mui/material";
 import { useEffect, useState } from "react";
-import { addUpdateBlog, deleteBlog, paginatedBlog } from "@/app/_actions/actions";
-import { toast } from "react-toastify";
-import UpdateBlog from "./updateBlog";
 import CustomButton from "../ui/CustomButton";
-import RichTextEditor from "../RichTextEditor";
 import InputField from "../ui/CustomInputFild";
-import CustomTextField from "../ui/CustomTextField";
-import CustomDate from "../ui/CustomDate";
 import DataTable from "../ui/DataTable";
 import { paginatedUsers, userInfoUpdate } from "@/app/_actions/auth-action";
 import { RiCloseCircleLine } from "react-icons/ri";

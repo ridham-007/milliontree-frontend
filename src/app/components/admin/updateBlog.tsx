@@ -7,12 +7,13 @@ import CustomButton from "../ui/CustomButton";
 import InputField from "../ui/CustomInputFild";
 import CustomTextField from "../ui/CustomTextField";
 import CustomDate from "../ui/CustomDate";
-import RichTextEditor from "../RichTextEditor";
 import { addUpdateBlog } from "@/app/_actions/actions";
 import Image from "next/image";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { fireStorage } from "@/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
+import CustomEditor from "../custom-editor";
+
 interface updateBlogProps {
   data?: any;
   setSHowEditBlog?: any;
@@ -42,7 +43,7 @@ export default function UpdateBlog({
     title: "",
     featureImage: "",
     _id: "",
-    content: { jsonData: {}, htmlContent: "" },
+    content: "",
     location: "",
     description: "",
     creditBy: "",
@@ -56,65 +57,14 @@ export default function UpdateBlog({
   const [submitLoading, setSubmitLoading] = useState(false);
   const [imageFile, setImageFile] = useState<any>(null);
 
-  const isObject = (item: any) => {
-    return item && typeof item === "object" && !Array.isArray(item);
-  };
-
-  const convertDeepMergeEquivalent = (path: string, value: any) => {
-    if (!path) {
-      return value;
-    }
-
-    const keys = path.split(".");
-    const result = {};
-    let current: any = result;
-
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      if (i === keys.length - 1) {
-        current[key] = value;
-      } else {
-        current[key] = {};
-        current = current[key];
-      }
-    }
-
-    return result;
-  };
-
-  function mergeDeep(target: any, source: any) {
-    let output = Object.assign({}, target);
-    if (isObject(target) && isObject(source)) {
-      Object.keys(source).forEach((key) => {
-        if (isObject(source[key])) {
-          if (!(key in target)) Object.assign(output, { [key]: source[key] });
-          else output[key] = mergeDeep(target[key], source[key]);
-        } else {
-          Object.assign(output, { [key]: source[key] });
-        }
-      });
-    }
-    return output;
-  }
-
   const handleOnChange = (
     key: keyof FormData,
     value: any,
-    parentKey?: string
   ) => {
-    if (parentKey !== undefined && parentKey !== null) {
-      let change: any = {};
-      change[key] = value;
-      change = convertDeepMergeEquivalent(parentKey, change);
-      let articleCopy = Object.assign({}, blog);
-      let finalArticle = mergeDeep(articleCopy, change);
-      setBlog(finalArticle);
-    } else {
       setBlog((prevState: any) => ({
         ...prevState,
         [key]: value,
       }));
-    }
   };
 
   const handleBlogImageChange = (
@@ -173,7 +123,7 @@ export default function UpdateBlog({
         addUpdateBlog: {
           _id: data._id,
           title: blog.title,
-          content: blog.content.htmlData ? blog.content.htmlData : 'Hello',
+          content: blog.content ? blog.content : 'Hello',
           creditBy: blog.creditBy,
           createDate: blog.createDate,
           location: blog.location,
@@ -181,7 +131,7 @@ export default function UpdateBlog({
           status: blog.status,
           slug: blog.slug,
           description: blog.description,
-          jsonContent: blog.content.jsonData,
+          jsonContent: blog.jsonContent,
         },
       });
       setBlog(initialFormData);
@@ -197,7 +147,7 @@ export default function UpdateBlog({
     if (data) {
       setBlog(() => ({
         ...data,
-        content: { jsonData: data?.jsonContent, htmlData: data?.content },
+        content: data?.content,
       }));
     }
   }, [data]);
@@ -303,10 +253,9 @@ export default function UpdateBlog({
               className="flex w-full gap-[10px] justify-center border-dashed border items-center border-[#777777] rounded-[10px] px-[40px] py-[40px] sm:py-[50px] mt-1"
             >
               <p className="text-nowrap">Attach photo</p>
-              <p
-                          className="flex px-3 w-full sm:w-max h-[42px] rounded-lg items-center cursor-pointer !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white"
-                        >Choose File
-                        </p>
+              <p className="flex px-3 w-full sm:w-max h-[42px] rounded-lg items-center cursor-pointer !bg-white !text-[#306E1D] border !border-[#306E1D] hover:!bg-white">
+                Choose File
+              </p>
             </label>
           </div>
           <div className="w-full sm:w-[50%]">
@@ -324,13 +273,8 @@ export default function UpdateBlog({
         </div>
         <div className="w-full">
           <label className="font-medium leading-[24px]">Content</label>
-          {blog?.content?.htmlData && (
-            <RichTextEditor
-              content={{ jsonData: {}, htmlContent: blog?.content?.htmlData }}
-              onChange={(Content: any) => {
-                handleOnChange("content", Content);
-              }}
-            />
+          {blog?.content && (
+            <CustomEditor data={blog?.content} onChange={handleOnChange} />
           )}
         </div>
         <div className="flex justify-end gap-4 mt-4">
